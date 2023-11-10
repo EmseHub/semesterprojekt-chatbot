@@ -1,0 +1,119 @@
+[
+    {
+        "vorname": "Harry James",
+        "nachname": "Potter",
+        "adresse": {
+            "strasse": "Ligusterweg",
+            "hausnr": "4",
+            "stadt": "Little Whinging",
+            "plz": "12345",
+            "land": "Vereinigtes Königreich"
+        },
+        "matnr": 1234567,
+        "pruefungen": [
+            {
+                "fachID": 2,
+                "isAngemeldet": true,
+                "note": 1.3
+            },
+            {
+                "fachID": 4,
+                "isAngemeldet": false,
+                "note": null
+            },
+            {
+                "fachID": 6,
+                "isAngemeldet": true,
+                "note": null
+            }
+        ]
+    },
+    {
+        "vorname": "Ronald Bilius",
+        "nachname": "Weasley",
+        "adresse": {
+            "strasse": "Fuchsbau",
+            "hausnr": "1",
+            "stadt": "Ottery St. Catchpole",
+            "plz": "54321",
+            "land": "Vereinigtes Königreich"
+        },
+        "matnr": 1234567,
+        "pruefungen": [
+            {
+                "fachID": 1,
+                "isAngemeldet": true,
+                "note": 3.7
+            },
+            {
+                "fachID": 3,
+                "isAngemeldet": true,
+                "note": null
+            },
+            {
+                "fachID": 4,
+                "isAngemeldet": false,
+                "note": null
+            }
+        ]
+    },
+    {
+        "vorname": "Hermine Jean",
+        "nachname": "Granger",
+        "adresse": {
+            "strasse": "Heathgate",
+            "hausnr": "8",
+            "stadt": "London",
+            "plz": "13579",
+            "land": "Vereinigtes Königreich"
+        },
+        "matnr": 1234567,
+        "pruefungen": [
+            {
+                "fachID": 1,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "fachID": 2,
+                "isAngemeldet": true,
+                "note": 1.3
+            },
+            {
+                "fachID": 3,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "fachID": 4,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "fachID": 5,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "fachID": 6,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "fachID": 7,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "fachID": 8,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "fachID": 9,
+                "isAngemeldet": true,
+                "note": 1.0
+            }
+        ]
+    }
+]
