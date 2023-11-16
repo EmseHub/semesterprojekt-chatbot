@@ -14,3 +14,5 @@
 - Aktion durchführen & Infos dazu ausgeben
 - nach weiterem Anliegen fragen
 - repeat loop
+
+- neuer Eintrag (TEST)
