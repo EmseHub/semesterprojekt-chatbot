@@ -5,6 +5,7 @@
 ## Plan/Pseudocode
 
 - TEST
+- Test2
 - Begrüßung des Users
 - Chatbot loop, user input einlesen
 - Input mit NLP zerlegen
