@@ -1,10 +1,25 @@
 {
   "intents": [
     {
+      "tag": "hilfe",
+      "patterns": ["hilfe", "help", "was kann ich tun?", "welche aufgaben?"],
+      "responses": ["Du kannst mir einfach schreiben, bei welcher Aufgabe ich dich unterstützen kann."],
+      "context": [""],
+      "type": "chat"
+    },
+    {
+      "tag": "danke",
+      "patterns": ["danke", "dankeschön", "vielen dank"],
+      "responses": ["Sehr gerne!", "Kein Problem, gern geschehen.", "Immer wieder gerne!"],
+      "context": [""],
+      "type": "chat"
+    },
+    {
       "tag": "begrüßung",
       "patterns": ["hi", "hey", "hallo", "moin", "guten tag", "hello"],
       "responses": ["Hallo!", "Guten Tag!", "Hallo, wie kann ich helfen?"],
-      "context": [""]
+      "context": [""],
+      "type": "task"
     }
   ]
 }

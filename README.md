@@ -58,3 +58,4 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 - Aktion durch User bestätigen lassen
 - Aktion durchführen & Infos dazu ausgeben
 - nach weiterem Anliegen fragen (repeat loop)
+- profit
