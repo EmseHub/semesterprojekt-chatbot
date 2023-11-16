@@ -1,0 +1,1 @@
+# Hierhin können Hilfsfunktionen ausgelagert werden

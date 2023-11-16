@@ -1,0 +1,4 @@
+# required module installations (dependencies) of the project are listed here
+# can be installed automatically by the command: 'pip install -r requirements.txt' (alternative: install via pipenv)
+
+# nltk
