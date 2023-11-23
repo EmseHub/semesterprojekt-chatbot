@@ -1,6 +1,7 @@
 # Hierhin können Hilfsfunktionen ausgelagert werden
 from time import sleep, time
 from src.constants import TASKS, DEBUG, LOADING_ANIMATION_SET
+import nltk
 
 
 # Beispiel
@@ -11,6 +12,7 @@ def doStuff():
     print("Doing Stuff")
 
 
+# CHAT OUTPUT Helpers
 def studentInput(text=""):
     inp = input("Student: " + text)
     return inp
@@ -26,17 +28,7 @@ def printAvailableFunctions():
         print("- ", task)
 
 
-def loadingAnimation2(dots=3, seconds=0.8):
-    """
-    Wait, let the bot pretend thinking about an answer (mimic human response).
-    """
-    for i in range(dots):
-        sleep(seconds)
-        print(".", end=" ", flush=True)
-    sleep(seconds)
-    print("\n")
-
-
+# Chat Loading Animations
 def loadingAnimation(duration=1, variant=1):
     animation_set = LOADING_ANIMATION_SET
     # create valid variant numbers
@@ -60,6 +52,35 @@ def loadingAnimation(duration=1, variant=1):
             print(" " * 100, flush=True)
             sleep(0.1)
             break
+
+
+# (test)
+def loadingAnimation2(dots=3, seconds=0.8):
+    """
+    Wait, let the bot pretend thinking about an answer (mimic human response).
+    """
+    for i in range(dots):
+        sleep(seconds)
+        print(".", end=" ", flush=True)
+    sleep(seconds)
+    print("\n")
+
+
+# NLP PIPELINE Helpers
+def getSentences(text):
+    sentences = nltk.sent_tokenize(text)
+    return sentences
+
+
+def getTokens(text):
+    tokens = nltk.tokenize(text)
+    return tokens
+
+
+def doLemmatization(tokens):
+    lemmatizer = nltk.WordNetLemmatizer
+    result = [lemmatizer.lemmatize(token) for token in tokens]
+    return result
 
 
 def getIntent(text):

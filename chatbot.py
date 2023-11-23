@@ -26,16 +26,25 @@ while True:
         continue
 
     # NLP PIPELINE
+    # preprocessing (tokenization, filter stop words)
+
     # tokenize the users input text
-    # sentences = nltk.sent_tokenize(text)
-    # print(DEBUG, "Eingegebenerer Satz:")
-    # print(sentences, "\n")
+    sentences = nltk.sent_tokenize(text)
+    print(DEBUG, "Sätze:", sentences)
 
     # get the words of each sentence
-    # for sentence in sentences:
-    #     words = nltk.word_tokenize(sentence)
-    #     print(words)
-    # print("\n")
+    words = nltk.word_tokenize(text)
+    print(DEBUG, "Tokens:", words)
+
+    # remove stopwords
+
+    # pos_tagging (get nouns/verbs / extract features)
+
+    # stemming/lemmatization of the features
+
+    # get results as bag of words
+
+    # get intent by similiarity of intents.data?
 
     # Chatbot Answer
     loadingAnimation(2, 1)
