@@ -1,9 +1,9 @@
-import spellCheckIgnore from '/chatbot-logic/nlp-json/spell-check-ignore.json' assert { type: 'json' };
-import stopwords from '/chatbot-logic/nlp-json/stopwords.json' assert { type: 'json' };
-import lemmaMapping from '/chatbot-logic/nlp-json/IWNLP.Lemmatizer_20181001.min.json' assert { type: 'json' };
-import intents from '/chatbot-logic/nlp-json/intents.json' assert { type: 'json' };
+import spellCheckIgnore from './nlp-json/spell-check-ignore.json' assert { type: 'json' };
+import stopwords from './nlp-json/stopwords.json' assert { type: 'json' };
+import lemmaMapping from './nlp-json/IWNLP.Lemmatizer_20181001.min.json' assert { type: 'json' };
+import intents from './nlp-json/intents.json' assert { type: 'json' };
 
-import postalCodes from '/chatbot-logic/nlp-json/postal-codes.json' assert { type: 'json' };
+import postalCodes from './nlp-json/postal-codes.json' assert { type: 'json' };
 
 
 

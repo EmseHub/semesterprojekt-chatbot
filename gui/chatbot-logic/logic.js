@@ -1,6 +1,6 @@
-import { arrIntents } from '/chatbot-logic/nlp-data-service.js';
-import { replaceDiacritics, getProcessedWords } from '/chatbot-logic/string-editing.js';
-import tasks from '/chatbot-logic/tasks.js';
+import { arrIntents } from './nlp-data-service.js';
+import { replaceDiacritics, getProcessedWords } from './string-editing.js';
+import tasks from './tasks.js';
 
 
 var objRunningTaskState = null;
@@ -17,7 +17,7 @@ export function getResponse(strMessage) {
     // 8. Task abarbeiten
 
 
-    if (!strMessage || !strMessage.trim()) { return ['Die Empfangene Nachricht konnte leider nicht verarbeitet werden.', null, false]; }    
+    if (!strMessage || !strMessage.trim()) { return ['Die Empfangene Nachricht konnte leider nicht verarbeitet werden.', null, false]; }
     strMessage = strMessage.trim().replace(/\s+/g, ' '); // Jeden Whitespace (Space/Tab/Newline) beliebiger Länge reduzieren auf ein Leerzeichen (' ')
 
     let strResponse = '';
@@ -95,7 +95,6 @@ function getIntent(arrWords) {
 export function getRandomItemInArray(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
-
 
 
 //#region --------------------------- Tasks ---------------------------

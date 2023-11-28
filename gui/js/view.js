@@ -1,7 +1,5 @@
-import { arrCourses } from '/js/data-service.js';
-import { arrStudents } from '/js/data-service.js';
-
-import { getResponse } from '/chatbot-logic/logic.js';
+import { arrStudents,arrCourses } from './data-service.js';
+import { getResponse } from '../chatbot-logic/logic.js';
 
 
 
@@ -84,7 +82,7 @@ function updateStudentCards(arrStudents, arrCourses) {
             + '  <div class="row g-1">'
             + '   <div class="col-md-auto">'
             + '    <div class="px-2 py-4">'
-            + '     <img src="/img/' + objStudent.profilbild + '" class="img-fluid rounded-start student-img" alt="' + fullname + '">'
+            + '     <img src="./img/' + objStudent.profilbild + '" class="img-fluid rounded-start student-img" alt="' + fullname + '">'
             + '    </div>'
             + '   </div>'
             + '   <div class="col-md">'

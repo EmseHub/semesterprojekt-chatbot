@@ -1,8 +1,8 @@
-import { arrCourses } from '/js/data-service.js';
-import { arrStudents } from '/js/data-service.js';
-import { arrPostalCodes } from '/chatbot-logic/nlp-data-service.js';
-import { replaceDiacritics } from '/chatbot-logic/string-editing.js';
-import { getRandomItemInArray } from '/chatbot-logic/logic.js';
+import { arrStudents, arrCourses } from '../js/data-service.js';
+
+import { arrPostalCodes } from './nlp-data-service.js';
+import { replaceDiacritics } from './string-editing.js';
+import { getRandomItemInArray } from './logic.js';
 
 // ---DATA TEST---
 // setTimeout(() => {

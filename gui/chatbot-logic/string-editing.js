@@ -1,9 +1,9 @@
-import {arrSpellCheckIgnore} from '/chatbot-logic/nlp-data-service.js';
-import {arrStopwords} from '/chatbot-logic/nlp-data-service.js';
-import {arrLemmaMapping} from '/chatbot-logic/nlp-data-service.js';
+import {arrSpellCheckIgnore, arrStopwords, arrLemmaMapping} from './nlp-data-service.js';
 // var arrLemmaMapping = [];
 
-const dictionary = new Typo('de_DE', false, false, { dictionaryPath: "/chatbot-logic/libs/typo.js-1.2.3/dictionaries" });
+
+// Achtung: Pfad noch relativ zu Root, da von index.html aus eingebunden
+const dictionary = new Typo('de_DE', false, false, { dictionaryPath: "./chatbot-logic/libs/typo.js-1.2.3/dictionaries" });
 
 
 export function replaceDiacritics(strText) {
