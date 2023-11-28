@@ -4,6 +4,10 @@
 
 Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
+### Aktueller Hinweis
+
+- JS-Only-Demo im Verzeichnis <i>/gui</i> kann über lokalen <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> getestet werden, läuft bis auf Weiteres jedoch nur unter Chrome (<i>import assertions</i> werden aus Sicherheitsgründen nicht von allen Browsern unterstützt, siehe <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility">hier</a>)
+
 ### Aufgaben des Chatbots (Features/Tasks)
 
 - Änderung der Adresse nach Umzug
@@ -17,9 +21,9 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
 ### Environment:
 
-- Identifikation des Studenten per Matrikelnummer (dient quasi als Passwort/Legitimation)
+- Identifikation des Studenten per Matrikelnummer bei jeder Anfrage (dient quasi als Passwort/Legitimation)
 - Umgangssprache verstehen (ggf. unklare Anfrage)
-- menschliche natürlichsprachliche Kommunikation (freundliche, flüssige Sprachweise)
+- menschliche, natürlichsprachliche Kommunikation (freundliche, flüssige Sprachweise)
 - Aktionen sollen tatsächliche Änderungen in der Datenbank bewirken
 - Fehlerbehandlung von Falscheingaben & EdgeCases
   - falsche Matrikelnummer
