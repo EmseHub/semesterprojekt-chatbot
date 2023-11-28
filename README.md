@@ -6,7 +6,7 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
 ### Aktueller Hinweis
 
-- JS-Only-Demo im Verzeichnis <i>/gui</i> kann über lokalen <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> getestet werden, läuft bis auf Weiteres jedoch nur unter Chrome (<i>import assertions</i> werden aus Sicherheitsgründen nicht von allen Browsern unterstützt, siehe <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility">hier</a>)
+- JS-Only-Demo im Verzeichnis <i>/gui</i> kann über lokalen <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> oder <a href="https://emsehub.github.io/semesterprojekt-chatbot/gui/">hier</a> getestet werden, läuft bis auf Weiteres jedoch nur unter Chrome (<i>import assertions</i> werden aus Sicherheitsgründen nicht von allen Browsern unterstützt, siehe <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility">hier</a>)
 
 ### Aufgaben des Chatbots (Features/Tasks)
 
@@ -15,9 +15,9 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 - Anmeldung zu einer Prüfung
 - Abmeldung von einer Prüfung
 - Abfrage Status der Prüfungsanmeldung
-  - angemeldet | nicht angemeldet | Prüfung bereits abgeschlossen
+  - nicht angemeldet | angemeldet und nicht abgeschlossen | angemeldet und abgeschlossen
 - Abfrage Note zu bestandener Prüfung
-  - Fehler, falls Prüfung noch nicht bestanden wurde
+  - Falls Prüfung nicht bestanden ist, Feedback über Status der Prüfungsanmeldung
 
 ### Environment:
 
@@ -63,3 +63,22 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 - Aktion durchführen & Infos dazu ausgeben
 - nach weiterem Anliegen fragen (repeat loop)
 - profit
+
+## Beispieldialoge
+
+- Adressänderung A
+  - Studierender: Hallo, ich bin letzte Woche umgezogen und wollte meine neue Adresse mitteilen.
+  - Chatbot: Sehr gern. Bitte nennen Sie Ihre Matrikelnummer, damit ich Sie im System aufrufen kann.
+  - Studierender: Meine Mat.Nr. ist 123456.
+  - Chatbot: Vielen Dank, Frau Meier. Bitte nennen Sie mir Ihre neue Adresse.
+  - Studierender: Ich wohne jetzt in der Hauptstraße 12 in Dortmund.
+  - Chatbot: Vielen Dank. Können Sie mir bitte noch die Postleitzahl der Hauptstraße 12 in Dortmund nennen?
+  - Studierender: 44143
+  - Chatbot: Vielen Dank. Ich fasse noch einmal zusammen: Sie sind umgezogen und Ihre neue Adresse lautet Hauptstraße 12 in 44143 Dortmund. Ist dies korrekt?
+  - Studierender: Ja
+  - Chatbot: Vielen Dank, ich habe die Änderung vorgenommen.
+- Adressänderung B
+  - Studierender: Guten Morgen, mein Name ist Meier (123456) und ich bin umgezogen. Ich wohne jetzt in 44143 Dortmund und zwar in der Hauptstraße 12. Bitte ändern Sie meine Anschrift.
+  - Chatbot: Vielen Dank, Frau Meier. Ich fasse noch einmal zusammen: Sie sind umgezogen und Ihre neue Adresse lautet Hauptstraße 12 in 44143 Dortmund. Ist dies korrekt?
+  - Studierender: Ja
+  - Chatbot: Vielen Dank, ich habe die Änderung vorgenommen.
