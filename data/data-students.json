@@ -7,26 +7,28 @@
             "hausnr": "4",
             "stadt": "Little Whinging",
             "plz": "12345",
-            "land": "Vereinigtes Königreich"
+            "staat": "Vereinigtes Königreich"
         },
-        "matnr": 1234567,
+        "matnr": "1234567",
         "pruefungen": [
             {
-                "fachID": 2,
+                "kursID": 2,
                 "isAngemeldet": true,
                 "note": 1.3
             },
             {
-                "fachID": 4,
+                "kursID": 4,
                 "isAngemeldet": false,
                 "note": null
             },
             {
-                "fachID": 6,
+                "kursID": 6,
                 "isAngemeldet": true,
                 "note": null
             }
-        ]
+        ],
+        "profilbild": "hp_harry.png",
+        "letztesUpdate": "2023-11-21T16:50:53.752Z"
     },
     {
         "vorname": "Ronald Bilius",
@@ -36,26 +38,23 @@
             "hausnr": "1",
             "stadt": "Ottery St. Catchpole",
             "plz": "54321",
-            "land": "Vereinigtes Königreich"
+            "staat": "Vereinigtes Königreich"
         },
-        "matnr": 1234567,
+        "matnr": "7654321",
         "pruefungen": [
             {
-                "fachID": 1,
+                "kursID": 1,
                 "isAngemeldet": true,
                 "note": 3.7
             },
             {
-                "fachID": 3,
+                "kursID": 3,
                 "isAngemeldet": true,
                 "note": null
-            },
-            {
-                "fachID": 4,
-                "isAngemeldet": false,
-                "note": null
             }
-        ]
+        ],
+        "profilbild": "hp_ron.png",
+        "letztesUpdate": "2023-11-21T16:50:53.752Z"
     },
     {
         "vorname": "Hermine Jean",
@@ -65,55 +64,42 @@
             "hausnr": "8",
             "stadt": "London",
             "plz": "13579",
-            "land": "Vereinigtes Königreich"
+            "staat": "Vereinigtes Königreich"
         },
-        "matnr": 1234567,
+        "matnr": "1122334",
         "pruefungen": [
             {
-                "fachID": 1,
+                "kursID": 3,
                 "isAngemeldet": true,
                 "note": 1.0
             },
             {
-                "fachID": 2,
+                "kursID": 5,
                 "isAngemeldet": true,
                 "note": 1.3
             },
             {
-                "fachID": 3,
+                "kursID": 6,
                 "isAngemeldet": true,
                 "note": 1.0
             },
             {
-                "fachID": 4,
+                "kursID": 7,
                 "isAngemeldet": true,
                 "note": 1.0
             },
             {
-                "fachID": 5,
+                "kursID": 8,
                 "isAngemeldet": true,
                 "note": 1.0
             },
             {
-                "fachID": 6,
-                "isAngemeldet": true,
-                "note": 1.0
-            },
-            {
-                "fachID": 7,
-                "isAngemeldet": true,
-                "note": 1.0
-            },
-            {
-                "fachID": 8,
-                "isAngemeldet": true,
-                "note": 1.0
-            },
-            {
-                "fachID": 9,
+                "kursID": 9,
                 "isAngemeldet": true,
                 "note": 1.0
             }
-        ]
+        ],
+        "profilbild": "hp_hermine.png",
+        "letztesUpdate": "2023-11-21T16:50:53.752Z"
     }
 ]
