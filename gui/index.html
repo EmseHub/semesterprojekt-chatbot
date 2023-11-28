@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Chatbot</title>
+    <title>Hatbot</title>
 
     <link rel="icon" type="image/png" sizes="16x16" rel="noopener" target="_blank" href="/img/favicon_hat_16.png">
     <link rel="icon" type="image/png" sizes="32x32" rel="noopener" target="_blank" href="/img/favicon_hat_32.png">
@@ -20,73 +20,18 @@
 
 <body>
     <div id="container-spinner">
-        <div class="spinner-grow" style="width: 6rem; height: 6rem;" role="status">
-            <span class="visually-hidden">Lädt...</span>
-        </div>
+        <img src="/img/hp_hut.png" alt="Lädt...">
     </div>
     <div class="container-fluid" id="container-main">
         <div class="row mt-4">
-            <h2 id="heading">©Hatbot</h2>
+            <h2 id="heading">&copy;Hatbot</h2>
         </div>
 
         <div class="row">
 
             <!-- Stats -->
             <div class="col-5 align-self-end">
-                <div class="container-fluid" id="container-students">
-
-                    <!-- <div class="row">
-                        <div class="card student-card mb-3" style="max-width: 540px;">
-                            <div class="row g-0">
-                                <div class="col-md-auto">
-                                    <div class="px-2 py-4">
-                                        <img src="/img/hp_harry.png" class="img-fluid rounded-start student-img" alt="Harry Potter">
-                                    </div>
-                                </div>
-                                <div class="col-md">
-                                    <div class="card-body py-4">
-                                        <h6 class="card-title">Harry Potter</h6>
-                                        <table class="table student-table">
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row">Adresse</th>
-                                                    <td>Mstes, 48895 Lenni</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Prüfung A</th>
-                                                    <td>Prüfung A</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Prüfung B</th>
-                                                    <td>1,7</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Prüfung B</th>
-                                                    <td>1,7</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Prüfung B</th>
-                                                    <td>1,7</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Prüfung B</th>
-                                                    <td>1,7</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Prüfung B</th>
-                                                    <td>1,7</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <p class="card-text">Notendurchschnitt: 1,2</p>
-                                        <p class="card-text"><small class="text-body-secondary student-small">Last updated 3 mins ago</small></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-
-                </div>
+                <div class="container-fluid" id="container-students"></div>
             </div>
 
             <!-- Chat -->
@@ -102,41 +47,9 @@
                         </div>
 
                         <div class="col">
-                            <div class="row gx-0 gy-3" id="container-messages">
-
-                                <!-- <div class="chat-row-message">
-                                    <div class="chat-message chat-message-system">
-                                        Höy du sau Lorem isum dolor sit amet, consectetur adipisicing elit. Laudantium nemo, iusto magni provident id animi in, dignissimos alias fuga quia qui deserunt rerum molestiae! Quod similique
-                                        voluptatem
-                                        soluta porro, quidem tempora culpa consequatur provident quo
-                                        dolorum, quasi voluptalla.
-                                    </div>
-                                </div>
-                                <div class="chat-row-message">
-                                    <div class="chat-message chat-message-user">
-                                        Höy du sau Lorum, quasi voluptalla. User
-                                    </div>
-                                </div>
-                                <div class="chat-row-message">
-                                    <div class="chat-message chat-message-system">
-                                        Höy du sau Lora.
-                                    </div>
-                                </div>
-                                <div class="chat-row-message">
-                                    <div class="chat-message chat-message-user">
-                                        Höy du saulla. User
-                                    </div>
-                                </div>
-                                <div class="chat-row-message">
-                                    <div class="chat-message chat-message-system">
-                                        Hallo, was kann ich für Dich tun?
-                                    </div>
-                                </div> -->
-
-                            </div>
+                            <div class="row" id="container-messages"></div>
 
                             <div class="row gx-2 mt-4">
-
                                 <div class="col">
                                     <input type="text" class="form-control" id="input-message" placeholder="" onkeyup="if(event.keyCode == 13) handleSendMessage()">
                                 </div>
@@ -166,27 +79,14 @@
         <script src="/libs/jquery-3.7.1/jquery-3.7.1.min.js"></script>
         <script src="/libs/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
 
-        <script src="/libs/typo.js-1.2.3/typo.js"></script>
 
-        <!-- <script src="/js/data.js" type="module"></script> -->
-        <!-- <script src="/js/chatbot-logic.js" type="module"></script> -->
-        <!-- <script src="/js/view.js" type="module"></script> -->
-
-        <script>
-            // Gloable Variablen
-            // var dictionary = new Typo('de_DE', false, false, { dictionaryPath: "/libs/typo.js-1.2.3/dictionaries" });
-        </script>
-
+        <script src="/chatbot-logic/libs/typo.js-1.2.3/typo.js"></script>
 
         <script type="module">
-            import { handleSendMessage } from '/js/view.js'
-
+            import { handleSendMessage } from '/js/view.js';
             window.handleSendMessage = handleSendMessage;
             // document.getElementById('#myBtn').addEventListener('click', handleSendMessage)
-
         </script>
-
-
 </body>
 
 </html>

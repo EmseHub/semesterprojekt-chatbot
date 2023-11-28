@@ -1,7 +1,7 @@
-import { arrCourses } from '/js/data.js';
-import { arrStudents } from '/js/data.js';
+import { arrCourses } from '/js/data-service.js';
+import { arrStudents } from '/js/data-service.js';
 
-import { getReply } from '/js/chatbot-logic.js';
+import { getResponse } from '/chatbot-logic/logic.js';
 
 
 
@@ -12,10 +12,16 @@ $(document).ready(function () {
     document.getElementById('container-spinner').style.display = 'none';
     document.getElementById('container-main').style.display = 'block';
 
-
     document.getElementById('input-message').focus();
 
-    appendMessageSystem('Hallo, was kann ich für Dich tun?');
+    const arrWelcomeMsgs = [
+        'So, dann setze mich mal auf...',
+        'Ihr denkt, ich bin ein alter Hut,<br>mein Aussehen ist auch gar nicht gut.<br>Dafür bin ich der schlauste aller Hüte,<br>und ist\'s nicht wahr, so fress ich mich, du meine Güte!',
+        'Alle Zylinder und schicken Kappen<br>sind gegen mich doch nur Jammerlappen!',
+        'Ich weiß in Hogwarts am besten Bescheid<br>und bin für jeden Schädel bereit.',
+        'Nun los, so setzt mich auf, nur Mut,<br>habt nur Vertrauen zum Sprechenden Hut!'
+    ]
+    appendMessageSystem(arrWelcomeMsgs[Math.floor(Math.random() * arrWelcomeMsgs.length)]);
 });
 //#endregion
 
@@ -25,15 +31,19 @@ export function handleSendMessage() {
     const elemInputMessage = document.getElementById('input-message');
     const strMessage = elemInputMessage.value;
     if (!strMessage || !strMessage.trim()) { return; }
-    appendMessageUser(strMessage);
-    elemInputMessage.value = '';
 
+    setTimeout(() => {
+        appendMessageUser(strMessage);
+        elemInputMessage.value = '';
+    }, 0);
 
-    const [strReply, objDiagnostic] = getReply(strMessage);
-    appendMessageSystem(strReply);
-    console.log(objDiagnostic);
-    updateDiagnostic(objDiagnostic);
+    setTimeout(() => {
+        const [strResponse, objDiagnostic, isDataChanged] = getResponse(strMessage);
+        appendMessageSystem(strResponse);
+        updateDiagnostic(objDiagnostic);
 
+        if (isDataChanged) { updateStudentCards(arrStudents, arrCourses); }
+    }, 1000);
 }
 //#endregion
 
@@ -81,29 +91,41 @@ function updateStudentCards(arrStudents, arrCourses) {
             + '    <div class="card-body py-4">'
             + '     <h6 class="card-title student-title">' + fullname + '</h6>'
             + '     <table class="table student-table">'
-            + '      <tbody>'
-            + '       <tr>'
-            + '        <th scope="row">Adresse</th>'
-            + '        <td>' + address + '</td>'
-            + '       </tr>'
+            + '      <tr>'
+            + '       <th scope="row">Matrikelnummer</th>'
+            + '       <td>' + objStudent.matnr + '</td>'
+            + '      </tr>'
+            + '      <tr class="border-0">'
+            + '       <th scope="row">Adresse</th>'
+            + '       <td>' + address + '</td>'
+            + '      </tr>'
+
+            + '      <tr class="border-0">'
+            + '       <th class="table-divider" colspan="2">Prüfungen</th>'
+            + '      </tr>'
             ;
-        objStudent.pruefungen.forEach(objPruefung => {
+        objStudent.pruefungen.forEach((objPruefung, index) => {
             const objKurs = arrCourses.find(c => c.id === objPruefung.kursID);
             const strStatus = ((objPruefung.note !== null)
                 ? objPruefung.note.toFixed(1)
                 : ((objPruefung.isAngemeldet) ? 'Angemeldet' : 'Nicht angemeldet'));
             htmlStudents += ''
-                + '   <tr>'
-                + '    <th scope="row">' + objKurs?.name + '</th>'
-                + '    <td>' + strStatus + '</td>'
-                + '   </tr>'
+                + '    <tr' + ((index + 1 === objStudent.pruefungen.length) ? ' class="border-0"' : '') + '>'
+                + '     <th scope="row">' + objKurs?.name + '</th>'
+                + '     <td>' + strStatus + '</td>'
+                + '    </tr>'
                 ;
         });
         htmlStudents += ''
-            + '      </tbody>'
+
+            + '    <tr class="border-0">'
+            + '     <th class="table-divider" scope="row">Durchschnitt</th>'
+            + '     <td class="table-divider">' + gradeAverage + '</td>'
+            + '    </tr>'
+            + '    <tr>'
+            + '     <td class="student-update" colspan="2">Letzte Aktualisierung ' + getGerDateStrWithTimeFromDateObj(objStudent.letztesUpdate) + '</td>'
+            + '    </tr>'
             + '     </table>'
-            + '     <p class="card-text">Notendurchschnitt: ' + gradeAverage + '</p>'
-            + '     <p class="card-text"><small class="text-body-secondary student-small">Letzte Aktualisierung: ' + getGerDateStrWithTimeFromDateObj(objStudent.letztesUpdate) + '</small></p>'
             + '    </div>'
             + '   </div>'
             + '  </div>'
@@ -124,7 +146,7 @@ function updateDiagnostic(objDiagnostic) {
         + '<b>Task</b>: ' + (objDiagnostic.intent?.task || '-') + ', '
         + '<b>Korrigiert</b>: ' + (objDiagnostic.spellChecked?.join(' ') || '-') + ', '
         + '<b>Lemmatisiert</b>: ' + (objDiagnostic.lemmatized?.join(' ') || '-') + ', '
-        + '<b>Bereinigt</b>: ' + (objDiagnostic.cleaned?.join(' ') || '-') + ', '
+        + '<b>Bereinigt</b>: ' + (objDiagnostic.processed?.join(' ') || '-') + ', '
         + '<b>Intent</b>: ' + (objDiagnostic.intent?.tag || '-') + ', '
         + '<b>Score</b>: ' + strScore
         ;
@@ -160,11 +182,3 @@ function roundTwoDecimals(nr) {
     return Math.round((nr * 100) * (1 + Number.EPSILON)) / 100;
 }
 //#endregion
-
-
-
-
-
-// arrStudents[0].pruefungen[1].note = 1.9;
-// arrStudents[0].letztesUpdate = new Date();
-// updateStudentCards(arrStudents, arrCourses);
