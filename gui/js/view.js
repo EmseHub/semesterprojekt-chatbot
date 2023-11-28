@@ -78,10 +78,10 @@ function updateStudentCards(arrStudents, arrCourses) {
 
         htmlStudents += ''
             + '<div class="row">'
-            + ' <div class="card student-card" style="max-width: 540px;">'
+            + ' <div class="card student-card">'
             + '  <div class="row g-1">'
             + '   <div class="col-md-auto">'
-            + '    <div class="px-2 py-4">'
+            + '    <div class="px-2 pt-4">'
             + '     <img src="./img/' + objStudent.profilbild + '" class="img-fluid rounded-start student-img" alt="' + fullname + '">'
             + '    </div>'
             + '   </div>'
