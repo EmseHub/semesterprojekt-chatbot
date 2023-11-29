@@ -3,6 +3,7 @@
 from src.constants import *
 from src.helpers import *
 
+
 # import third-party modules
 from time import sleep
 import nltk
@@ -20,6 +21,7 @@ while True:
 
     # check if user wants to exit or needs help
     if str(text).lower() in EXIT_MESSAGES:
+        print("Tschüss!")
         break
     if str(text).lower() in ["help", "hilfe"]:
         printAvailableFunctions()
@@ -47,5 +49,7 @@ while True:
     # get intent by similiarity of intents.data?
 
     # Chatbot Answer
-    loadingAnimation(2, 1)
-    chatbotAnswer("Boah, sorry. Das weiß ich auch nicht.")
+    # loadingAnimation(2, 3)
+    # chatbotAnswer("Boah, sorry. Das weiß ich auch nicht.")
+
+    test()
