@@ -32,17 +32,10 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
   - Achtung: Anfragen zu Prüfungen (An-/Abmeldung etc.) sind recht ähnlich --> Sicherstellen, dass die richtige Aktion durchgeführt wird!
 - Kreativität bei der Lösung, hinreichende Komplexität durch NLP
 
-### Benötigte Mock-Daten (Datenbank)
+### Offene Fragen
 
-- Studenten (mind. 5) mit...
-  - Matrikelnummer,
-  - Namen,
-  - Adresse
-  - Prüfungen
-    - angemeldete
-    - bestandene/nicht-bestandene
-- Lehrveranstaltungen (mind. 5) mit...
-  - d
+- Identitätsabfrage je Anliegen oder je Session/Chataufruf?
+- NLTK oder spaCy?
 
 ## TODO
 
