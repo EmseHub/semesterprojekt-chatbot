@@ -1,11 +1,12 @@
-import { arrStudents,arrCourses } from './data-service.js';
+import { arrStudents, arrCourses } from './data-service.js';
 import { getResponse } from '../chatbot-logic/logic.js';
+import { recognizeTextFromSpeech, speakUtteranceFromText, stopTextFromSpeechRecognition, cancelSpeechFromTextUtterances } from './speech-service.js';
 
+var stateIsSpeechMode = false;
 
 
 //#region --------------------------- Start ---------------------------
 $(document).ready(function () {
-    // Daten visualisieren
     updateStudentCards(arrStudents, arrCourses);
     document.getElementById('container-spinner').style.display = 'none';
     document.getElementById('container-main').style.display = 'block';
@@ -19,7 +20,7 @@ $(document).ready(function () {
         'Ich weiß in Hogwarts am besten Bescheid<br>und bin für jeden Schädel bereit.',
         'Nun los, so setzt mich auf, nur Mut,<br>habt nur Vertrauen zum Sprechenden Hut!'
     ]
-    appendMessageSystem(arrWelcomeMsgs[Math.floor(Math.random() * arrWelcomeMsgs.length)]);
+    appendMessageSystem(getRandomItemInArray(arrWelcomeMsgs));
 });
 //#endregion
 
@@ -41,7 +42,66 @@ export function handleSendMessage() {
         updateDiagnostic(objDiagnostic);
 
         if (isDataChanged) { updateStudentCards(arrStudents, arrCourses); }
-    }, 1000);
+    }, getRandomInt(1000, 2000));
+}
+
+export function toggleSpeechMode() {
+    stateIsSpeechMode = !stateIsSpeechMode;
+    document.getElementById('img-mic').src = (stateIsSpeechMode) ? './img/mic_off.png' : './img/mic_on.png';
+    document.getElementById('btn-speech').classList.toggle('btn-activated');
+    loopAudioConversation(0);
+
+    function loopAudioConversation(countNoInputResult) {
+        if (!stateIsSpeechMode) {
+            stopTextFromSpeechRecognition();
+            cancelSpeechFromTextUtterances();
+            return;
+        }
+        recognizeTextFromSpeech((cbStrMessage) => {
+            if (cbStrMessage === undefined || cbStrMessage === null) {
+                if (stateIsSpeechMode) { toggleSpeechMode(); }
+                return;
+            }
+            if (cbStrMessage.trim() === '') {
+                if (!stateIsSpeechMode) { return; }
+                if (countNoInputResult < 1 || countNoInputResult > 3) {
+                    toggleSpeechMode();
+                    return;
+                }
+                const strResponseToSpeak = getRandomItemInArray([
+                    'Bist Du noch da?',
+                    'Hallo?',
+                    'Ich höre Dich nicht mehr...',
+                    'Noch da?',
+                    'Kannst Du mich hören?',
+                    'Hat es Dir die Sprache verschlagen?',
+                    'Eingeschlafen?',
+                    'Bist Du AFK?',
+                    'Warum sagst Du nichts?'
+                ]);
+                appendMessageSystem(strResponseToSpeak);
+                speakUtteranceFromText(strResponseToSpeak, (cbEndedSuccessfully) => {
+                    countNoInputResult++;
+                    (cbEndedSuccessfully) ? loopAudioConversation(countNoInputResult) : toggleSpeechMode();
+                });
+                return;
+            }
+
+            appendMessageUser(cbStrMessage);
+            const [strResponse, objDiagnostic, isDataChanged] = getResponse(cbStrMessage);
+
+            setTimeout(() => {
+                appendMessageSystem(strResponse);
+                updateDiagnostic(objDiagnostic);
+                if (isDataChanged) { updateStudentCards(arrStudents, arrCourses); }
+                if (stateIsSpeechMode) {
+                    speakUtteranceFromText(strResponse, (cbEndedSuccessfully) => {
+                        (cbEndedSuccessfully) ? loopAudioConversation(1) : toggleSpeechMode();
+                    });
+                }
+            }, getRandomInt(1000, 2000));
+        })
+    }
 }
 //#endregion
 
@@ -178,5 +238,15 @@ function getGerDateStrWithTimeFromDateObj(objDate) {
 function roundTwoDecimals(nr) {
     return Math.round((nr + Number.EPSILON) * 100) / 100;
     return Math.round((nr * 100) * (1 + Number.EPSILON)) / 100;
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); // inklusive min, exklusive max
+}
+
+function getRandomItemInArray(arr) {
+    return (arr instanceof Array) ? arr[Math.floor(Math.random() * arr.length)] : null;
 }
 //#endregion

@@ -2,8 +2,7 @@ import { arrIntents } from './nlp-data-service.js';
 import { replaceDiacritics, getProcessedWords } from './string-editing.js';
 import tasks from './tasks.js';
 
-
-var objRunningTaskState = null;
+var stateObjRunningTask = null;
 
 export function getResponse(strMessage) {
 
@@ -25,29 +24,29 @@ export function getResponse(strMessage) {
     let isDataChanged = false;
 
     const objIntent = getIntent(arrWords);
-    console.log('---Gefundener Intent---', objIntent, `\n\n${(objIntent?.hitCount || 0) + ' von ' + arrWords.length + ' Wörtern teffen'}`);
+    console.log('---Gefundener Intent---', objIntent, `\n\n${(objIntent?.hitCount || 0) + ' von ' + arrWords.length + ' Wörtern treffen'}`);
     objDiagnostic.intent = objIntent;
 
-    if (objRunningTaskState || objIntent?.task) {
-        if (!objRunningTaskState) {
-            objRunningTaskState = { name: objIntent.task, params: {} };
+    if (stateObjRunningTask || objIntent?.task) {
+        if (!stateObjRunningTask) {
+            stateObjRunningTask = { name: objIntent.task, params: {} };
         }
-        const strRunningTaskName = objRunningTaskState.name;
+        const strRunningTaskName = stateObjRunningTask.name;
         strResponse = `Für die Aufgabe "${strRunningTaskName}" ist leider noch kein Ablauf definiert...`;
         const strIntentTag = objIntent?.tag;
 
-        [objRunningTaskState, strResponse, isDataChanged] = (function () {
+        [stateObjRunningTask, strResponse, isDataChanged] = (function () {
             switch (strRunningTaskName) {
-                case 'adresse_aendern': return tasks.processTaskAdresseAendern(objRunningTaskState, strMessage, strIntentTag);
-                case 'pruefung_anmelden': return tasks.processTaskPruefungAnmelden(objRunningTaskState, strMessage, strIntentTag);
-                case 'pruefung_abmelden': return tasks.processTaskPruefungAbmelden(objRunningTaskState, strMessage, strIntentTag);
-                case 'pruefung_status': return tasks.processTaskPruefungStatus(objRunningTaskState, strMessage, strIntentTag);
+                case 'adresse_aendern': return tasks.processTaskAdresseAendern(stateObjRunningTask, strMessage, strIntentTag);
+                case 'pruefung_anmelden': return tasks.processTaskPruefungAnmelden(stateObjRunningTask, strMessage, strIntentTag);
+                case 'pruefung_abmelden': return tasks.processTaskPruefungAbmelden(stateObjRunningTask, strMessage, strIntentTag);
+                case 'pruefung_status': return tasks.processTaskPruefungStatus(stateObjRunningTask, strMessage, strIntentTag);
             }
             return [null, strResponse, isDataChanged];
         })();
 
         // Task abgeschlossen oder -brochen --> Anschlussfrage ergänzen 
-        if (!objRunningTaskState) {
+        if (!stateObjRunningTask) {
             strResponse += ' ' + getRandomItemInArray([
                 'Kann ich sonst noch etwas für Dich tun?',
                 'Darf es sonst noch etwas sein?',
@@ -93,19 +92,5 @@ function getIntent(arrWords) {
 
 
 export function getRandomItemInArray(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+    return (arr instanceof Array) ? arr[Math.floor(Math.random() * arr.length)] : null;
 }
-
-
-//#region --------------------------- Tasks ---------------------------
-
-//#endregion
-
-
-// ---- PATTERNS IN LOWER CASE UMWANDELN ----
-// for (let i = 0; i < arrIntents.length; i++) {
-//     for (let y = 0; y < arrIntents[i].patterns.length; y++) {
-//         arrIntents[i].patterns[y] = arrIntents[i].patterns[y].toLowerCase();
-//     }
-// }
-// console.log(arrIntents);

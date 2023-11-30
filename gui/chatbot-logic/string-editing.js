@@ -1,6 +1,4 @@
-import {arrSpellCheckIgnore, arrStopwords, arrLemmaMapping} from './nlp-data-service.js';
-// var arrLemmaMapping = [];
-
+import { arrSpellCheckIgnore, arrStopwords, arrLemmaMapping } from './nlp-data-service.js';
 
 // Achtung: Pfad noch relativ zu Root, da von index.html aus eingebunden
 const dictionary = new Typo('de_DE', false, false, { dictionaryPath: "./chatbot-logic/libs/typo.js-1.2.3/dictionaries" });
@@ -141,35 +139,7 @@ function lemmatize(strWord) {
     const strBaseForm = objBaseForm?.Lemmas[0]?.Lemma;
     if (!strBaseForm) { return strWord; }
     return strBaseForm;
-
-    const structure = {
-        "Form": "gewusst",
-        "Lemmas": [
-            {
-                "POS": "Verb",
-                "Form": "gewusst",
-                "Lemma": "wissen"
-            },
-            {
-                "POS": "Adjective",
-                "Form": "gewusst",
-                "Lemma": "gewusst"
-            }
-        ]
-    };
-    const test2 = {
-        "Form": "länder",
-        "Lemmas": [
-            {
-                "POS": "Noun",
-                "Form": "Länder",
-                "Lemma": "Land"
-            }
-        ]
-    };
 }
-
-
 
 
 export function getProcessedWords(strText) {
@@ -210,24 +180,3 @@ export function getProcessedWords(strText) {
 
     return [arrWords, objDiagnostic];
 }
-
-
-
-
-
-// ---- TEMP FÜR TESTS ----
-
-// ---- Umlaute aus Array entfernen ----
-// console.log(arrStopwordsGer.map(x => replaceDiacritics(x)));
-
-// function downloadJSON() {
-//     const blob = new Blob([JSON.stringify(arrLemmaMapping, null, null)], { type: 'application/json' });
-//     const url = URL.createObjectURL(blob);
-//     const a = document.createElement("a");
-//     a.href = url;
-//     a.download = 'download.json';
-
-//     a.click();
-//     a.remove();
-//     URL.revokeObjectURL(url);
-// };

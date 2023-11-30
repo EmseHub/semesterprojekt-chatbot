@@ -12,8 +12,6 @@
         ],
         "task": ""
     },
-
-
     {
         "tag": "adresse_aendern",
         "minHits": 2,
@@ -47,11 +45,11 @@
             "heiraten",
             "hochzeit",
             "ehe",
-            "aktualisieren",
+            "neu",
             "anpassen",
             "aendern",
-            "neu",
-            "veraendern"
+            "veraendern",
+            "aktualisieren"
         ],
         "responses": [
             ""
@@ -73,7 +71,8 @@
             "teilnehmen",
             "teilnahme",
             "moegen",
-            "moechten"
+            "moechten",
+            "aendern"
         ],
         "responses": [
             "Ich schaue ins System...",
@@ -95,7 +94,8 @@
             "ab",
             "moegen",
             "moechten",
-            "zuruecktreten"
+            "zuruecktreten",
+            "ruecktritt"
         ],
         "responses": [
             ""
@@ -121,9 +121,6 @@
         ],
         "task": "pruefung_status"
     },
-
-
-
     {
         "tag": "zustimmung",
         "minHits": 1,
@@ -172,8 +169,6 @@
         ],
         "task": ""
     },
-
-
     {
         "tag": "begruessung",
         "minHits": 1,
@@ -190,7 +185,7 @@
         ],
         "responses": [
             "Hallo, wie kann ich helfen?",
-            "Seid gegrüßt! Was kann ich für Dich tun?",
+            "Sei gegrüßt! Was kann ich für Dich tun?",
             "Hallo :)",
             "Hey! Schön, dass Du wieder da bist!",
             "Willkommen zurück!",
@@ -252,8 +247,6 @@
         ],
         "task": ""
     },
-
-
     {
         "tag": "bullshit1",
         "minHits": 1,
@@ -296,17 +289,6 @@
             "do you want me to sing"
         ]
     },
-
-
-
-
-
-
-
-
-
-
-    
     {
         "tag": "alive",
         "minHits": 1,

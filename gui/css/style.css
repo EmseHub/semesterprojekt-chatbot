@@ -125,15 +125,33 @@ td.student-update {
 
 #input-message:focus {
     border-color: rgb(97, 42, 0);
+    border-right: 0;
     outline: 0;
-    box-shadow: 0 0 0 0.25rem rgb(246, 238, 229);
+    box-shadow: 0 0 0 .25rem rgb(246, 238, 229);
+    clip-path: inset(-25rem 0 -25rem -25rem);
 }
 
 #container-chat button {
     font-size: 0.6rem;
-    line-height: 0.6rem;
+    line-height: 0.7rem;
     height: 2rem;
     --bs-btn-bg: #5e2901;
+    --bs-btn-border-color: #5e2901;
+    --bs-btn-hover-bg: #391800;
+    --bs-btn-hover-border-color: #291403;
+    --bs-btn-active-bg: #391800;
+    --bs-btn-active-border-color: #291403;
+}
+
+.btn-activated {
+    background-color: darkgreen;
+    border-color: darkgreen;
+}
+
+.btn-activated:hover,
+.btn-activated:active {
+    background-color: #003100 !important;
+    border-color: #003100 !important;
 }
 
 .chat-row-message {

@@ -49,13 +49,17 @@
                         <div class="col">
                             <div class="row" id="container-messages"></div>
 
-                            <div class="row gx-2 mt-4">
+                            <div class="row gx-1 mt-4">
                                 <div class="col">
-                                    <input type="text" class="form-control" id="input-message" placeholder="" onkeyup="if(event.keyCode == 13) handleSendMessage()">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="input-message" placeholder="" aria-describedby="btn-send" onkeyup="if(event.keyCode == 13) handleSendMessage()">
+                                        <button type="button" class="btn btn-dark" id="btn-send" onclick="handleSendMessage()">></button>
+                                    </div>
                                 </div>
-
                                 <div class="col-auto">
-                                    <button type="button" class="btn btn-dark" onclick="handleSendMessage()">></button>
+                                    <button type="button" class="btn btn-dark" id="btn-speech" onclick="toggleSpeechMode()">
+                                        <img class="img-fluid" id="img-mic" src="./img/mic_on.png">
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -83,9 +87,17 @@
         <script src="./chatbot-logic/libs/typo.js-1.2.3/typo.js"></script>
 
         <script type="module">
-            import { handleSendMessage } from './js/view.js';
+            import { handleSendMessage, toggleSpeechMode } from './js/view.js';
             window.handleSendMessage = handleSendMessage;
-            // document.getElementById('#myBtn').addEventListener('click', handleSendMessage)
+            window.toggleSpeechMode = toggleSpeechMode;
+        </script>
+
+        <script>
+            window.onerror = (event, source, lineno, colno, error) => {
+                if (error == 'SyntaxError: import assertions are not currently supported') {
+                    document.getElementById('container-spinner').innerHTML = '<h6>Bitte Chrome verwenden...</h6>';
+                }
+            };
         </script>
 </body>
 
