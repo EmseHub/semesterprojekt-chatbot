@@ -85,7 +85,7 @@ export function speakUtteranceFromText(strText, callback) {
 export function stopTextFromSpeechRecognition() {
     if (curSpeechRecognition) {
         curSpeechRecognition.stop();
-        curSpeechRecognition = null
+        curSpeechRecognition = null;
     }
 }
 

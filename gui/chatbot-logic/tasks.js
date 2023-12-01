@@ -4,39 +4,6 @@ import { arrPostalCodes } from './nlp-data-service.js';
 import { replaceDiacritics } from './string-editing.js';
 import { getRandomItemInArray } from './logic.js';
 
-// ---DATA TEST---
-// setTimeout(() => {
-//     const arrPlz = [];
-//     for (const key in objPlzOld) {
-//         const obj = arrPlz[key];
-//         arrPlz.push({
-//             zipcode: makeDiacritics(obj.zipcode),
-//             city: makeDiacritics(obj.city),
-//             state: makeDiacritics(obj.state),
-//             community: makeDiacritics(obj.community),
-//             latitude: obj.latitude,
-//             longitude: obj.longitude
-//         });
-//     }
-//     console.log(arrPlz);
-// }, 1000);
-
-// function makeDiacritics(strText) {
-//     if (!strText || !strText.trim()) { return strText; }
-//     const diacriticsMap = [
-//         { 'base': 'Ä', 'letters': /[\u00C4\u00C6\u01FC\u01E2]/g },
-//         { 'base': 'Ö', 'letters': /[\u00D6\u0152]/g },
-//         { 'base': 'Ü', 'letters': /[\u00DC]/g },
-//         { 'base': 'ä', 'letters': /[\u00E4\u00E6\u01FD\u01E3]/g },
-//         { 'base': 'ö', 'letters': /[\u00F6\u0153]/g },
-//         { 'base': 'ü', 'letters': /[\u00FC]/g },
-//         { 'base': 'ß', 'letters': /[\u00DF]/g }
-//     ];
-//     for (let i = 0; i < diacriticsMap.length; i++) { strText = strText.replace(diacriticsMap[i].letters, diacriticsMap[i].base); }
-//     return strText;
-// }
-
-
 //#region --------------------------- Daten ermitteln ---------------------------
 function getStudentFromMessage(strMessageProcessed) {
     const objResult = { objStudent: null, strQuery: '' };
@@ -56,6 +23,16 @@ function getStudentFromMessage(strMessageProcessed) {
     }
     // Richtigen Treffer auswählen
     objResult.objStudent = arrMatchingStudents.reduce((bestObj, curObj) => ((bestObj.matnr).length >= (curObj.matnr).length) ? bestObj : curObj);
+    return objResult;
+}
+
+function getAddressFromMessage(strMessageRaw) {
+    const objResult = { ObjAddress: null, strQuery: '' };
+    if (!strMessageRaw || !strMessageRaw.trim()) { return objResult; }
+    // Prüfen, ob Nachricht Elemente einer Adresse enthält
+
+    // TO DO
+
     return objResult;
 }
 
@@ -95,10 +72,10 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
 
         const objAddress = (objDetectedData.objAddress) ? { ...objDetectedData.objAddress } : { staat: 'Deutschland' };
 
-        // Prüfen, ob bisher Daten übermittelt worden sind
+        // Prüfen, ob zuvor bereits Adress-Daten übermittelt worden sind
         if (!arrAddressKeys.some(key => objAddress[key])) {
             const strMessageProcessed = strMessageRaw.replaceAll(',', ' ').replace(/\s+in\s+/gi, ' ').replace(/\s+/g, ' ');
-            const regexFullAddress = /\b([a-zäöüß]{2,}(-?))*(\.?)\s+\d+([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])/gi;
+            const regexFullAddress = /\b([a-zäöüß]{2,}(-?))*(\.?)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])/gi;
 
             const arrFullAddress = strMessageProcessed.match(regexFullAddress);
             if (arrFullAddress && arrFullAddress.length !== 0) {
@@ -111,19 +88,19 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
                 }
             }
         }
-
+        // Prüfen, ob Adresse oder Hausnummer fehlt und in aktueller Nachricht enthalten ist
         if (!objAddress.strasse || !objAddress.hausnr) { // TO DO
             const getStrasseAndHausnr = (strGivenStrasse, strGivenHausnr, strMessageRaw) => {
                 // Wort(-Wort-) && WS? && str/str./straße/strasse && WS && Nr+
-                const regexStrasseAndHausnr = /\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)\s+\d+([a-z]?)+/gi;
+                const regexStrasseAndHausnr = /\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)\s+\d{1,4}([a-z]*)\b/gi;
                 // Wort(-Wort-) && WS? && str/str./straße/strasse am Ende
                 const regexStrasse = /\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)(?![a-z0-9äöüß-])/gi;
                 // (hausnummer || hausnr) && WS && Zahl+
-                const regexDescrAndHausnr = /\b(hausnummer|hausnr(\.?))\s+\d+([a-z]?)+/gi;
+                const regexDescrAndHausnr = /\b(hausnummer|hausnr(\.?))\s+\d{1,4}([a-z]*)\b/gi;
                 // (hausnummer || hausnr) && WS && Zahl+
-                const regexHausnr = /\b\d+[a-z]*/gi;
+                const regexHausnr = /\b\d{1,4}[a-z]*\b/gi;
                 // Wort(-Wort-) && WS && Nr+
-                const regexWordAndHausnr = /\b([a-zäöüß]{2,}(-?))+\s+\d+([a-z]?)+/gi;
+                const regexWordAndHausnr = /\b([a-zäöüß]{2,}(-?))+\s+\d{1,4}([a-z]*)\b/gi;
 
                 let strStrasse = strGivenStrasse;
                 let strHausnr = strGivenHausnr;
@@ -179,7 +156,7 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
             objAddress.strasse = strStrasse;
             objAddress.hausnr = strHausnr;
         }
-
+        // Prüfen, ob PLZ oder Stadt fehlt und in aktueller Nachricht enthalten ist
         if (!objAddress.plz || !objAddress.stadt) {
             const getStrassePlzAndStadt = (strGivenPlz, strGivenStadt, strMessageRaw) => {
                 // PLZ{5} && WP && Stadt(-Stadt)

@@ -15,7 +15,6 @@ export function getResponse(strMessage) {
     // 7. Intent zuordnen (inkl. Ersetzung von Umlauten)
     // 8. Task abarbeiten
 
-
     if (!strMessage || !strMessage.trim()) { return ['Die Empfangene Nachricht konnte leider nicht verarbeitet werden.', null, false]; }
     strMessage = strMessage.trim().replace(/\s+/g, ' '); // Jeden Whitespace (Space/Tab/Newline) beliebiger Länge reduzieren auf ein Leerzeichen (' ')
 
@@ -57,10 +56,10 @@ export function getResponse(strMessage) {
     else {
         strResponse = getRandomItemInArray(objIntent?.responses || arrIntents.find(i => i.tag === 'trefferlos').responses);
     }
-
+    
+    objDiagnostic.runningTask = stateObjRunningTask;
     return [strResponse, objDiagnostic, isDataChanged];
 }
-
 
 function getIntent(arrWords) {
     if (!arrWords || arrWords.length === 0) { return null; }

@@ -4,7 +4,6 @@ import { recognizeTextFromSpeech, speakUtteranceFromText, stopTextFromSpeechReco
 
 var stateIsSpeechMode = false;
 
-
 //#region --------------------------- Start ---------------------------
 $(document).ready(function () {
     updateStudentCards(arrStudents, arrCourses);
@@ -49,9 +48,9 @@ export function toggleSpeechMode() {
     stateIsSpeechMode = !stateIsSpeechMode;
     document.getElementById('img-mic').src = (stateIsSpeechMode) ? './img/mic_off.png' : './img/mic_on.png';
     document.getElementById('btn-speech').classList.toggle('btn-activated');
-    loopAudioConversation(0);
+    loopAudioConversation(null, 0);
 
-    function loopAudioConversation(countNoInputResult) {
+    function loopAudioConversation(objDiagnostic, countNoInputResult) {
         if (!stateIsSpeechMode) {
             stopTextFromSpeechRecognition();
             cancelSpeechFromTextUtterances();
@@ -63,8 +62,9 @@ export function toggleSpeechMode() {
                 return;
             }
             if (cbStrMessage.trim() === '') {
+                countNoInputResult++;
                 if (!stateIsSpeechMode) { return; }
-                if (countNoInputResult < 1 || countNoInputResult > 3) {
+                if (!objDiagnostic || !objDiagnostic.runningTask || countNoInputResult > 3) {
                     toggleSpeechMode();
                     return;
                 }
@@ -81,22 +81,21 @@ export function toggleSpeechMode() {
                 ]);
                 appendMessageSystem(strResponseToSpeak);
                 speakUtteranceFromText(strResponseToSpeak, (cbEndedSuccessfully) => {
-                    countNoInputResult++;
-                    (cbEndedSuccessfully) ? loopAudioConversation(countNoInputResult) : toggleSpeechMode();
+                    (cbEndedSuccessfully) ? loopAudioConversation(objDiagnostic, countNoInputResult) : toggleSpeechMode();
                 });
                 return;
             }
 
             appendMessageUser(cbStrMessage);
-            const [strResponse, objDiagnostic, isDataChanged] = getResponse(cbStrMessage);
+            const [strResponse, objDiagnosticNew, isDataChanged] = getResponse(cbStrMessage);
 
             setTimeout(() => {
                 appendMessageSystem(strResponse);
-                updateDiagnostic(objDiagnostic);
+                updateDiagnostic(objDiagnosticNew);
                 if (isDataChanged) { updateStudentCards(arrStudents, arrCourses); }
                 if (stateIsSpeechMode) {
                     speakUtteranceFromText(strResponse, (cbEndedSuccessfully) => {
-                        (cbEndedSuccessfully) ? loopAudioConversation(1) : toggleSpeechMode();
+                        (cbEndedSuccessfully) ? loopAudioConversation(objDiagnosticNew, 0) : toggleSpeechMode();
                     });
                 }
             }, getRandomInt(1000, 2000));
@@ -175,7 +174,6 @@ function updateStudentCards(arrStudents, arrCourses) {
                 ;
         });
         htmlStudents += ''
-
             + '    <tr class="border-0">'
             + '     <th class="table-divider" scope="row">Durchschnitt</th>'
             + '     <td class="table-divider">' + gradeAverage + '</td>'
@@ -201,7 +199,7 @@ function updateDiagnostic(objDiagnostic) {
         ? `${(objDiagnostic.intent.hitCount || 0) + ' von ' + objDiagnostic.intent.patterns.length}`
         : '-';
     const htmlDiagnostic = ''
-        + '<b>Task</b>: ' + (objDiagnostic.intent?.task || '-') + ', '
+        + '<b>Offener Task</b>: ' + (objDiagnostic.runningTask?.name || '-') + ', '
         + '<b>Korrigiert</b>: ' + (objDiagnostic.spellChecked?.join(' ') || '-') + ', '
         + '<b>Lemmatisiert</b>: ' + (objDiagnostic.lemmatized?.join(' ') || '-') + ', '
         + '<b>Bereinigt</b>: ' + (objDiagnostic.processed?.join(' ') || '-') + ', '
