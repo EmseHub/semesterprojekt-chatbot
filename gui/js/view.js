@@ -79,10 +79,12 @@ export function toggleSpeechMode() {
                     'Bist Du AFK?',
                     'Warum sagst Du nichts?'
                 ]);
-                appendMessageSystem(strResponseToSpeak);
-                speakUtteranceFromText(strResponseToSpeak, (cbEndedSuccessfully) => {
-                    (cbEndedSuccessfully) ? loopAudioConversation(objDiagnostic, countNoInputResult) : toggleSpeechMode();
-                });
+                setTimeout(() => {
+                    appendMessageSystem(strResponseToSpeak);
+                    speakUtteranceFromText(strResponseToSpeak, (cbEndedSuccessfully) => {
+                        (cbEndedSuccessfully) ? loopAudioConversation(objDiagnostic, countNoInputResult) : toggleSpeechMode();
+                    });
+                }, getRandomInt(1000, 5000));
                 return;
             }
 
@@ -146,7 +148,7 @@ function updateStudentCards(arrStudents, arrCourses) {
             + '   </div>'
             + '   <div class="col-md">'
             + '    <div class="card-body py-4">'
-            + '     <h6 class="card-title student-title">' + fullname + '</h6>'
+            + '     <h5 class="card-title student-title">' + fullname + '</h5>'
             + '     <table class="table student-table">'
             + '      <tr>'
             + '       <th scope="row">Matrikelnummer</th>'
@@ -158,7 +160,7 @@ function updateStudentCards(arrStudents, arrCourses) {
             + '      </tr>'
 
             + '      <tr class="border-0">'
-            + '       <th class="table-divider" colspan="2">Prüfungen</th>'
+            + '       <th class="table-divider" scope="col" colspan="2">Prüfungen</th>'
             + '      </tr>'
             ;
         objStudent.pruefungen.forEach((objPruefung, index) => {
@@ -195,29 +197,43 @@ function updateStudentCards(arrStudents, arrCourses) {
 
 function updateDiagnostic(objDiagnostic) {
     if (!objDiagnostic) { return; }
-    const strScore = (objDiagnostic.intent)
-        ? `${(objDiagnostic.intent.hitCount || 0) + ' von ' + objDiagnostic.intent.patterns.length}`
-        : '-';
+
+    let strScore = '-';
+    if (objDiagnostic.intent) {
+        const hitCount = objDiagnostic.intent.hitCount || 0;
+        const patternsCount = objDiagnostic.intent.patterns.length || 0;
+        const wordCount = objDiagnostic.processed.length || 0;
+        strScore = `${hitCount}/${wordCount} ${(wordCount === 1) ? 'Wort trifft' : 'Wörter treffen'} (${(hitCount * 100 / wordCount).toFixed(0)}%) bei ${patternsCount} ${(patternsCount === 0) ? 'Pattern' : 'Patterns'}`;
+    }
+
     const htmlDiagnostic = ''
-        + '<b>Offener Task</b>: ' + (objDiagnostic.runningTask?.name || '-') + ', '
-        + '<b>Korrigiert</b>: ' + (objDiagnostic.spellChecked?.join(' ') || '-') + ', '
-        + '<b>Lemmatisiert</b>: ' + (objDiagnostic.lemmatized?.join(' ') || '-') + ', '
-        + '<b>Bereinigt</b>: ' + (objDiagnostic.processed?.join(' ') || '-') + ', '
-        + '<b>Intent</b>: ' + (objDiagnostic.intent?.tag || '-') + ', '
-        + '<b>Score</b>: ' + strScore
+        + '<table>'
+        + '  <tr>'
+        + '    <th scrope="row">' + 'Akt. Task' + '</th>'
+        + '    <td>' + (objDiagnostic.runningTask?.name || '-') + '</td>'
+        + '  </tr>'
+        + '  <tr>'
+        + '    <th scrope="row">' + 'Korrigiert' + '</th>'
+        + '    <td>' + (objDiagnostic.spellChecked?.join(' ') || '-') + '</td>'
+        + '  </tr>'
+        + '  <tr>'
+        + '    <th scrope="row">' + 'Ohne Stopwords' + '</th>'
+        + '    <td>' + (objDiagnostic.stopwordFree?.join(' ') || '-') + '</td>'
+        + '  </tr>'
+        + '  <tr>'
+        + '    <th scrope="row">' + 'Lemmatisiert' + '</th>'
+        + '    <td>' + (objDiagnostic.lemmatized?.join(' ') || '-') + '</td>'
+        + '  </tr>'
+        + '  <tr>'
+        + '    <th scrope="row">' + 'Intent' + '</th>'
+        + '    <td>' + (objDiagnostic.intent?.tag || '-') + '</td>'
+        + '  </tr>'
+        + '  <tr>'
+        + '    <th scrope="row">' + 'Score' + '</th>'
+        + '    <td>' + strScore + '</td>'
+        + '  </tr>'
+        + '</table>'
         ;
-    // const htmlDiagnostic = ''
-    //     + '<table>'
-    //     + '    <tr>'
-    //     + '        <td>Task: ' + (objDiagnostic.intent?.task || '-') + '</td>'
-    //     + '        <td>Input: ' + objDiagnostic.intent?.task + '</td>'
-    //     + '        <td>Korrigiert: ' + objDiagnostic.spellChecked?.join(' ') + '</td>'
-    //     + '        <td>Lemmatisiert: ' + objDiagnostic.lemmatized?.join(' ') + '</td>'
-    //     + '        <td>Intent: ' + objDiagnostic.intent?.tag + '</td>'
-    //     + '        <td>Score: ' + strScore + '</td>'
-    //     + '    </tr>'
-    //     + '</table>'
-    //     ;
     $('#container-diagnostic').html('<span>' + htmlDiagnostic + '</span>');
 }
 //#endregion

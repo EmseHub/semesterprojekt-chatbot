@@ -16,8 +16,12 @@
     color: #291305;
     /* Hat 1 */
     color: #a65b00;
+    color: rgb(166, 91, 0);
+    color: rgb(168, 93, 0);
     /* Hat 2 */
     color: #5e2901;
+    color: rgb(94, 41, 1);
+    color: rgb(97, 42, 0);
 }
 
 body {
@@ -38,20 +42,20 @@ body {
 
 #container-main {
     display: none;
-    /* margin-bottom: 1rem; */
     max-width: 1300px;
+    /* margin-bottom: 1rem; */
 }
 
 #heading {
     font-weight: normal;
     margin-bottom: .5rem;
+    font-size: calc(1.325rem + .9vw);
 }
 
 .student-card {
     background-color: #f6eee5;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
     margin-top: .9rem;
-    /* max-width: 540px; */
 }
 
 .student-title {
@@ -112,7 +116,6 @@ td.student-update {
 } */
 
 #container-messages {
-    /* padding: 0; */
     --bs-gutter-x: 0;
     --bs-gutter-y: .85rem;
 }
@@ -124,7 +127,7 @@ td.student-update {
 }
 
 #input-message:focus {
-    border-color: rgb(97, 42, 0);
+    border-color: rgb(94, 41, 1);
     border-right: 0;
     outline: 0;
     box-shadow: 0 0 0 .25rem rgb(246, 238, 229);
@@ -171,13 +174,6 @@ td.student-update {
     width: auto;
     border: 0;
     /* box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; */
-
-    /* Hat 1 */
-    /* color: #a65b00; */
-    /* color: rgb(168, 93, 0); */
-    /* Hat 2 */
-    /* color: #5e2901; */
-    /* color: rgb(97, 42, 0); */
 }
 
 .chat-message-system {
@@ -218,8 +214,12 @@ td.student-update {
     font-size: .5rem;
 }
 
+#container-diagnostic th {
+    padding: 0 .5rem 0 0;
+}
+
 #container-diagnostic td {
-    padding: 0 .2rem 0 0;
+    padding: 0;
 }
 
 

@@ -7,11 +7,22 @@
             "Tut mir leid, ich verstehe die Anfrage nicht. Könntest Du sie umformulieren?",
             "Mit dieser Nachricht kann ich leider nichts anfangen.",
             "Check ich nicht.",
+            "Ich verstehe nicht.",
             "Könntest Du die Aussage konkretisieren?",
-            "Du musst langsam mit mir sprechen, ich bin nur ein Hut."
+            "Sag es so, dass ich es verstehe...",
+            "Was labersch Du?",
+            "Wat babbelst Du da wieder?",
+            "Du nuschelst.",
+            "Du musst langsam mit mir sprechen, ich bin nur ein Hut.",
+            "Diese Wörter kann ich leider nicht unter einen Hut bringen."
         ],
         "task": ""
     },
+
+
+
+
+
     {
         "tag": "adresse_aendern",
         "minHits": 2,
@@ -121,6 +132,10 @@
         ],
         "task": "pruefung_status"
     },
+
+
+
+
     {
         "tag": "zustimmung",
         "minHits": 1,
@@ -134,6 +149,8 @@
             "ok",
             "okay",
             "gut",
+            "perfekt",
+            "bestens",
             "einverstanden",
             "klar",
             "genau",
@@ -141,7 +158,8 @@
         ],
         "responses": [
             "Sehr gut.",
-            "Nice."
+            "Nice.",
+            "Hut ab!"
         ],
         "task": ""
     },
@@ -153,6 +171,7 @@
             "nee",
             "stopp",
             "stop",
+            "ende",
             "abbruch",
             "abbrechen",
             "beenden",
@@ -169,6 +188,10 @@
         ],
         "task": ""
     },
+
+
+
+
     {
         "tag": "begruessung",
         "minHits": 1,
@@ -191,7 +214,8 @@
             "Willkommen zurück!",
             "Was willst Du?",
             "Hmm, schwierig, äußerst schwierig. Ich sehe bei Dir sehr viel Mut. Im Köpfchen hast Du auch was. Ich sehe Talent, ohja und den Drang, sich zu beweisen. Aber wo stecke ich Dich hin?",
-            "Du gehörst nach Gryffindor!"
+            "Du gehörst nach Gryffindor!",
+            "Ich ziehe meinen Hut vor Dir!"
         ],
         "task": ""
     },
@@ -224,9 +248,28 @@
             "Es ist wie Spiegel: Man sieht sich!",
             "Ich verabscheue mich!",
             "Bis denne, Antenne!",
+            "Hau rinse!",
             "Denk immer dran: Es sind nicht unsere Fähigkeiten, die zeigen, wer wir sind, sondern unsere Entscheidungen.",
             "Eines möchte ich Dir noch mit auf den Weg geben: Die Stimme eines Kindes, egal wie ehrlich oder aufrichtig, ist bedeutungslos für jene, die verlernt haben, zuzuhören.",
-            "Keep it J.K. Rowling!"
+            "Keep it J.K. Rowling!",
+            "Mach et joot, schwenk de Hoot!"
+        ],
+        "task": ""
+    },
+    {
+        "tag": "befinden",
+        "minHits": 2,
+        "patterns": [
+            "wie",
+            "gehen",
+            "fuehlen",
+            "laufen"
+        ],
+        "responses": [
+            "Sehr gut! Bei Dir alles gut?",
+            "Alles paletti! Wie geht es Dir?",
+            "Man schlägt sich so durch!",
+            "Bestens! Wie steh's bei Dir?"
         ],
         "task": ""
     },
@@ -247,6 +290,37 @@
         ],
         "task": ""
     },
+
+
+
+
+
+
+
+
+
+
+
+
+    {
+        "tag": "wikipedia",
+        "minHits": 1,
+        "patterns": [
+            "wikipedia",
+            "wiki"
+        ],
+        "responses": [
+            ""
+        ],
+        "task": "wikipedia"
+    },
+
+
+
+
+
+
+
     {
         "tag": "bullshit1",
         "minHits": 1,
@@ -256,10 +330,21 @@
         ],
         "responses": [
             "Oh ja.",
-            "Schon, ja."
+            "Schon, ja.",
+            "Ich mach Dich so klein mit Hut."
         ],
         "task": ""
     },
+
+
+
+
+
+
+
+
+
+
     {
         "tag": "tasks",
         "minHits": 1,
@@ -274,7 +359,8 @@
             "I can do whatever you asks me to do",
             "I can talk and do things for you",
             "Right now i'm in developing stage as soon i'm developed, I can do everything"
-        ]
+        ],
+        "task": ""
     },
     {
         "tag": "talk",
@@ -287,7 +373,8 @@
         "responses": [
             "Yeah surely",
             "do you want me to sing"
-        ]
+        ],
+        "task": ""
     },
     {
         "tag": "alive",
@@ -300,7 +387,8 @@
         "responses": [
             "I'm in doubt about that",
             "No, i don't think so i need to do all this"
-        ]
+        ],
+        "task": ""
     },
     {
         "tag": "marie",
@@ -479,18 +567,6 @@
             "looking ..."
         ],
         "task": "google"
-    },
-    {
-        "tag": "wikipedia",
-        "minHits": 1,
-        "patterns": [
-            "wikipedia",
-            "wiki"
-        ],
-        "responses": [
-            "Searching ..."
-        ],
-        "task": "wikipedia"
     },
     {
         "tag": "news",

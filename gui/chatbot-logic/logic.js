@@ -23,7 +23,7 @@ export function getResponse(strMessage) {
     let isDataChanged = false;
 
     const objIntent = getIntent(arrWords);
-    console.log('---Gefundener Intent---', objIntent, `\n\n${(objIntent?.hitCount || 0) + ' von ' + arrWords.length + ' Wörtern treffen'}`);
+    // console.log('---Gefundener Intent---', objIntent, `\n\n${(objIntent?.hitCount || 0) + ' von ' + arrWords.length + ' Wörtern treffen'}`);
     objDiagnostic.intent = objIntent;
 
     if (stateObjRunningTask || objIntent?.task) {
@@ -54,9 +54,9 @@ export function getResponse(strMessage) {
         }
     }
     else {
-        strResponse = getRandomItemInArray(objIntent?.responses || arrIntents.find(i => i.tag === 'trefferlos').responses);
+        strResponse = getRandomItemInArray(objIntent?.responses);
     }
-    
+
     objDiagnostic.runningTask = stateObjRunningTask;
     return [strResponse, objDiagnostic, isDataChanged];
 }
@@ -84,7 +84,10 @@ function getIntent(arrWords) {
             arrPossibleIntents.push({ ...objIntent, hitCount });
         }
     }
-    if (arrPossibleIntents.length === 0) { return null; }
+    if (arrPossibleIntents.length === 0) {
+        // return null; 
+        return { ...arrIntents.find(i => i.tag === 'trefferlos'), hitCount: 0 };
+    }
     console.log('Mögliche Intents', arrPossibleIntents);
     return arrPossibleIntents.reduce((bestObj, curObj) => (bestObj.hitCount >= curObj.hitCount) ? bestObj : curObj);
 }
@@ -93,3 +96,29 @@ function getIntent(arrWords) {
 export function getRandomItemInArray(arr) {
     return (arr instanceof Array) ? arr[Math.floor(Math.random() * arr.length)] : null;
 }
+
+// ---- PATTERNS IN LOWER CASE UMWANDELN ----
+// for (let i = 0; i < arrIntents.length; i++) {
+//     for (let y = 0; y < arrIntents[i].patterns.length; y++) {
+//         arrIntents[i].patterns[y] = arrIntents[i].patterns[y].toLowerCase();
+//     }
+// }
+// console.log(arrIntents);
+
+
+// ---- UMLAUTE AUS ARRAY ENTFERNEN ----
+// console.log(arrStopwordsGer.map(x => replaceDiacritics(x)));
+
+
+// ---- TEST-DOWNLOAD ----
+// function downloadJSON() {
+//     const blob = new Blob([JSON.stringify(arrLemmaMapping, null, null)], { type: 'application/json' });
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = 'download.json';
+
+//     a.click();
+//     a.remove();
+//     URL.revokeObjectURL(url);
+// };

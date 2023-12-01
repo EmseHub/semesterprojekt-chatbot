@@ -127,7 +127,8 @@ function removeStopwords(arrWords) {
     const arrResult = [];
     for (let i = 0; i < arrWords.length; i++) {
         const strWord = arrWords[i];
-        if (arrStopwords.indexOf(strWord.toLowerCase()) === -1) { arrResult.push(strWord); }
+        const strWordProcessed = replaceDiacritics(strWord.toLowerCase());
+        if (arrStopwords.indexOf(strWordProcessed) === -1) { arrResult.push(strWord); }
     }
     return arrResult;
 }
@@ -139,7 +140,34 @@ function lemmatize(strWord) {
     const strBaseForm = objBaseForm?.Lemmas[0]?.Lemma;
     if (!strBaseForm) { return strWord; }
     return strBaseForm;
+    
+    const structureBspA = {
+        "Form": "gewusst",
+        "Lemmas": [
+            {
+                "POS": "Verb",
+                "Form": "gewusst",
+                "Lemma": "wissen"
+            },
+            {
+                "POS": "Adjective",
+                "Form": "gewusst",
+                "Lemma": "gewusst"
+            }
+        ]
+    };
+    const structureBspB = {
+        "Form": "länder",
+        "Lemmas": [
+            {
+                "POS": "Noun",
+                "Form": "Länder",
+                "Lemma": "Land"
+            }
+        ]
+    };
 }
+
 
 
 export function getProcessedWords(strText) {
@@ -163,6 +191,7 @@ export function getProcessedWords(strText) {
 
     // Stop-Words entfernen
     arrWords = removeStopwords(arrWords);
+    objDiagnostic.stopwordFree = [...arrWords];
 
     // Lemmatisierung
     for (let i = 0; i < arrWords.length; i++) {
@@ -170,12 +199,7 @@ export function getProcessedWords(strText) {
     }
     objDiagnostic.lemmatized = [...arrWords];
 
-    // Umlaute etc. entfernen
-    // for (let i = 0; i < arrWords.length; i++) {
-    //     arrWords[i] = replaceDiacritics(arrWords[i]);
-    // }
-    // console.log('---Wörter nach voller Bereinigung---', arrWords);
-
+    // TO DO... POS/Stemming/...?
     objDiagnostic.processed = [...arrWords];
 
     return [arrWords, objDiagnostic];

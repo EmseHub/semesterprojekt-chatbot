@@ -328,7 +328,7 @@ function processTaskPruefungAnmelden(objTaskState, strMessageRaw, strIntentTag) 
     }
     // Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
     if (strIntentTag !== 'zustimmung') {
-        const strResponse = `Okay ${objStudent.vorname.split(' ')[0]}, möchtest die Prüfung im Fach "${objCourse.name}" bei ${objCourse.lehrperson} verbindlich anmelden?`;
+        const strResponse = `Okay ${objStudent.vorname.split(' ')[0]}, möchtest Du die Prüfung im Fach "${objCourse.name}" bei ${objCourse.lehrperson} verbindlich anmelden?`;
         return [objTaskState, strResponse, isDataChanged];
     }
     // Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
@@ -369,7 +369,7 @@ function processTaskPruefungAbmelden(objTaskState, strMessageRaw, strIntentTag) 
     }
     // Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
     if (strIntentTag !== 'zustimmung') {
-        const strResponse = `Okay ${objStudent.vorname.split(' ')[0]}, möchtest die Prüfung im Fach "${objCourse.name}" bei ${objCourse.lehrperson} wirklich abmelden?`;
+        const strResponse = `Okay ${objStudent.vorname.split(' ')[0]}, möchtest Du die Prüfung im Fach "${objCourse.name}" bei ${objCourse.lehrperson} wirklich abmelden?`;
         return [objTaskState, strResponse, isDataChanged];
     }
     // Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
