@@ -1,8 +1,12 @@
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const speechSynth = window.speechSynthesis;
+let arrVoices = speechSynth.getVoices();
+speechSynth.onvoiceschanged = () => {
+    arrVoices = speechSynth.getVoices();
+    console.log('Event voiceschanged');
+};
 
 let curSpeechRecognition;
-// speechSynth.onvoiceschanged = () => { };
 
 export function recognizeTextFromSpeech(callback) {
     // console.time('Laufzeit recognizeTextFromSpeech');
@@ -23,8 +27,7 @@ export function recognizeTextFromSpeech(callback) {
             .join('');
         transcript = transcript.charAt(0).toUpperCase() + transcript.slice(1); // Ersten Buchstaben kapitalisieren
         transcript = transcript.replace(/(?<=\d)\s+(?=\d)/g, ''); // White-Space zwischen Zahlen entfernen
-        callback(transcript)
-        return;
+        callback(transcript);
     };
 
     curSpeechRecognition.onend = () => {
@@ -32,7 +35,6 @@ export function recognizeTextFromSpeech(callback) {
             // console.timeEnd('Laufzeit recognizeTextFromSpeech');
             console.log('Speech-Recognition-Service ohne Ergebnis beendet');
             callback('');
-            return;
         }
     };
 
@@ -46,7 +48,6 @@ export function speakUtteranceFromText(strText, callback) {
         return;
     }
     // if (!speechSynth.speaking || speechSynth.pause()) {}
-    const arrVoices = speechSynth.getVoices();
     if (!arrVoices || arrVoices.length === 0) {
         console.log('Keine Voices');
         callback(false);
