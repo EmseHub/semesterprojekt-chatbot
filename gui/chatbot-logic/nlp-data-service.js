@@ -4,12 +4,11 @@ import lemmaMapping from './nlp-json/IWNLP.Lemmatizer_20181001.min.json' assert 
 // var lemmaMapping = [];
 
 import intents from './nlp-json/intents.json' assert { type: 'json' };
-
 import postalCodes from './nlp-json/postal-codes.json' assert { type: 'json' };
 
 
 
-// --- BESSER ABER WEGEN PROMISES NICHT VERWENDET ---
+// --- BESSER, ABER WEGEN PROMISES NICHT VERWENDET ---
 // fetch('/chatbot-logic/nlp-json/spell-check-ignore.json')
 //     .then(response => response.json())
 //     .then(json => console.log(json));

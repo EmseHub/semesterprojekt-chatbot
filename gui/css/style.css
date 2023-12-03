@@ -146,6 +146,10 @@ td.student-update {
     --bs-btn-active-border-color: #291403;
 }
 
+#img-mic {
+    image-rendering: pixelated;
+}
+
 .btn-activated {
     background-color: darkgreen;
     border-color: darkgreen;
@@ -216,10 +220,12 @@ td.student-update {
 
 #container-diagnostic th {
     padding: 0 .5rem 0 0;
+    vertical-align: top;
 }
 
 #container-diagnostic td {
     padding: 0;
+    vertical-align: top;
 }
 
 

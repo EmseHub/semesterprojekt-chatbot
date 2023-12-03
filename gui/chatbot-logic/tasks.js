@@ -4,6 +4,7 @@ import { arrPostalCodes } from './nlp-data-service.js';
 import { replaceDiacritics } from './string-editing.js';
 import { getRandomItemInArray } from './logic.js';
 
+
 //#region --------------------------- Daten ermitteln ---------------------------
 function getStudentFromMessage(strMessageProcessed) {
     const objResult = { objStudent: null, strQuery: '' };
@@ -23,16 +24,6 @@ function getStudentFromMessage(strMessageProcessed) {
     }
     // Richtigen Treffer auswählen
     objResult.objStudent = arrMatchingStudents.reduce((bestObj, curObj) => ((bestObj.matnr).length >= (curObj.matnr).length) ? bestObj : curObj);
-    return objResult;
-}
-
-function getAddressFromMessage(strMessageRaw) {
-    const objResult = { ObjAddress: null, strQuery: '' };
-    if (!strMessageRaw || !strMessageRaw.trim()) { return objResult; }
-    // Prüfen, ob Nachricht Elemente einer Adresse enthält
-
-    // TO DO
-
     return objResult;
 }
 
@@ -403,7 +394,6 @@ function processTaskPruefungStatus(objTaskState, strMessageRaw, strIntentTag) {
     return [null, strResponse, isDataChanged];
 }
 //#endregion
-
 
 export default {
     processTaskAdresseAendern,

@@ -122,3 +122,19 @@ export function getRandomItemInArray(arr) {
 //     a.remove();
 //     URL.revokeObjectURL(url);
 // };
+
+// ---- UMLAUTE UND ß BILDEN ----
+// function makeDiacritics(strText) {
+//     if (!strText || !strText.trim()) { return strText; }
+//     const diacriticsMap = [
+//         { 'base': 'Ä', 'letters': /[\u00C4\u00C6\u01FC\u01E2]/g },
+//         { 'base': 'Ö', 'letters': /[\u00D6\u0152]/g },
+//         { 'base': 'Ü', 'letters': /[\u00DC]/g },
+//         { 'base': 'ä', 'letters': /[\u00E4\u00E6\u01FD\u01E3]/g },
+//         { 'base': 'ö', 'letters': /[\u00F6\u0153]/g },
+//         { 'base': 'ü', 'letters': /[\u00FC]/g },
+//         { 'base': 'ß', 'letters': /[\u00DF]/g }
+//     ];
+//     for (let i = 0; i < diacriticsMap.length; i++) { strText = strText.replace(diacriticsMap[i].letters, diacriticsMap[i].base); }
+//     return strText;
+// }

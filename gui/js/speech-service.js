@@ -1,10 +1,7 @@
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const speechSynth = window.speechSynthesis;
 let arrVoices = speechSynth.getVoices();
-speechSynth.onvoiceschanged = () => {
-    arrVoices = speechSynth.getVoices();
-    console.log('Event voiceschanged');
-};
+speechSynth.onvoiceschanged = () => { arrVoices = speechSynth.getVoices(); };
 
 let curSpeechRecognition;
 
@@ -47,7 +44,6 @@ export function speakUtteranceFromText(strText, callback) {
         callback(false);
         return;
     }
-    // if (!speechSynth.speaking || speechSynth.pause()) {}
     if (!arrVoices || arrVoices.length === 0) {
         console.log('Keine Voices');
         callback(false);
@@ -70,7 +66,7 @@ export function speakUtteranceFromText(strText, callback) {
     speechSynth.speak(speechSynthUtterance);
 
     speechSynthUtterance.onend = (event) => {
-        // console.log(`Utterance ausgesprochen in ${(event.elapsedTime / 1000).toFixed(2)} Sekunden`,);
+        // console.log(`Utterance ausgesprochen in ${(event.elapsedTime / 1000).toFixed(2)} Sekunden`);
         callback(true);
     };
     speechSynthUtterance.onerror = (event) => {
