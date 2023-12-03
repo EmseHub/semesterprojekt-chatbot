@@ -23,7 +23,6 @@ export function getResponse(strMessage) {
     let isDataChanged = false;
 
     const objIntent = getIntent(arrWords);
-    // console.log('---Gefundener Intent---', objIntent, `\n\n${(objIntent?.hitCount || 0) + ' von ' + arrWords.length + ' Wörtern treffen'}`);
     objDiagnostic.intent = objIntent;
 
     if (stateObjRunningTask || objIntent?.task) {

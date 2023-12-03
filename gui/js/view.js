@@ -47,16 +47,17 @@ export function handleSendMessage() {
 export function toggleSpeechMode() {
     stateIsSpeechMode = !stateIsSpeechMode;
     const elemImgMic = document.getElementById('img-mic');
-    elemImgMic.src = (stateIsSpeechMode) ? './img/mic_off.png' : './img/mic_on.png';
     document.getElementById('btn-speech').classList.toggle('btn-activated');
     loopAudioConversation(null, 0);
 
     function loopAudioConversation(objDiagnostic, countNoInputResult) {
         if (!stateIsSpeechMode) {
+            // elemImgMic.src = './img/mic_on.png';
             stopTextFromSpeechRecognition();
             cancelSpeechFromTextUtterances();
             return;
         }
+        elemImgMic.src = './img/mic_on.png';
         recognizeTextFromSpeech((cbStrMessage) => {
             if (cbStrMessage === undefined || cbStrMessage === null) {
                 if (stateIsSpeechMode) { toggleSpeechMode(); }
@@ -84,7 +85,6 @@ export function toggleSpeechMode() {
                     appendMessageSystem(strResponseToSpeak);
                     elemImgMic.src = './img/audio_play.png';
                     speakUtteranceFromText(strResponseToSpeak, (cbEndedSuccessfully) => {
-                        elemImgMic.src = './img/mic_on.png';
                         (cbEndedSuccessfully) ? loopAudioConversation(objDiagnostic, countNoInputResult) : toggleSpeechMode();
                     });
                 }, getRandomInt(1000, 5000));
@@ -101,7 +101,6 @@ export function toggleSpeechMode() {
                 if (stateIsSpeechMode) {
                     elemImgMic.src = './img/audio_play.png';
                     speakUtteranceFromText(strResponse, (cbEndedSuccessfully) => {
-                        elemImgMic.src = './img/mic_on.png';
                         (cbEndedSuccessfully) ? loopAudioConversation(objDiagnosticNew, 0) : toggleSpeechMode();
                     });
                 }

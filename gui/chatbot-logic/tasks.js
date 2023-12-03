@@ -54,7 +54,7 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
         objDetectedData.objStudent = objStudent;
         strQuery = strQueryStudent;
         // Damit etwaige Zahlenfolge der Matrikelnummer nicht irrtümlich für Hausnummer oder PLZ gehalten wird, Matrikelnummer aus Message entfernen
-        if (objStudent) { strMessageRaw = strMessageRaw.replace(objStudent.matnr, ''); }
+        // if (objStudent) { strMessageRaw = strMessageRaw.replace(objStudent.matnr, ''); }
     }
 
     // Prüfen, ob Adresse vollständig angegeben wurde
@@ -236,7 +236,7 @@ function getMissingStudentOrCourseFromMessage(objGivenData, strMessageRaw) {
         if (objCourse) {
             objResult.objCourse = objCourse;
             // Damit etwaige Zahlenfolge im Kursnamen nicht irrtümlich für Matrikelnummer gehalten wird, Kursnamen aus Message entfernen
-            strMessageProcessed = strMessageProcessed.replace(replaceDiacritics(objCourse.name.toLowerCase()), '');
+            // strMessageProcessed = strMessageProcessed.replace(replaceDiacritics(objCourse.name.toLowerCase()), '');
         }
         else { objResult.strQuery = strQuery; }
     }
@@ -255,7 +255,7 @@ function getReferencedPruefungFromMessage(objGivenData, strMessageRaw) {
     if (!objGivenData || !strMessageRaw || !strMessageRaw.trim()) { return [objPruefung, objGivenData, null]; }
     // Prüfen, welche Angaben noch fehlen und ob sie in der aktuellen Nachricht enthalten sind    
     const { objStudent, objCourse, strQuery } = getMissingStudentOrCourseFromMessage(objGivenData, strMessageRaw);
-    const objUpdatedData = { objStudent, objCourse };
+    const objUpdatedData = { objStudent, objCourse };    
     // Falls, alle notwendigen Daten vorhanden sind, Kurs in den dem User zugeordneten Prüfungen finden (wenn nicht, wird Rückfrage weitergeben)
     if (objStudent && objCourse) { objPruefung = objStudent.pruefungen.find(p => p.kursID === objCourse.id); }
     return [objPruefung, objUpdatedData, strQuery];
