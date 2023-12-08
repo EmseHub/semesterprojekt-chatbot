@@ -36,6 +36,45 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
 - Identitätsabfrage je Anliegen oder je Session/Chataufruf?
 - NLTK oder spaCy?
+- Rechtschreibprüfung/Autokorrektur vorab?
+
+### Projekt-Setup 
+
+- Zur Verwaltung von Packages und Virtual Environment das Package "pipenv" installieren, d. h. CMD öffnen und folgenden Befehl eingeben:
+   ```
+   pip install pipenv
+   ```
+ - Projektorder in VS Code öffnen, ggf. bisherige Environments (Ordner "env") löschen und im Terminal folgenden Befehl eingeben, um eine neue pipenv-Umgebung einzurichten (ein lokales Verzeichnis außerhalb des Projektordners wird angelegt, s. u.).
+   ```
+   pipenv install
+   ```
+ - Derselbe Befehl installiert automatisch alle im Projekt verwendeten Packages, sofern welche vorhanden sind (d. h. sofern Pipfile und Pipeline.lock bestehen, die Informationen über Packages enthalten)
+
+ - pipenv-Umgebung muss aktiviert werden via:
+   ```
+   pipenv shell
+   ```
+ - pipenv-Umgebung kann später deaktiviert werden via:
+   ```
+   exit
+   ```
+ - **Von nun an sollten Packages *immer* via *pipenv* installiert bzw. deinstalliert werden**:
+   ```
+   pipenv install beispielpackage
+   pipenv uninstall beispielpackage
+   ```
+ - Es sollte der Interpreter der Virtual Environment verwendet werden:<br>STRG + Shift + P -> "Python: Select Interpreter" -> "semesterprojekt-chatbot-..." wählen
+
+ - Pfad zum Verzeichnis des Virtual Environments ausgeben:
+   ```
+   pipenv --venv
+   ```
+- Falls zum Ausführen von Python-Files die Extension *Code Runner* verwendet wird, muss in den lokalen Workspace-Settings (JSON) folgender Eintrag mit dem Pfad zur Virtual Environment ergänzt werden
+   ```json
+   "code-runner.executorMap": {
+     "python": "C:\\Users\\...\\semesterprojekt-chatbot-...\\Scripts\\python -u"
+   }
+   ```
 
 ## TODO
 
