@@ -36,7 +36,11 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
 - Identitätsabfrage je Anliegen oder je Session/Chataufruf?
 - NLTK oder spaCy?
-- Rechtschreibprüfung/Autokorrektur vorab?
+- 1 Token == 1 Wort?
+- Rechtschreibprüfung/Autokorrektur vorab? Auf Satz- oder Wortebene?
+- Stop-Words erst vor Lemmatization/Stemming entfernen, oder direkt zu Beginn?
+- Lemmatization UND/ODER Stemming?
+- Co-reference resolution weglassen?
 
 ### Projekt-Setup 
 
@@ -75,13 +79,17 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
      "python": "C:\\Users\\...\\semesterprojekt-chatbot-...\\Scripts\\python -u"
    }
    ```
+- Hinweis: NTLK benötigt einige gesonderte Downloads, daher ist vor Verwendung des Chatbots einmalig die Datei *setup.py* auszuführen
 
-## TODO
+## NLP-Pipeline
 
-- intents.json ergänzen
-- restliche nlp schritte durchführen (nlp pipeline)
-- wie können die aussagen zu intents gematcht werden?
-  - beispiele online recherchieren
+1. Tokenization (auf Wortebene)
+2. Automatische Rechtschreibkorrektur auf Wortebene
+3. Stop-Words entfernen
+4. Part-of-Speech-Tagging ((PoS-Tagging))
+5. Named Entity Recognition (NER)
+6. Lemmatization [oder Stemming]
+7. [Co-reference resolution]
 
 ## Grober Plan
 
