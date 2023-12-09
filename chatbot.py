@@ -1,55 +1,19 @@
-"PYTHON CHATBOT Semesterprojekt"
-# setup: import outsourced files/functions
-from src.constants import *
-from src.helpers import *
+from nlp_pipelines import nltk_pipeline
 
 
-# import third-party modules
-from time import sleep
-import nltk
+def getResponse(message):
+    return nltk_pipeline.get_tokenized_text(message)
 
-# nltk.download('punkt')
 
-# start chat loop with welcome message
-print(WELCOME)
-printAvailableFunctions()
-print(DIVIDER)
-
+# Input via Terminal (später ersetzt durch String vom Frontend)
 while True:
-    # read users input
-    text = studentInput()
+    # message = input()
+    # print("Eingabe:\n" + message)
+    # if message.lower() == "exit":
+    #     break
 
-    # check if user wants to exit or needs help
-    if str(text).lower() in EXIT_MESSAGES:
-        print("Tschüss!")
-        break
-    if str(text).lower() in ["help", "hilfe"]:
-        printAvailableFunctions()
-        continue
+    sample_message = "Das ist eine Beispiel-Nachricht, Aber mit Fehlren und  Leerzeichen. Sie wurde z.B. verfasst von Dr. House und Mr. X, während der Hg. Homer ist."
 
-    # NLP PIPELINE
-    # preprocessing (tokenization, filter stop words)
-
-    # tokenize the users input text
-    sentences = nltk.sent_tokenize(text)
-    print(DEBUG, "Sätze:", sentences)
-
-    # get the words of each sentence
-    words = nltk.word_tokenize(text)
-    print(DEBUG, "Tokens:", words)
-
-    # remove stopwords
-
-    # pos_tagging (get nouns/verbs / extract features)
-
-    # stemming/lemmatization of the features
-
-    # get results as bag of words
-
-    # get intent by similiarity of intents.data?
-
-    # Chatbot Answer
-    # loadingAnimation(2, 3)
-    # chatbotAnswer("Boah, sorry. Das weiß ich auch nicht.")
-
-    test()
+    response = getResponse(sample_message.strip())
+    # print(response)
+    break
