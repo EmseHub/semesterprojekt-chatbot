@@ -4,7 +4,7 @@
 WELCOME = "\nHallo lieber Student! Ich bin der Chatbot deines Studienbüros. Was kann ich für dich tun? (schreibe 'exit' um den Chat zu beenden)"
 SPACE = "\n"
 DIVIDER = "\n------------------------------------------------------------------------------------------\n"
-DEBUG = "[DEBUG] |"
+DEBUG = "[DEBUG]"
 EXIT_MESSAGES = [
     "x",
     "exit",

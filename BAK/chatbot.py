@@ -3,12 +3,9 @@
 from src.constants import *
 from src.helpers import *
 
-
 # import third-party modules
 from time import sleep
-import nltk
 
-# nltk.download('punkt')
 
 # start chat loop with welcome message
 print(WELCOME)
@@ -31,12 +28,8 @@ while True:
     # preprocessing (tokenization, filter stop words)
 
     # tokenize the users input text
-    sentences = nltk.sent_tokenize(text)
-    print(DEBUG, "Sätze:", sentences)
 
     # get the words of each sentence
-    words = nltk.word_tokenize(text)
-    print(DEBUG, "Tokens:", words)
 
     # remove stopwords
 

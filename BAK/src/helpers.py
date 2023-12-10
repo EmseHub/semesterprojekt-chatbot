@@ -8,6 +8,7 @@ from nltk.stem import WordNetLemmatizer
 # Download module resources (initially needed)
 # nltk.download('punkt')
 # nltk.download('stopwords')
+# nltk.download("words")
 # nltk.download('wordnet')
 
 
@@ -73,19 +74,19 @@ def loadingAnimation2(dots=3, seconds=0.8):
 
 
 # NLP PIPELINE
-
-
 def getResponse(text: str):
     """
     Takes a text to do all the NLP processing on it to get the intent. Returns the response message.
     """
     # TODO preprocessing pipeline:
-
     # tokenize
+    # spellchecking
     # remove stopwords
+    # lemmatization/stemming
     # pos_tagging
-    # stemming/lemmatization
-    # bag of words
+    # named entity recognition
+
+    # -> bag of words?
     # get intent by similiarity of intents.data?
     # choose random response of the intent tag
     # return text
@@ -100,7 +101,9 @@ def getSentences(text: str):
 
 
 def getTokens(text: str):
+    # get tokens and lowercase them
     tokens = nltk.word_tokenize(text)
+
     return tokens
 
 
@@ -115,12 +118,21 @@ def removeStopwords(tokens: list[str]):
     # filter out stopwords
     filtered_tokens = [w for w in tokens if not w in stop_words]
 
+    # TODO filter out punctuation
+
     return filtered_tokens
 
 
 def doPosTagging(tokens: list[str]):
-    # TODO
-    return
+    # TODO (nltk.pos_tag)
+    pos_tags = nltk.pos_tag(tokens)
+    return pos_tags
+
+
+def doNamedEntityRecognition(tokens: list[str]):
+    # TODO (nltk.ne_chunk)
+    named_entities = nltk.ne_chunk(tokens)
+    return named_entities
 
 
 def doLemmatization(tokens: list[str]):
@@ -145,8 +157,10 @@ def getIntent(text):
 
 # test ouput
 def test():
-    text = "Ich ging vorhin in den Wald. Dort sah ich Peter, der gerade am Joggen war."
-    tokens = getTokens(text)
+    text_ger = "Ich ging vorhin in den Wald. Dort sah ich Peter, der gerade am Joggen war. Abaci Cacti"
+    text_eng = "I went into the forest. There I saw Peter, who was jogging around. Then he leaves."
+
+    tokens = getTokens(text_ger)
     print(DEBUG, "TOKENS", tokens)
 
     filtered_text = removeStopwords(tokens)
