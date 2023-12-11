@@ -85,12 +85,13 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 ## NLP-Pipeline
 
 1. Tokenization (auf Wortebene)
-2. Automatische Rechtschreibkorrektur auf Wortebene
-3. Stop-Words entfernen
-4. Part-of-Speech-Tagging ((PoS-Tagging))
-5. Named Entity Recognition (NER)
-6. Lemmatization [oder Stemming]
-7. [Co-reference resolution]
+2. Interpunktion entfernen
+3. Automatische Rechtschreibkorrektur auf Wortebene
+4. Stop-Words entfernen
+5. Part-of-Speech-Tagging (PoS-Tagging)
+6. Named Entity Recognition (NER)
+7. Lemmatization [oder Stemming]
+8. [Co-reference resolution]
 
 ## Grober Plan
 
