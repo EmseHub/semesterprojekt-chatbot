@@ -3,9 +3,9 @@
 ## Aufgabenteilung
 
 - Preprocessing vervollständigen (Micha/Leon)
-- Passende (performante) Tools für Rechtschreibkorrektur finden (Thorsten)
+- Passende (performante) Tools für Rechtschreibkorrektur finden (Thorsten -> spelling_correction.py)
 - Potenzielle Algorithmen für Intent-Matching finden (Micha/Leon)
-- Doku aufsetzen (Jana)
+- Doku aufsetzen (Jana -> DOKU.md oder Word-Datei in OneDrive)
 
 ## Aktueller Hinweis
 
