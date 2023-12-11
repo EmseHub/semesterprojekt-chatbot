@@ -1,6 +1,6 @@
 # Semesterprojekt Chatbot
 
-## Aufgaben
+## Aufgabenteilung
 
 - Preprocessing vervollständigen (Micha/Leon)
 - Passende (performante) Tools für Rechtschreibkorrektur finden (Thorsten)
