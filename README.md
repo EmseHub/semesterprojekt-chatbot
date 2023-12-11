@@ -44,9 +44,10 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
 ### Projekt-Setup 
 
-- Zur Verwaltung von Packages und Virtual Environment das Package "pipenv" installieren, d. h. CMD öffnen und folgenden Befehl eingeben:
+- Zur Verwaltung von Packages und Virtual Environment das Package "pipenv" installieren, d. h. CMD öffnen und je nach Präferenz einen der folgenden Befehle ausführen:
    ```
    pip install pipenv
+   pip install --user pipenv
    ```
  - Projektorder in VS Code öffnen, ggf. bisherige Environments (Ordner "env") löschen und im Terminal folgenden Befehl eingeben, um eine neue pipenv-Umgebung einzurichten (ein lokales Verzeichnis außerhalb des Projektordners wird angelegt, s. u.).
    ```
@@ -67,7 +68,7 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
    pipenv install beispielpackage
    pipenv uninstall beispielpackage
    ```
- - Es sollte der Interpreter der Virtual Environment verwendet werden:<br>STRG + Shift + P -> "Python: Select Interpreter" -> "semesterprojekt-chatbot-..." wählen
+ - Es muss der Interpreter der Virtual Environment verwendet werden:<br>**STRG + Shift + P -> "Python: Select Interpreter" -> "semesterprojekt-chatbot-..." wählen**<br>(auf das Refresh-Icon oben in der Leiste klicken, falls die VE noch nicht aufgeführt ist)
 
  - Pfad zum Verzeichnis des Virtual Environments ausgeben:
    ```
