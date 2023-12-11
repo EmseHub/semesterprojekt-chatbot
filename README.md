@@ -1,79 +1,17 @@
 # Semesterprojekt Chatbot
 
-## Aufgabenteilung
+## Aktuelles
 
-- Preprocessing vervollständigen (Micha/Leon)
-- Passende (performante) Tools für Rechtschreibkorrektur finden (Thorsten -> spelling_correction.py)
-- Potenzielle Algorithmen für Intent-Matching finden (Micha/Leon)
-- Doku aufsetzen (Jana -> DOKU.md oder Word-Datei in OneDrive)
-
-## Aktueller Hinweis
+### Hinweis
 
 - JS-Only-Demo im Verzeichnis <i>/gui</i> kann über lokalen <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> oder <a href="https://emsehub.github.io/semesterprojekt-chatbot/gui/">hier</a> getestet werden, läuft bis auf Weiteres jedoch nur unter Chrome (<i>import assertions</i> werden aus Sicherheitsgründen nicht von allen Browsern unterstützt, siehe <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility">hier</a>)
 
-## Projekt-Setup 
+### Aufgaben
 
-- Zur Verwaltung von Packages und Virtual Environment das Package "pipenv" installieren, d. h. CMD öffnen und je nach Präferenz einen der folgenden Befehle ausführen:
-   ```
-   pip install pipenv
-   pip install --user pipenv
-   ```
- - Projektorder in VS Code öffnen, ggf. bisherige Environments (Ordner "env") löschen und im Terminal folgenden Befehl eingeben, um eine neue pipenv-Umgebung einzurichten (ein lokales Verzeichnis außerhalb des Projektordners wird angelegt, s. u.).
-   ```
-   pipenv install
-   ```
- - Derselbe Befehl installiert automatisch alle im Projekt verwendeten Packages, sofern welche vorhanden sind (d. h. sofern Pipfile und Pipeline.lock bestehen, die Informationen über Packages enthalten)
-
- - pipenv-Umgebung muss aktiviert werden via:
-   ```
-   pipenv shell
-   ```
- - pipenv-Umgebung kann später deaktiviert werden via:
-   ```
-   exit
-   ```
- - **Von nun an sollten Packages *immer* via *pipenv* installiert bzw. deinstalliert werden**:
-   ```
-   pipenv install beispielpackage
-   pipenv uninstall beispielpackage
-   ```
- - Es muss der Interpreter der Virtual Environment verwendet werden:<br>**STRG + Shift + P -> "Python: Select Interpreter" -> "semesterprojekt-chatbot-..." wählen**<br>(auf das Refresh-Icon oben in der Leiste klicken, falls die VE noch nicht aufgeführt ist)
-
- - Pfad zum Verzeichnis des Virtual Environments ausgeben:
-   ```
-   pipenv --venv
-   ```
-- Falls zum Ausführen von Python-Files die Extension *Code Runner* verwendet wird, muss in den lokalen Workspace-Settings (JSON) folgender Eintrag mit dem Pfad zur Virtual Environment ergänzt werden
-   ```json
-   "code-runner.executorMap": {
-     "python": "C:\\Users\\...\\semesterprojekt-chatbot-...\\Scripts\\python -u"
-   }
-   ```
-- Hinweis: NTLK benötigt einige gesonderte Downloads, daher ist vor Verwendung des Chatbots einmalig die Datei *setup.py* auszuführen
-
-## NLP-Pipeline
-
-1. Tokenization (auf Wortebene)
-2. Interpunktion entfernen
-3. Automatische Rechtschreibkorrektur auf Wortebene
-4. Stop-Words entfernen
-5. Part-of-Speech-Tagging (PoS-Tagging)
-6. Named Entity Recognition (NER)
-7. Lemmatization [oder Stemming]
-8. [Co-reference resolution]
-
-## Grober Plan
-
-- Begrüßung des Users
-- Chatbot loop, user input einlesen
-- Input mit NLP zerlegen
-- Satzbestandteile analysieren (NLP Pipeline)
-- Intent des Nutzers ermitteln
-- mögliche Antwort aus vorgefertigten Texten auswählen
-- Aktion durch User bestätigen lassen
-- Aktion durchführen & Infos dazu ausgeben
-- nach weiterem Anliegen fragen (repeat loop)
-- profit
+- Preprocessing vervollständigen (*preprocessing/\**) -> Micha/Leon
+- Passende (performante) Tools für Rechtschreibkorrektur finden (*preprocessing/spelling_correction.py*) -> Thorsten
+- Potenzielle Algorithmen für Intent-Matching finden (*rule_engine/intent_matching*)-> Micha/Leon
+- Doku aufsetzen (*documentation/documentation.md* oder Word-Datei) -> Jana
 
 ## Requirements
 
@@ -121,6 +59,70 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
   - Chatbot: Vielen Dank, Frau Meier. Ich fasse noch einmal zusammen: Sie sind umgezogen und Ihre neue Adresse lautet Hauptstraße 12 in 44143 Dortmund. Ist dies korrekt?
   - Studierender: Ja
   - Chatbot: Vielen Dank, ich habe die Änderung vorgenommen.
+
+## Grober Plan
+
+- Begrüßung des Users
+- Chatbot loop, user input einlesen
+- Input mit NLP zerlegen
+- Satzbestandteile analysieren (NLP Pipeline)
+- Intent des Nutzers ermitteln
+- mögliche Antwort aus vorgefertigten Texten auswählen
+- Aktion durch User bestätigen lassen
+- Aktion durchführen & Infos dazu ausgeben
+- nach weiterem Anliegen fragen (repeat loop)
+- profit
+
+## NLP-Pipeline
+
+1. Tokenization (auf Wortebene)
+2. Interpunktion entfernen
+3. Automatische Rechtschreibkorrektur auf Wortebene
+4. Stop-Words entfernen
+5. Part-of-Speech-Tagging (PoS-Tagging)
+6. Named Entity Recognition (NER)
+7. Lemmatization [oder Stemming]
+8. [Co-reference resolution]
+
+## Projekt-Setup 
+
+- Zur Verwaltung von Packages und Virtual Environment das Package "pipenv" installieren, d. h. CMD öffnen und je nach Präferenz einen der folgenden Befehle ausführen:
+   ```
+   pip install pipenv
+   pip install --user pipenv
+   ```
+ - Projektorder in VS Code öffnen, ggf. bisherige Environments (Ordner "env") löschen und im Terminal folgenden Befehl eingeben, um eine neue pipenv-Umgebung einzurichten (ein lokales Verzeichnis außerhalb des Projektordners wird angelegt, s. u.).
+   ```
+   pipenv install
+   ```
+ - Derselbe Befehl installiert automatisch alle im Projekt verwendeten Packages, sofern welche vorhanden sind (d. h. sofern Pipfile und Pipeline.lock bestehen, die Informationen über Packages enthalten)
+
+ - pipenv-Umgebung muss aktiviert werden via:
+   ```
+   pipenv shell
+   ```
+ - pipenv-Umgebung kann später deaktiviert werden via:
+   ```
+   exit
+   ```
+ - **Von nun an sollten Packages *immer* via *pipenv* installiert bzw. deinstalliert werden**:
+   ```
+   pipenv install beispielpackage
+   pipenv uninstall beispielpackage
+   ```
+ - Es muss der Interpreter der Virtual Environment verwendet werden:<br>**STRG + Shift + P -> "Python: Select Interpreter" -> "semesterprojekt-chatbot-..." wählen**<br>(auf das Refresh-Icon oben in der Leiste klicken, falls die VE noch nicht aufgeführt ist)
+
+ - Pfad zum Verzeichnis des Virtual Environments ausgeben:
+   ```
+   pipenv --venv
+   ```
+- Falls zum Ausführen von Python-Files die Extension *Code Runner* verwendet wird, muss in den lokalen Workspace-Settings (JSON) folgender Eintrag mit dem Pfad zur Virtual Environment ergänzt werden
+   ```json
+   "code-runner.executorMap": {
+     "python": "C:\\Users\\...\\semesterprojekt-chatbot-...\\Scripts\\python -u"
+   }
+   ```
+- Hinweis: NTLK benötigt einige gesonderte Downloads, daher ist vor Verwendung des Chatbots einmalig die Datei *setup.py* auszuführen
 
 ## Offene Fragen
 

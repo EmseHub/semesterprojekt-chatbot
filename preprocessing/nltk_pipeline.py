@@ -6,8 +6,11 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk import pos_tag
 
+from .spelling_correction import autocorrect_tokens
 
-def get_tokenized_text(raw_text):
+def get_tagged_tokens(raw_text):
+
+    diagnostic = {}
     language = "german"
 
     # Mehrfache Leerzeichen, Tabs und Zeilenumbrüche mit RegEx auf ein Leerzeichen reduzieren
@@ -17,35 +20,36 @@ def get_tokenized_text(raw_text):
     tokens_sentence = sent_tokenize(clean_text, language)
     tokens_word = word_tokenize(clean_text, language)
 
-    # Stop-Words entfernen (case-insensitive besser?)
-    filtered_tokens_word = [
-        token for token in tokens_word if token not in stopwords.words(language)
-    ]
-
     # Satzzeichen entfernen
     filtered_tokens_word = [
-        token for token in filtered_tokens_word if token not in string.punctuation
+        token for token in tokens_word if token not in string.punctuation
+    ]
+
+    # Stop-Words entfernen (case-insensitive besser?)
+    filtered_tokens_word = [
+        token for token in filtered_tokens_word if token not in stopwords.words(language)
     ]
 
     # Tokens, die eine Mindestanzahl an Zeichen unterschreite entfernen
     filtered_tokens_word = [
-        token for token in filtered_tokens_word if len(token) > 1]
+        token for token in filtered_tokens_word if len(token) > 1
+    ]
 
     # Parts-of-Speech-Tagging
     tagged_tokens = pos_tag(filtered_tokens_word)
 
+    print('------- tokens_sentence -------')
     print(tokens_sentence)
-    print('---------------')
+    print('------- tokens_word -------')
     print(tokens_word)
-    print('---------------')
+    print('------- filtered_tokens_word -------')
     print(filtered_tokens_word)
-    print('---------------')
+    print('------- tagged_tokens -------')
     print(tagged_tokens)
-    print('---------------')
-    response = " ".join(filtered_tokens_word)
-    print(response)
+    # print('---------------')  
+    # print(" ".join(filtered_tokens_word))
 
-    return response
+    return (tagged_tokens,diagnostic)
 
 
 # https://fortext.net/routinen/lerneinheiten/preprocessing-mit-nltk

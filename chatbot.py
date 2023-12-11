@@ -1,8 +1,18 @@
-from nlp_pipelines import nltk_pipeline
+from preprocessing import nltk_pipeline
+from rule_engine import intent_matching, rules
 
+state_running_task = {}
 
-def getResponse(message):
-    return nltk_pipeline.get_tokenized_text(message)
+def get_response(message):
+    (tagged_tokens, diagnostic) = nltk_pipeline.get_tagged_tokens(message)
+    intent = intent_matching.get_intent(tagged_tokens)
+    (new_state_running_task, query) = rules.process_task(tagged_tokens, intent, state_running_task)
+
+    # print(tagged_tokens)
+    # print(diagnostic)
+    # print(new_state_running_task)
+    # print(query)
+    return "TO DO"
 
 
 # Input via Terminal (später ersetzt durch String vom Frontend)
@@ -13,7 +23,6 @@ while True:
     #     break
 
     sample_message = "Das ist eine Beispiel-Nachricht, Aber mit Fehlren und  Leerzeichen. Sie wurde z.B. verfasst von Dr. House und Mr. X, während der Hg. Homer ist."
-
-    response = getResponse(sample_message.strip())
+    response = get_response(sample_message.strip())
     # print(response)
     break
