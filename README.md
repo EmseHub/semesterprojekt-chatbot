@@ -1,48 +1,17 @@
 # Semesterprojekt Chatbot
 
-## Requirements
+## Aufgaben
 
-Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
+- Preprocessing vervollständigen (Micha/Leon)
+- Passende (performante) Tools für Rechtschreibkorrektur finden (Thorsten)
+- Potenzielle Algorithmen für Intent-Matching finden (Micha/Leon)
+- Doku aufsetzen (Jana)
 
-### Aktueller Hinweis
+## Aktueller Hinweis
 
 - JS-Only-Demo im Verzeichnis <i>/gui</i> kann über lokalen <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> oder <a href="https://emsehub.github.io/semesterprojekt-chatbot/gui/">hier</a> getestet werden, läuft bis auf Weiteres jedoch nur unter Chrome (<i>import assertions</i> werden aus Sicherheitsgründen nicht von allen Browsern unterstützt, siehe <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility">hier</a>)
 
-### Aufgaben des Chatbots (Features/Tasks)
-
-- Änderung der Adresse nach Umzug
-- Änderung des Nachnamens nach Heirat
-- Anmeldung zu einer Prüfung
-- Abmeldung von einer Prüfung
-- Abfrage Status der Prüfungsanmeldung
-  - nicht angemeldet | angemeldet und nicht abgeschlossen | angemeldet und abgeschlossen
-- Abfrage Note zu bestandener Prüfung
-  - Falls Prüfung nicht bestanden ist, Feedback über Status der Prüfungsanmeldung
-
-### Environment:
-
-- Identifikation des Studenten per Matrikelnummer bei jeder Anfrage (dient quasi als Passwort/Legitimation)
-- Umgangssprache verstehen (ggf. unklare Anfrage)
-- menschliche, natürlichsprachliche Kommunikation (freundliche, flüssige Sprachweise)
-- Aktionen sollen tatsächliche Änderungen in der Datenbank bewirken
-- Fehlerbehandlung von Falscheingaben & EdgeCases
-  - falsche Matrikelnummer
-  - unerlaubte Anmeldung (Prüfung bereits bestanden) oder Notenabfrage (Prüfung noch nicht bestanden)
-- bei unklaren Anfragen: im Zweifel Nachfragen des Chatbots (fehlende Informationen erfragen, Verifizierung des Intents)
-  - Achtung: Anfragen zu Prüfungen (An-/Abmeldung etc.) sind recht ähnlich --> Sicherstellen, dass die richtige Aktion durchgeführt wird!
-- Kreativität bei der Lösung, hinreichende Komplexität durch NLP
-
-### Offene Fragen
-
-- Identitätsabfrage je Anliegen oder je Session/Chataufruf?
-- NLTK oder spaCy?
-- 1 Token == 1 Wort?
-- Rechtschreibprüfung/Autokorrektur vorab? Auf Satz- oder Wortebene?
-- Stop-Words erst vor Lemmatization/Stemming entfernen, oder direkt zu Beginn?
-- Lemmatization UND/ODER Stemming?
-- Co-reference resolution weglassen?
-
-### Projekt-Setup 
+## Projekt-Setup 
 
 - Zur Verwaltung von Packages und Virtual Environment das Package "pipenv" installieren, d. h. CMD öffnen und je nach Präferenz einen der folgenden Befehle ausführen:
    ```
@@ -106,7 +75,35 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 - nach weiterem Anliegen fragen (repeat loop)
 - profit
 
-## Beispieldialoge
+## Requirements
+
+Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
+
+### Aufgaben des Chatbots (Features/Tasks)
+
+- Änderung der Adresse nach Umzug
+- Änderung des Nachnamens nach Heirat
+- Anmeldung zu einer Prüfung
+- Abmeldung von einer Prüfung
+- Abfrage Status der Prüfungsanmeldung
+  - nicht angemeldet | angemeldet und nicht abgeschlossen | angemeldet und abgeschlossen
+- Abfrage Note zu bestandener Prüfung
+  - Falls Prüfung nicht bestanden ist, Feedback über Status der Prüfungsanmeldung
+
+### Environment:
+
+- Identifikation des Studenten per Matrikelnummer bei jeder Anfrage (dient quasi als Passwort/Legitimation)
+- Umgangssprache verstehen (ggf. unklare Anfrage)
+- menschliche, natürlichsprachliche Kommunikation (freundliche, flüssige Sprachweise)
+- Aktionen sollen tatsächliche Änderungen in der Datenbank bewirken
+- Fehlerbehandlung von Falscheingaben & EdgeCases
+  - falsche Matrikelnummer
+  - unerlaubte Anmeldung (Prüfung bereits bestanden) oder Notenabfrage (Prüfung noch nicht bestanden)
+- bei unklaren Anfragen: im Zweifel Nachfragen des Chatbots (fehlende Informationen erfragen, Verifizierung des Intents)
+  - Achtung: Anfragen zu Prüfungen (An-/Abmeldung etc.) sind recht ähnlich --> Sicherstellen, dass die richtige Aktion durchgeführt wird!
+- Kreativität bei der Lösung, hinreichende Komplexität durch NLP
+
+### Beispieldialoge
 
 - Adressänderung A
   - Studierender: Hallo, ich bin letzte Woche umgezogen und wollte meine neue Adresse mitteilen.
@@ -124,3 +121,13 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
   - Chatbot: Vielen Dank, Frau Meier. Ich fasse noch einmal zusammen: Sie sind umgezogen und Ihre neue Adresse lautet Hauptstraße 12 in 44143 Dortmund. Ist dies korrekt?
   - Studierender: Ja
   - Chatbot: Vielen Dank, ich habe die Änderung vorgenommen.
+
+## Offene Fragen
+
+- Identitätsabfrage je Anliegen oder je Session/Chataufruf?
+- NLTK oder spaCy?
+- 1 Token == 1 Wort?
+- Rechtschreibprüfung/Autokorrektur vorab? Auf Satz- oder Wortebene?
+- Stop-Words erst vor Lemmatization/Stemming entfernen, oder direkt zu Beginn?
+- Lemmatization UND/ODER Stemming?
+- Co-reference resolution weglassen?
