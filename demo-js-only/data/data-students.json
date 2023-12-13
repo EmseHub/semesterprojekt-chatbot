@@ -1,0 +1,105 @@
+[
+    {
+        "vorname": "Harry James",
+        "nachname": "Potter",
+        "adresse": {
+            "strasse": "Ligusterweg",
+            "hausnr": "4",
+            "stadt": "Little Whinging",
+            "plz": "12345",
+            "staat": "Vereinigtes Königreich"
+        },
+        "matnr": "1234567",
+        "pruefungen": [
+            {
+                "kursID": 2,
+                "isAngemeldet": true,
+                "note": 1.3
+            },
+            {
+                "kursID": 4,
+                "isAngemeldet": false,
+                "note": null
+            },
+            {
+                "kursID": 6,
+                "isAngemeldet": true,
+                "note": null
+            }
+        ],
+        "profilbild": "hp_harry.png",
+        "letztesUpdate": "2023-11-21T16:50:53.752Z"
+    },
+    {
+        "vorname": "Ronald Bilius",
+        "nachname": "Weasley",
+        "adresse": {
+            "strasse": "Fuchsbau",
+            "hausnr": "1",
+            "stadt": "Ottery St. Catchpole",
+            "plz": "54321",
+            "staat": "Vereinigtes Königreich"
+        },
+        "matnr": "7654321",
+        "pruefungen": [
+            {
+                "kursID": 1,
+                "isAngemeldet": true,
+                "note": 3.7
+            },
+            {
+                "kursID": 3,
+                "isAngemeldet": true,
+                "note": null
+            }
+        ],
+        "profilbild": "hp_ron.png",
+        "letztesUpdate": "2023-11-21T16:50:53.752Z"
+    },
+    {
+        "vorname": "Hermine Jean",
+        "nachname": "Granger",
+        "adresse": {
+            "strasse": "Heathgate",
+            "hausnr": "8",
+            "stadt": "London",
+            "plz": "13579",
+            "staat": "Vereinigtes Königreich"
+        },
+        "matnr": "1122334",
+        "pruefungen": [
+            {
+                "kursID": 3,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "kursID": 5,
+                "isAngemeldet": true,
+                "note": 1.3
+            },
+            {
+                "kursID": 6,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "kursID": 7,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "kursID": 8,
+                "isAngemeldet": true,
+                "note": 1.0
+            },
+            {
+                "kursID": 9,
+                "isAngemeldet": true,
+                "note": 1.0
+            }
+        ],
+        "profilbild": "hp_hermine.png",
+        "letztesUpdate": "2023-11-21T16:50:53.752Z"
+    }
+]

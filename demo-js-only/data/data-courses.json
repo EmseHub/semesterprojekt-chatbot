@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "name": "Verteidigung gegen die dunklen Künste",
+        "lehrperson": "Prof. Lupin"
+    },
+    {
+        "id": 2,
+        "name": "Kräuterkunde",
+        "lehrperson": "Prof. Sprout"
+    },
+    {
+        "id": 3,
+        "name": "Zaubertränke",
+        "lehrperson": "Prof. Snape"
+    },
+    {
+        "id": 4,
+        "name": "Muggelkunde",
+        "lehrperson": "Prof. Quirrell"
+    },
+    {
+        "id": 5,
+        "name": "Wahrsagen",
+        "lehrperson": "Prof. Trelawney"
+    },
+    {
+        "id": 6,
+        "name": "Geschichte der Zauberei",
+        "lehrperson": "Prof. Binns"
+    },
+    {
+        "id": 7,
+        "name": "Verwandlung",
+        "lehrperson": "Prof. McGonagall"
+    },
+    {
+        "id": 8,
+        "name": "Pflege magischer Geschöpfe",
+        "lehrperson": "Hagrid"
+    },
+    {
+        "id": 9,
+        "name": "Astronomie",
+        "lehrperson": "Prof. Sinistra"
+    }
+]
