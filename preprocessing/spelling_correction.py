@@ -2,6 +2,11 @@
 #  https://stackoverflow.com/questions/13928155/spell-checker-for-python
 #  https://norvig.com/spell-correct.html
 
+#  https://medium.com/@yashj302/spell-check-and-correction-nlp-python-f6a000e3709d
+#   -> Jamspell     pip install jamspell
+#   -> Symspellpy   pip install symspellpy
+#   -> Textblob     pip install textblob (-> P. Norvig)
+
 def autocorrect_word(word):
     corrected_word = "TO DO" + word
     return corrected_word
