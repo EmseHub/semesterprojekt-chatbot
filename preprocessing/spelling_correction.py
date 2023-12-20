@@ -3,9 +3,32 @@
 #  https://norvig.com/spell-correct.html
 
 #  https://medium.com/@yashj302/spell-check-and-correction-nlp-python-f6a000e3709d
-#   -> Jamspell     pip install jamspell
-#   -> Symspellpy   pip install symspellpy
-#   -> Textblob     pip install textblob (-> P. Norvig)
+
+#   JAMSPELL *********************************************************************
+#   ******************************************************************************
+
+#   -> Jamspell     pipenv install jamspell
+#      Supported Languages?
+#      https://wortschatz.uni-leipzig.de/en/download/German
+
+#       import jamspell
+
+#       corrector = jamspell.TSpellCorrector()
+#       corrector.LoadLangModel('en.bin')
+
+#       corrector.FixFragment('I am the begt spell cherken!')
+#       u'I am the best spell checker!'
+
+#       corrector.GetCandidates(['i', 'am', 'the', 'begt', 'spell', 'cherken'], 3)
+#       (u'best', u'beat', u'belt', u'bet', u'bent', ... )
+
+#       corrector.GetCandidates(['i', 'am', 'the', 'begt', 'spell', 'cherken'], 5)
+#       (u'checker', u'chicken', u'checked', u'wherein', u'coherent', ...)
+
+
+
+#   -> Symspellpy   pipenv install symspellpy
+#   -> Textblob     pipenv install textblob (-> P. Norvig)
 
 def autocorrect_word(word):
     corrected_word = "TO DO" + word
