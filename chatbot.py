@@ -3,10 +3,12 @@ from rule_engine import intent_matching, rules
 
 state_running_task = {}
 
+
 def get_response(message):
     (tagged_tokens, diagnostic) = nltk_pipeline.get_tagged_tokens(message)
     intent = intent_matching.get_intent(tagged_tokens)
-    (new_state_running_task, query) = rules.process_task(tagged_tokens, intent, state_running_task)
+    (new_state_running_task, query) = rules.process_task(
+        tagged_tokens, intent, state_running_task)
 
     # print(tagged_tokens)
     # print(diagnostic)
