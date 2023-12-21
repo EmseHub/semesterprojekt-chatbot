@@ -105,6 +105,14 @@ Zur Simulation der Datenbank der Hochschule haben wir JSON-Dateien verwendet. In
 - In der Datei "data-courses.json" befinden sich alle Kurse der Hochschule. Die Kurse besitzen jeweils eine ID, einen Namen und die Lehrperson, die diesen Kurs ausführt. 
 - Die Datei "data-students.json" enthält alle Studierenden der Hochschule. Für jeden Studierenden wird eine Matrikelnummer, ein Vor- und Nachname, die Adresse, ein Profilbild sowie das Datum, an der die Daten des Students zuletzt geändert wurden, gespeichert. Außerdem werden pro Student die Prüfungen gespeichert, die angemeldet oder schon geschrieben sind.
 
+    ```json
+    Code data-courses
+    ```
+
+    ```json
+    Code data-students
+    ```
+
 ### Intents
 
 Damit der Chatbot die Intention aus den Anfragen der Studierenden erkennen kann, müssen Intents definiert werden. Intents beschreiben die Absicht oder das Ziel des Nutzers, wie beispielsweise die Absicht, seine Adresse zu ändern. Der Chatbot überprüft bei einer Anfrage, ob ein Thema angesprochen wurde, das er kennt. Er überprüft also, ob er einen Intent erkennt. 
@@ -130,6 +138,10 @@ Folgende Intent-Möglichkeiten existieren bei unserer Aufgabenstellung:
 - "statusabfrage": Der Studierende möchte den aktuellen Status einer Prüfung wissen
 - "notenabfrage": Der Studierende möchte die Note einer Prüfung wissen
 
+    ```json
+    Code intents
+    ```
+
 ### Schritte des Chatbots
 
 **Preprocessing mit NLP-Pipeline:**
@@ -146,11 +158,19 @@ Zuerst noch Normalization? -> Text in Kleinbuchstaben konvertieren & Satzzeichen
 
 Danach noch Co-reference resolution? -> herausfinden, ob sich zwei Wörter eines Textes auf dieselbe Entität beziehen
 
+    ```
+    Code preprocessing
+    ```
+
 **Intent Matching:**
 
 noch erweitern
 
 - Intent des Nutzers ermitteln
+
+    ```
+    Code intent matching
+    ```
 
 **Regelwerk**
 
@@ -160,3 +180,21 @@ noch erweitern
 - Aktion durch User bestätigen lassen
 - Aktion durchführen & Infos dazu ausgeben
 - nach weiterem Anliegen fragen (repeat loop)
+
+    ```
+    Code Regelwerk
+    ```
+
+### Ausführung der Schritte
+
+Im folgenden Absatz werden die Schritte des Chatbots ausgeführt. In der Methode "get_response" wird der Text der Anfrage übergeben. Bei diesem Text werden dann die oben aufgeführten einzelnen Schritte durchgeführt. Dadurch wird eine Antwort ausgewählt und eventuelle weitere Bearbeitungsschritte angestoßen. Die Antwort wird von der Methode "get_response" zurückgegeben.
+
+    ```
+    Code chatbot.py
+    ```
+
+## GUI
+
+keine Ahnung was Michael hier gemacht hat, aber sieht gut aus
+
+kommt der Code für die GUI hier rein und muss der auch erklärt werden?
