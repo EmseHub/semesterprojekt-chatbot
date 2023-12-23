@@ -96,7 +96,7 @@ Im Folgenden sind die beiden Beispieldialoge aus der Aufgabenstellung aufgeliste
    ```
 - Hinweis: NTLK benötigt einige gesonderte Downloads, daher ist vor Verwendung des Chatbots einmalig die Datei *setup.py* auszuführen
 
-## Implementierung
+## Implementierung / Grundlegender Aufbau
 
 In den folgenden Abschnitten ist die Implementierung des Chatbots zu finden.
 
@@ -151,7 +151,7 @@ Im ersten Schritt zerlegt der Chatbot die Anfrage des Studierenden mit Hilfe von
 
 Zuerst noch Normalization? -> Text in Kleinbuchstaben konvertieren & Satzzeichen entfernen
 
-1. Tokenization: Bei der Tokenization wird der Text in einzelne Bestandteile (=Token) zerlegt. Der Text wird dabei zum Beispiel in seine einzelnen Wörter zerlegt.
+1. Tokenization: Bei der Tokenization wird der Text in einzelne Bestandteile (Tokens) zerlegt. Der Text wird dabei zum Beispiel in seine einzelnen Wörter zerlegt.
 2. Stop-Word-Removal: Stoppwörter, also Wörter, die dem Verständnis des Textes nicht weiterhelfen, werden entfernt.
 3. Part-of-Speech-Tagging (PoS-Tagging): Die einzelnen Wörter werden ihren Wortarten zugeordnet. Das Word "laufen" ist beispielsweise ein Verb, während das Wort "schnell" ein Adjektiv ist.
 4. Named Entity Recognition (NER): NER versucht, Eigennamen erkennen. Diese sogenannten "Named Entities" sind zum Beispiel Namen von Personen, Orten oder Firmen. NER-Methoden nutzen dazu bestehende Wörterbücher, welche eine Liste bereits bekannter Entitäten enthalten.
@@ -186,16 +186,73 @@ noch erweitern
     Code Regelwerk
     ```
 
-### Ausführung der Schritte
+## DER EINZIG WICHTIGE ABSCHNITT [In Jupyter-Notebook mit Beispielaufruf jeder Funktion]
 
-Im folgenden Absatz werden die Schritte des Chatbots ausgeführt. In der Methode "get_response" wird der Text der Anfrage übergeben. Bei diesem Text werden dann die oben aufgeführten einzelnen Schritte durchgeführt. Dadurch wird eine Antwort ausgewählt und eventuelle weitere Bearbeitungsschritte angestoßen. Die Antwort wird von der Methode "get_response" zurückgegeben.
+Im folgenden Absatz werden die Schritte des Chatbots ausgeführt.
 
-    ```
-    Code chatbot.py
-    ```
+## Definitionen Preprocessing
 
-## GUI
+Bla...
 
-keine Ahnung was Michael hier gemacht hat, aber sieht gut aus
+Notes
+- Unabhängig der Anzahl ihrer Sätze, soll in jeder Nachricht nicht mehr als eine Aufgabe/ein Task erkannt werden. Sonst ist es kaum möglich, die in der Nachricht enthaltenen Informationen präzise zuzuordnen und konkrete Rückfragen zu fehlenden Angaben zu stellen.
+- Zudem kann nicht vorausgesetzt werden, dass die Nachrichten der User immer mit den Regeln der Interpunktion konform sind.  
+- Da Regeln der Orthographie bzw. Interpunktion in der Chat-Kommunikation oftmals vernachlässigt werden, sollen die Tokens je Nachricht auf Wortebene ermittelt und Satzzeichen vollständig ignoriert werden
 
-kommt der Code für die GUI hier rein und muss der auch erklärt werden?
+- NLTK verfügt über eine POS-Tagging-Funktion namens ```pos_tag```, die derzeit jedoch nur Englisch und Russisch unterstützt (siehe https://www.nltk.org/api/nltk.tag.pos_tag.html).
+- Da der Chat auf Deutsch stattfinden soll, haben wir uns für den *Hanover Tagger* (kurz *HanTa*) von Christian Wartena von der Hochschule Hannover entschieden, der Funktionen sowohl zum POS-Tagging als auch zum Lemmatisieren von Tokens in deutscher Sprache bietet (siehe https://github.com/wartaal/HanTa und https://serwiss.bib.hs-hannover.de/frontdoor/index/index/docId/2457).
+- Da das Model mit dem TIGER Corpus trainiert wurde, entsprechen die POS-Tags weitestgehend denen des Korpus bzw. dem Stuttgart-Tübingen-Tagset (STTS) (siehe https://www.ims.uni-stuttgart.de/forschung/ressourcen/lexika/germantagsets/#id-cfcbf0a7-0)
+
+
+
+- Ausgabe Objekt mit
+{ 
+  "original" : "Bla",
+  "corrected" : "Bla",
+  "lemma": "Bla",
+  "pos": "Bla",
+  "ner": ""
+}
+- ACHTUNG: STOPWORDS ENTFERNEN TOKENS
+
+
+
+## Definitionen Intent-Matching
+
+Bla...
+
+
+In der Methode "get_response" wird der Text der Anfrage übergeben. Bei diesem Text werden dann die oben aufgeführten einzelnen Schritte durchgeführt. Dadurch wird eine Antwort ausgewählt und eventuelle weitere Bearbeitungsschritte angestoßen. Die Antwort wird von der Methode "get_response" zurückgegeben.
+```
+Code chatbot.py
+```
+
+## Definitionen Regelwerk
+
+Bla.. 
+
+Notes
+- Die getaggten Tokens sind primär für die Erkennung des Intents relevant
+- Damit die ursprüngliche Satzstruktur analysiert werden kann und Personen-, Prüfungs-, Straßen- oder Ortsnamen von der Rechtschreibkorrektur und Lemmatisierung unberührt bleiben, wird der Funktion zum Auswerten der für einen Task relevanten Informationen auch der Originaltext der Nachricht übergeben.
+- TO DO: BESSER TOKENS ALS OBJEKTE INKL. ORIGINAL?
+
+
+## Chatbot Hauptmodul 
+
+Bla...
+
+Notes
+- Hier werden alle Schritte miteinander verknüpft
+- Ort der Ein- und Ausgabe von Nachrichten 
+
+    
+
+## GUI/Frontend (optional)
+
+**Im Jupyter-Notebook wird es kein Frontend geben, daher wären wir an dieser Stelle fertig (im Notebook muss der Code in chatbot.py minimal abgeändert werden, damit die Terminal-Eingabe wieder da ist).**
+
+Notes
+- Flask zum Austausch von User-Nachrichten und Chatbot-Antworten zwischen Server und Web-Frontend
+- ...
+
+
