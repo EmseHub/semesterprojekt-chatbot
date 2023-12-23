@@ -38,21 +38,45 @@ def get_tagged_tokens(raw_text):
     # ]
 
     # Parts-of-Speech-Tagging
-    tagged_tokens = pos_tag(filtered_tokens_word)
 
-    # ---- TEST ----
-    # Hanover Tagger
-    # https://github.com/wartaal/HanTa
+    # --NLTK--
+    # tagged_tokens = pos_tag(filtered_tokens_word)
+
+    # --Hanover Tagger--
     # https://github.com/wartaal/HanTa
     # https://github.com/wartaal/HanTa/blob/master/Demo.ipynb
     # https://textmining.wp.hs-hannover.de/Preprocessing.html#Lemmatisierung-und-Wortarterkennung
 
     hanover_tagger = hanta.HanoverTagger('morphmodel_ger.pgz')
+
+    # POS-Tags auflisten
+    # hanover_tagger.list_postags()
+    # hanover_tagger.list_mtags()
+
+    # HanTa-Tags entsprichen dem Stuttgart-Tübingen-Tagset (STTS)
+    # https://www.ims.uni-stuttgart.de/forschung/ressourcen/lexika/germantagsets/#id-cfcbf0a7-0
+    # https://homepage.ruhr-uni-bochum.de/stephen.berman/Korpuslinguistik/Tagsets-STTS.html
+    # https://www.ims.uni-stuttgart.de/documents/ressourcen/korpora/tiger-corpus/annotation/tiger_scheme-morph.pdf (pp 26/27)
+
     # print(hanover_tagger.analyze('Fachmärkte'))
-    tagged_tokens = hanover_tagger.tag_sent(filtered_tokens_word)
+
+    taglevel = 1
+    casesensitive = False
+    tagged_tokens = hanover_tagger.tag_sent(
+        filtered_tokens_word, taglevel, casesensitive
+    )
 
     # Pattern library rom CLiPS Research Center
     # https://datascience.blog.wzb.eu/2016/07/13/accurate-part-of-speech-tagging-of-german-texts-with-nltk/
+
+    # Stop Words erneut entfernen, anhand lemmata?
+
+    # Named-Entity-Recognition
+
+    # Ideen
+    # Flair -> https://huggingface.co/flair/ner-german-large
+    # BERT -> https://jupiter.fh-swf.de/projects/ner/ und https://huggingface.co/fhswf/bert_de_ner
+    # Electra?
 
     print('------- tokens_sentence -------')
     print(tokens_sentence)
