@@ -8,30 +8,41 @@
 #   ******************************************************************************
 
 #   -> Jamspell     pipenv install jamspell
+    
+#    https://github.com/bakwc/JamSpell
+#    In C++ geschrieben, braucht daher swig3, idealerweise einen anderen Spellchecker einsetzen... 
 #      Supported Languages?
 #      https://wortschatz.uni-leipzig.de/en/download/German
 
-#       import jamspell
 
-#       corrector = jamspell.TSpellCorrector()
-#       corrector.LoadLangModel('en.bin')
-
-#       corrector.FixFragment('I am the begt spell cherken!')
-#       u'I am the best spell checker!'
-
-#       corrector.GetCandidates(['i', 'am', 'the', 'begt', 'spell', 'cherken'], 3)
-#       (u'best', u'beat', u'belt', u'bet', u'bent', ... )
-
-#       corrector.GetCandidates(['i', 'am', 'the', 'begt', 'spell', 'cherken'], 5)
-#       (u'checker', u'chicken', u'checked', u'wherein', u'coherent', ...)
-
-
-
-#   -> Symspellpy   pipenv install symspellpy
+#   TEXTBLOB *********************************************************************
+#   ******************************************************************************
 #   -> Textblob     pipenv install textblob (-> P. Norvig)
+#                    pipenv install textblob-de
+
+#       https://www.geeksforgeeks.org/spelling-checker-in-python/
+
+#       https://textblob-de.readthedocs.io/en/latest/
+#       -> textblob-de = German Language Extension for TextBlob (Standard = Englisch)
+
+#       -> Correct-Function für Deutsch nicht verfügbar...
+
+
+#   PYSPELLCHECKER ***************************************************************
+#   ******************************************************************************
+#       pipenv install pyspellchecker
+
+#       https://github.com/sagorbrur/bengali_pyspellchecker
+
+from spellchecker import SpellChecker
 
 def autocorrect_word(word):
-    corrected_word = "TO DO" + word
+
+    spell = SpellChecker(language='de')
+
+    corrected_word = spell.correction(word)
+    #print(corrected_word)
+
     return corrected_word
 
 
@@ -49,5 +60,7 @@ def autocorrect_tokens(tokens):
 
 
 # Beispiel-Liste zum Testen
-# sample_tokens = ["Das", "its", "einne" "Beispil-Nachriecht", "Aber", "mit","Fehlren", "von" ,"Dr.", "House"]
-# print(autocorrect_tokens(sample_tokens))
+sample_tokens = ["Dase", "its", "einne", "Beispil-Nachriecht", "Aber", "mit","Fehlren", "von" ,"Dr.", "House"]
+#sample_tokens = ["Thsi", "comptuer", "extnsions"]
+
+print(autocorrect_tokens(sample_tokens))
