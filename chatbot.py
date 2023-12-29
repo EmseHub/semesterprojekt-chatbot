@@ -7,8 +7,15 @@ state_running_task = {}
 def get_response(message):
     (tagged_tokens, diagnostic) = nltk_pipeline.get_tagged_tokens(message)
     intent = intent_matching.get_intent(tagged_tokens)
+
+    print("---Gefundener Intent---\n", intent)
+
     (new_state_running_task, query) = rules.process_task(
-        tagged_tokens, intent, state_running_task)
+        tagged_tokens, intent, state_running_task
+    )
+
+    print("---Running-Task---\n", new_state_running_task)
+    print("---Rückfrage---\n", query)
 
     # print(tagged_tokens)
     # print(diagnostic)
