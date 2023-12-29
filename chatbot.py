@@ -12,11 +12,12 @@ def get_response(message):
     intent = intent_matching.get_intent(tagged_tokens)
     print("---Gefundener Intent---\n", intent)
 
-    (new_state_running_task, query) = rules.process_task(
-        tagged_tokens, intent, state_running_task
+    (new_state_running_task, query, is_data_changed) = rules.process_task(
+        state_running_task, tagged_tokens, intent
     )
     print("---Running-Task---\n", new_state_running_task)
     print("---Rückfrage---\n", query)
+    print("---Daten verändert?---\n", is_data_changed)
 
     # print(tagged_tokens)
     # print(diagnostic)
