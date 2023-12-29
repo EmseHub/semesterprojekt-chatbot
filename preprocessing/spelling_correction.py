@@ -8,9 +8,9 @@
 #   ******************************************************************************
 
 #   -> Jamspell     pipenv install jamspell
-    
+
 #    https://github.com/bakwc/JamSpell
-#    In C++ geschrieben, braucht daher swig3, idealerweise einen anderen Spellchecker einsetzen... 
+#    In C++ geschrieben, braucht daher swig3, idealerweise einen anderen Spellchecker einsetzen...
 #      Supported Languages?
 #      https://wortschatz.uni-leipzig.de/en/download/German
 
@@ -36,12 +36,14 @@
 
 from spellchecker import SpellChecker
 
+
 def autocorrect_word(word):
 
     spell = SpellChecker(language='de')
 
     corrected_word = spell.correction(word)
-    #print(corrected_word)
+    # print(corrected_word)
+    print(spell.candidates(word))
 
     return corrected_word
 
@@ -50,7 +52,7 @@ def autocorrect_tokens(tokens):
     if not tokens:
         # Liste ist leer...
         return []
-    
+
     corrected_tokens = []
     for token in tokens:
         corrected_token = autocorrect_word(token)
@@ -60,7 +62,10 @@ def autocorrect_tokens(tokens):
 
 
 # Beispiel-Liste zum Testen
-sample_tokens = ["Dase", "its", "einne", "Beispil-Nachriecht", "Aber", "mit","Fehlren", "von" ,"Dr.", "House"]
-#sample_tokens = ["Thsi", "comptuer", "extnsions"]
+sample_tokens = ["Dase", "its", "einne", "Beispil-Nachriecht",
+                 "Aber", "mit", "Fehlren", "von", "Dr.", "House"]
+sample_tokens = ["mien", "name", "Luftballon", "sauer"]
+
+# sample_tokens = ["Thsi", "comptuer", "extnsions"]
 
 print(autocorrect_tokens(sample_tokens))
