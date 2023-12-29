@@ -1,0 +1,310 @@
+[
+    {
+        "tag": "trefferlos",
+        "min_hits": 0,
+        "patterns": [],
+        "responses": [
+            "Tut mir leid, ich verstehe die Anfrage nicht. Könntest Du sie umformulieren?",
+            "Mit dieser Nachricht kann ich leider nichts anfangen.",
+            "Check ich nicht.",
+            "Ich verstehe nicht.",
+            "Könntest Du die Aussage konkretisieren?",
+            "Sag es so, dass ich es verstehe...",
+            "Was labersch Du?",
+            "Wat babbelst Du da wieder?",
+            "Du nuschelst.",
+            "Du musst langsam mit mir sprechen, ich bin nur ein Hut.",
+            "Diese Wörter kann ich leider nicht unter einen Hut bringen."
+        ],
+        "task": ""
+    },
+
+
+
+
+
+    {
+        "tag": "adresse_aendern",
+        "min_hits": 2,
+        "patterns": [
+            "adresse",
+            "anschrift",
+            "aendern",
+            "aenderung",
+            "aktualisieren",
+            "anpassen",
+            "aktuell",
+            "neu",
+            "vornehmen",
+            "umziehen",
+            "umzug",
+            "vornehmen"
+        ],
+        "responses": [
+            ""
+        ],
+        "task": "adresse_aendern"
+    },
+    {
+        "tag": "nachname_aendern",
+        "min_hits": 2,
+        "patterns": [
+            "nachname",
+            "familien",
+            "name",
+            "heirat",
+            "heiraten",
+            "hochzeit",
+            "ehe",
+            "neu",
+            "anpassen",
+            "aendern",
+            "veraendern",
+            "aktualisieren"
+        ],
+        "responses": [
+            ""
+        ],
+        "task": "nachname_aendern"
+    },
+    {
+        "tag": "pruefung_anmelden",
+        "min_hits": 2,
+        "patterns": [
+            "pruefung",
+            "pruefungsleistung",
+            "pruefungsanmeldung",
+            "klausur",
+            "anmeldung",
+            "anmelden",
+            "melden",
+            "an",
+            "teilnehmen",
+            "teilnahme",
+            "moegen",
+            "moechten",
+            "aendern"
+        ],
+        "responses": [
+            "Ich schaue ins System...",
+            "Einen Moment bitte..."
+        ],
+        "task": "pruefung_anmelden"
+    },
+    {
+        "tag": "pruefung_abmelden",
+        "min_hits": 2,
+        "patterns": [
+            "pruefung",
+            "pruefungsleistung",
+            "pruefungsabmeldung",
+            "klausur",
+            "abmeldung",
+            "abmelden",
+            "melden",
+            "ab",
+            "moegen",
+            "moechten",
+            "zuruecktreten",
+            "ruecktritt"
+        ],
+        "responses": [
+            ""
+        ],
+        "task": "pruefung_abmelden"
+    },
+    {
+        "tag": "pruefung_status",
+        "min_hits": 1,
+        "patterns": [
+            "pruefung",
+            "pruefungsleistung",
+            "klausur",
+            "status",
+            "note",
+            "bestehen",
+            "einsehen",
+            "auskunft",
+            "abfragen"
+        ],
+        "responses": [
+            ""
+        ],
+        "task": "pruefung_status"
+    },
+
+
+
+
+    {
+        "tag": "zustimmung",
+        "min_hits": 1,
+        "patterns": [
+            "ja",
+            "jawohl",
+            "jo",
+            "korrekt",
+            "bestaetigen",
+            "yes",
+            "ok",
+            "okay",
+            "gut",
+            "perfekt",
+            "bestens",
+            "einverstanden",
+            "klar",
+            "genau",
+            "exakt"
+        ],
+        "responses": [
+            "Sehr gut.",
+            "Nice.",
+            "Hut ab!"
+        ],
+        "task": ""
+    },
+    {
+        "tag": "ablehnung",
+        "min_hits": 1,
+        "patterns": [
+            "nein",
+            "nee",
+            "stopp",
+            "stop",
+            "ende",
+            "abbruch",
+            "abbrechen",
+            "beenden",
+            "zurueck",
+            "widersprechen",
+            "falsch",
+            "niemals",
+            "aufhoeren",
+            "exit"
+        ],
+        "responses": [
+            "Ich habe verstanden.",
+            "Nun denn..."
+        ],
+        "task": ""
+    },
+
+
+
+
+    {
+        "tag": "begruessung",
+        "min_hits": 1,
+        "patterns": [
+            "hallo",
+            "hi",
+            "hey",
+            "moin",
+            "na",
+            "gruss",
+            "gruessen",
+            "gut",
+            "tag"
+        ],
+        "responses": [
+            "Hallo, wie kann ich helfen?",
+            "Sei gegrüßt! Was kann ich für Dich tun?",
+            "Hallo :)",
+            "Hey! Schön, dass Du wieder da bist!",
+            "Willkommen zurück!",
+            "Was willst Du?",
+            "Hmm, schwierig, äußerst schwierig. Ich sehe bei Dir sehr viel Mut. Im Köpfchen hast Du auch was. Ich sehe Talent, ohja und den Drang, sich zu beweisen. Aber wo stecke ich Dich hin?",
+            "Du gehörst nach Gryffindor!",
+            "Ich ziehe meinen Hut vor Dir!"
+        ],
+        "task": ""
+    },
+    {
+        "tag": "abschiedsgruss",
+        "min_hits": 1,
+        "patterns": [
+            "tschuess",
+            "tschues",
+            "ciao",
+            "wiedersehen",
+            "bye",
+            "verabschieden",
+            "abschied",
+            "hauen",
+            "rein"
+        ],
+        "responses": [
+            "Auf Wiedersehen!",
+            "Danke für Deinen Besuch!",
+            "Beehre uns bald wieder!",
+            "Mach's gut!",
+            "Halt die Ohren steif!",
+            "Brudi, muss los...",
+            "Tschüsseldorf",
+            "San Frantschüssko",
+            "Tschüsli Müsli!",
+            "Auf Wiederklatsch!",
+            "Bis später, Attentäter!",
+            "Es ist wie Spiegel: Man sieht sich!",
+            "Ich verabscheue mich!",
+            "Bis denne, Antenne!",
+            "Hau rinse!",
+            "Denk immer dran: Es sind nicht unsere Fähigkeiten, die zeigen, wer wir sind, sondern unsere Entscheidungen.",
+            "Eines möchte ich Dir noch mit auf den Weg geben: Die Stimme eines Kindes, egal wie ehrlich oder aufrichtig, ist bedeutungslos für jene, die verlernt haben, zuzuhören.",
+            "Keep it J.K. Rowling!",
+            "Mach et joot, schwenk de Hoot!"
+        ],
+        "task": ""
+    },
+    {
+        "tag": "befinden",
+        "min_hits": 2,
+        "patterns": [
+            "wie",
+            "gehen",
+            "fuehlen",
+            "laufen"
+        ],
+        "responses": [
+            "Sehr gut! Bei Dir alles gut?",
+            "Alles paletti! Wie geht es Dir?",
+            "Man schlägt sich so durch!",
+            "Bestens! Wie steh's bei Dir?"
+        ],
+        "task": ""
+    },
+    {
+        "tag": "dank",
+        "min_hits": 1,
+        "patterns": [
+            "danke",
+            "danken",
+            "bedanken",
+            "hilfreich"
+        ],
+        "responses": [
+            "Gerne!",
+            "Jederzeit!",
+            "Ich ist mir eine Freude!",
+            "Ich bin froh, wenn ich helfen kann!"
+        ],
+        "task": ""
+    },
+
+
+
+    {
+        "tag": "bullshit1",
+        "min_hits": 1,
+        "patterns": [
+            "verarschen",
+            "wollen"
+        ],
+        "responses": [
+            "Oh ja.",
+            "Schon, ja.",
+            "Ich mach Dich so klein mit Hut."
+        ],
+        "task": ""
+    }
+]
