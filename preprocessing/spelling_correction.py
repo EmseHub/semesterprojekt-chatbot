@@ -34,18 +34,57 @@
 
 #       https://github.com/sagorbrur/bengali_pyspellchecker
 
-from spellchecker import SpellChecker
+    #from spellchecker import SpellChecker
+    #spell = SpellChecker(language='de')
 
+    #corrected_word = spell.correction(word)
+    # print(corrected_word)
+    #print(spell.candidates(word))
+
+    #Falsche/fehlerhaftes Wort identifizieren
+    #corrected_word = spell.correction(word)
+    
+    #if corrected_word != None:
+     #   print("Korrektur: " + corrected_word)
+    #else:
+    #    print("Kein Fehler: " + word)
+
+
+#   HUNSPELL *********************************************************************
+#   ******************************************************************************
+#       pipenv install phunspell
+
+#       https://github.com/pyhunspell/pyhunspell
+#       https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
+#       https://pypi.org/project/phunspell/
+
+#   print(pspell.lookup("phunspell")) # False
+#   print(pspell.lookup("about")) # True
+
+#   mispelled = pspell.lookup_list("Bill's TV is borken".split(" "))
+#   print(mispelled) # ["borken"]
+
+#    for suggestion in pspell.suggest('phunspell'):
+#        print(suggestion) # Hunspell
+
+import phunspell
+pspell = phunspell.Phunspell('de_DE')
 
 def autocorrect_word(word):
 
-    spell = SpellChecker(language='de')
+    #Prüft, ob Wort bekannt/im Wörterbuch vorhanden (true/false)
+    if pspell.lookup(word) == False:
+        suggestions = pspell.suggest(word)
 
-    corrected_word = spell.correction(word)
-    # print(corrected_word)
-    print(spell.candidates(word))
+        for index, suggestions in enumerate(suggestions):
+            if index == 0:
+                return suggestions
 
-    return corrected_word
+        #for index, element in enumerate(suggestions):
+            #print(index, ":", element)
+    else:
+        return word
+
 
 
 def autocorrect_tokens(tokens):
@@ -64,7 +103,7 @@ def autocorrect_tokens(tokens):
 # Beispiel-Liste zum Testen
 sample_tokens = ["Dase", "its", "einne", "Beispil-Nachriecht",
                  "Aber", "mit", "Fehlren", "von", "Dr.", "House"]
-sample_tokens = ["mien", "name", "Luftballon", "sauer"]
+sample_tokens = ["meina", "name", "Luftballon", "sauer"]
 
 # sample_tokens = ["Thsi", "comptuer", "extnsions"]
 
