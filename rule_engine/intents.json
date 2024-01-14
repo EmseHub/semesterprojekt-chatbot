@@ -37,8 +37,7 @@
             "neu",
             "vornehmen",
             "umziehen",
-            "umzug",
-            "vornehmen"
+            "umzug"
         ],
         "responses": [
             ""
@@ -269,7 +268,7 @@
             "Sehr gut! Bei Dir alles gut?",
             "Alles paletti! Wie geht es Dir?",
             "Man schlägt sich so durch!",
-            "Bestens! Wie steh's bei Dir?"
+            "Bestens! Wie steht's bei Dir?"
         ],
         "task": ""
     },
@@ -285,7 +284,7 @@
         "responses": [
             "Gerne!",
             "Jederzeit!",
-            "Ich ist mir eine Freude!",
+            "Es ist mir eine Freude!",
             "Ich bin froh, wenn ich helfen kann!"
         ],
         "task": ""
