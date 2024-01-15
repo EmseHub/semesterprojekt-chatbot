@@ -22,6 +22,8 @@ def process_task(state_running_task, tagged_tokens, intent):
 
         intent_tag = intent["tag"]
 
+        # TODO Bitte Beschreibung mit Erläuterung hinzufügen, was genau passiert hier?
+        # vermutlich Auswahl des durchzuführenden Tasks... aber durch lambda etwas unklar
         new_state_running_task, response, is_data_changed = (lambda: (
             {
                 'adresse_aendern': process_task_adresse_aendern,
@@ -32,7 +34,7 @@ def process_task(state_running_task, tagged_tokens, intent):
             }.get(running_task_name, lambda *args: [None, response, is_data_changed])
         )(state_running_task, tagged_tokens, intent_tag))()
 
-        # Task abgeschlossen oder -brochen --> Anschlussfrage ergänzen
+        # Task abgeschlossen oder abgebrochen --> Anschlussfrage ergänzen
         if not state_running_task:
             response += ' ' + get_random_item_in_list([
                 'Kann ich sonst noch etwas für Dich tun?',
