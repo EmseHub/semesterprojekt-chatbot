@@ -103,7 +103,7 @@ def autocorrect_tokens(tokens):
 # Beispiel-Liste zum Testen
 sample_tokens = ["Dase", "its", "einne", "Beispil-Nachriecht",
                  "Aber", "mit", "Fehlren", "von", "Dr.", "House"]
-sample_tokens = ["meina", "name", "Luftballon", "sauer"]
+sample_tokens = ["mein", "ist", "Zauberkunst",  "sauer"]
 
 # sample_tokens = ["Thsi", "comptuer", "extnsions"]
 
