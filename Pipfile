@@ -8,6 +8,7 @@ nltk = "*"
 hanta = "*"
 numpy = "*"
 pyspellchecker = "*"
+phunspell = "*"
 
 [dev-packages]
 
