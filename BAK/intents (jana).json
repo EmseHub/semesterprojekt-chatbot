@@ -1,0 +1,91 @@
+{
+  "intents": [
+    {
+      "tag": "hilfe",
+      "patterns": ["hilfe", "help", "was kann ich tun?", "welche aufgaben?"],
+      "responses": ["Du kannst mir einfach schreiben, bei welcher Aufgabe ich dich unterstützen kann."],
+      "context": [""],
+      "type": "chat"
+    },
+    {
+      "tag": "danke",
+      "patterns": ["danke", "dankeschön", "vielen dank"],
+      "responses": ["Sehr gerne!", "Kein Problem, gern geschehen.", "Immer wieder gerne!"],
+      "context": [""],
+      "type": "chat"
+    },
+    {
+      "tag": "begrüßung",
+      "patterns": ["hi", "hey", "hallo", "moin", "guten tag", "hello"],
+      "responses": ["Hallo!", "Guten Tag!", "Hallo, wie kann ich helfen?"],
+      "context": [""],
+      "type": "task"
+    },
+    {
+      "tag": "verabschiedung",
+      "patterns": ["tschüss", "auf wiedersehen", "bis bald", "bye", "abbrechen", "verlassen", "beenden", "exit", "stop", "stopp", "x", "leave"],
+      "responses": ["Danke für deinen Besuch! Bis zum nächsten Mal", "Auf Wiedersehen!"],
+      "context": [""],
+      "type": "chat"
+    },
+    {
+      "tag": "bestätigung",
+      "patterns": ["ja", "genau", "korrekt", "ok", "okay", "richtig"],
+      "responses": ["Danke für deine Bestätigung. Deine gewünschte Änderung wird jetzt durchgeführt."],
+      "context": [""],
+      "type": "task"
+    },
+    {
+      "tag": "verneinung",
+      "patterns": ["nein", "ne", "falsch", "nicht richtig", "nicht korrekt"],
+      "responses": ["Es tut mir leid, dann habe ich dich falsch verstanden. Bitte gib deinen Wunsch etwas genauer an."],
+      "context": [""],
+      "type": "chat"
+    },
+    {
+      "tag": "adressänderung",
+      "patterns": ["adresse", "umzug", "wohnen", "umgezogen", "wohne", "straße", "ort", "stadt", "adressänderung"],
+      "responses": ["Bitte nenne mir deine Matrikelnummer.", "Bitte gib jetzt deine neue Adresse mit Straße, Hausnummer, Ort und PLZ an.", "Bitte gib noch deine Straße und Hausnummer an.", "Bitte gib noch deinen Ort mit PLZ an.","Ist es korekt, dass deine aktuelle Adresse in folgende Adresse geändert werden soll? ...(Straße Hausnummer, Ort PLZ)", "Deine Adresse wurde erfolgreich geändert."],
+      "context": [""],
+      "type": "task"
+    },
+    {
+      "tag": "namensänderung",
+      "patterns": ["heirat", "hochzeit", "name", "nachname", "namen", "nachnamen", "geheiratet", "namensänderung"],
+      "responses": ["Bitte nenne mir deine Matrikelnummer.", "Bitte gib jetzt deinen neuen Nachnamen an.", "Ist es richtig, dass dein aktueller Nachname ... in den Namen ... geändert werden soll?", "Dein Nachname wurde erfolgreich geändert."],
+      "context": [""],
+      "type": "task"
+    },
+    {
+      "tag": "prüfungsanmeldung",
+      "patterns": ["anmelden", "anmeldung", "prüfungsanmeldung"],
+      "responses": ["Bitte nenne mir deine Matrikelnummer.", "Bitte gib den Namen des Kurses an, zu dessen Prüfung du dich anmelden wilst.", "Ist es richtig, dass ich dich zu folgender Prüfung anmelden soll? ...(Prüfungsname)", "Du wurdest erfolgreich zur Prüfung angemeldet."],
+      "context": [""],
+      "type": "task"
+    },
+    {
+      "tag": "prüfungsabmeldung",
+      "patterns": ["abmelden", "abmeldung", "prüfungsabmeldung"],
+      "responses": ["Bitte nenne mir deine Matrikelnummer.", "Bitte gib den Namen des Kurses an, zu dessen Prüfung du dich abmelden wilst.","Ist es richtig, dass ich dich von folgender Prüfung abmelden soll? ...(Prüfungsname)", "Du wurdest erfolgreich von der Prüfung abgemeldet."],
+      "context": [""],
+      "type": "task"
+    },
+    {
+      "tag": "statusabfrage",
+      "patterns": ["status", "stand", "aktuell", "aktueller", "angemeldet", "statusabfrage"],
+      "responses": ["Bitte nenne mir deine Matrikelnummer.", "Bitte gib den Namen des Kurses an, von dem du den Status deiner Prüfung wissen möchtest.", "Der Status deiner Prüfung ist folgender: Du bist zur Prüfung ...(angemeldet/abgemeldet).", "Der Status deiner Prüfung ist folgender: Du hast die Prüfung bereits abgeschlossen."],
+      "context": [""],
+      "type": "task"
+    },
+    {
+      "tag": "notenabfrage",
+      "patterns": ["note", "bestanden", "notenabfrage"],
+      "responses": ["Bitte nenne mir deine Matrikelnummer.", "Bitte gib den Namen des Kurses an, von dem du die Note deiner Prüfung wissen möchtest.", "Dazu kann ich dir leider keine Aussage geben, da du die Prüfung noch nicht bestanden hast.", "In dieser Prüfung hast du die Note ..."],
+      "context": [""],
+      "type": "task"
+    }
+
+    
+
+  ]
+}
