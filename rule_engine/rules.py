@@ -5,7 +5,7 @@ from datetime import datetime
 import re
 
 
-# Tasks
+# Ermittlung des auszuführenden Tasks & Initiierung der Funktion
 def process_task(state_running_task, tagged_tokens, intent):
 
     new_state_running_task = state_running_task
@@ -26,8 +26,7 @@ def process_task(state_running_task, tagged_tokens, intent):
 
         intent_tag = intent["tag"]
 
-        # TODO Bitte Beschreibung mit Erläuterung hinzufügen, was genau passiert hier?
-        # vermutlich Auswahl des durchzuführenden Tasks... aber durch lambda etwas unklar
+        # Funktion für den entsprechenden Task ausführen
         new_state_running_task, response, is_data_changed = (lambda: (
             {
                 'adresse_aendern': process_task_adresse_aendern,
@@ -51,9 +50,13 @@ def process_task(state_running_task, tagged_tokens, intent):
     return (new_state_running_task, response, is_data_changed)
 
 
+# ADRESSE ÄNDERN
 def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
     is_data_changed = False
 
+    # TODO: Klären: Warum sollte hier jemals "ablehnung" drinstehen? Der Tag/Name des ermittelten Intents
+    #       wird hier doch nur 1:1 weitergegeben an den anhand des oben am Intent ausgewählten Task.
+    #       D.h. wenn diese Funktion aufgerufen wurde, dann ist der Tag doch immer "adresse_aendern", oder?
     if intent_tag == 'ablehnung':
         return [None, 'Ich breche die Adressänderung ab.', is_data_changed]
 
@@ -61,6 +64,7 @@ def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
         return [state_running_task, None, is_data_changed]
 
     # Daten in Nachricht erkennen
+    # TODO: Funktion get_missing_student_information() implementieren
     obj_detected_data, str_query = get_missing_student_or_address_from_message(
         {**state_running_task.params}, tagged_tokens
     )
@@ -87,6 +91,8 @@ def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
         return [state_running_task, str_response, is_data_changed]
 
     # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
+
+    # TODO: Soll "live" hier bedeuten, dass der Student sich mit seiner MatNr. authentisiert hat?
     obj_student_live = next(
         (s for s in students if s.matnr == obj_detected_data.objStudent.matnr), None)
     if obj_student_live:
@@ -97,6 +103,7 @@ def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
     return [None, 'Vielen Dank, die Adresse wurde geändert.', is_data_changed]
 
 
+# NACHNAME ÄNDERN
 def process_task_nachname_aendern(state_running_task, tagged_tokens, intent_tag):
     is_data_changed = False
 
@@ -138,6 +145,7 @@ def process_task_nachname_aendern(state_running_task, tagged_tokens, intent_tag)
     return [None, 'Vielen Dank, dein Nachname wurde geändert.', is_data_changed]
 
 
+# PRÜFUNG ANMELDEN
 def process_task_pruefung_anmelden(state_running_task, tagged_tokens, intent_tag):
     is_data_changed = False
 
@@ -193,6 +201,7 @@ def process_task_pruefung_anmelden(state_running_task, tagged_tokens, intent_tag
     return [None, 'Die Prüfung wurde erfolgreich angemeldet.', is_data_changed]
 
 
+# PRÜFUNG ABMELDEN
 def process_task_pruefung_abmelden(state_running_task, tagged_tokens, intent_tag):
     is_data_changed = False
 
@@ -252,6 +261,7 @@ def process_task_pruefung_abmelden(state_running_task, tagged_tokens, intent_tag
     return [None, 'Die Prüfung wurde erfolgreich abgemeldet.', is_data_changed]
 
 
+# PRÜFUNGSSTATUS ABFRAGEN
 def process_task_pruefung_status(state_running_task, tagged_tokens, intent_tag):
     is_data_changed = False
 
