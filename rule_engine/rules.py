@@ -1,21 +1,8 @@
+from data_service import students, courses
 from helpers import get_random_item_in_list
+
 from datetime import datetime
-import json
 import re
-
-with open('../data/data-courses.json') as courses_file:
-    courses_data = json.load(courses_file)
-    assert courses_data.get('type') == 'json'
-
-with open('../data/data-students.json') as students_file:
-    students_data = json.load(students_file)
-    assert students_data.get('type') == 'json'
-
-arr_courses = courses_data
-arr_students = [
-    {**student, 'letztesUpdate': datetime.fromisoformat(student['letztesUpdate'])}
-    for student in students_data
-]
 
 
 # Tasks
@@ -80,7 +67,8 @@ def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
     state_running_task.params = obj_detected_data
 
     # Prüfen, ob alle Daten vorliegen
-    arr_address_keys = ['strasse', 'hausnr', 'stadt', 'plz']  # Staat außen vor da erstmal nur Deutschland
+    # Staat außen vor da erstmal nur Deutschland
+    arr_address_keys = ['strasse', 'hausnr', 'stadt', 'plz']
     if not (
         obj_detected_data.objStudent
         or obj_detected_data.objAddress
@@ -91,16 +79,19 @@ def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
     if intent_tag != 'zustimmung':
         str_response = (
-            f'Nun denn, {obj_detected_data.objStudent.vorname.split(" ")[0]}, ich ändere Deine Adresse zu "{obj_detected_data.objAddress.strasse} '
-            f'{obj_detected_data.objAddress.hausnr}, {obj_detected_data.objAddress.plz} {obj_detected_data.objAddress.stadt}", okay?'
+            f'Nun denn, {obj_detected_data.objStudent.vorname.split(
+                " ")[0]}, ich ändere Deine Adresse zu "{obj_detected_data.objAddress.strasse} '
+            f'{obj_detected_data.objAddress.hausnr}, {obj_detected_data.objAddress.plz} {
+                obj_detected_data.objAddress.stadt}", okay?'
         )
         return [state_running_task, str_response, is_data_changed]
 
     # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
-    obj_student_live = next((s for s in arr_students if s.matnr == obj_detected_data.objStudent.matnr), None)
+    obj_student_live = next(
+        (s for s in students if s.matnr == obj_detected_data.objStudent.matnr), None)
     if obj_student_live:
         obj_student_live.adresse = {**obj_detected_data.objAddress}
-        obj_student_live.letztesUpdate = datetime.datetime.now()
+        obj_student_live.letztesUpdate = datetime.datetime.now().isoformat()
         is_data_changed = True
 
     return [None, 'Vielen Dank, die Adresse wurde geändert.', is_data_changed]
@@ -131,15 +122,17 @@ def process_task_nachname_aendern(state_running_task, tagged_tokens, intent_tag)
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
     if intent_tag != 'zustimmung':
         str_response = (
-            f'Nun denn, {obj_detected_data.objStudent.vorname.split(" ")[0]}, ich ändere Deinen Nachnamen zu "{obj_detected_data.objStudent.nachname}", okay?'
+            f'Nun denn, {obj_detected_data.objStudent.vorname.split(" ")[0]}, ich ändere Deinen Nachnamen zu "{
+                obj_detected_data.objStudent.nachname}", okay?'
         )
         return [state_running_task, str_response, is_data_changed]
 
     # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
-    obj_student_live = next((s for s in arr_students if s.matnr == obj_detected_data.objStudent.matnr), None)
+    obj_student_live = next(
+        (s for s in students if s.matnr == obj_detected_data.objStudent.matnr), None)
     if obj_student_live:
         obj_student_live.nachname = {**obj_detected_data.objStudent}
-        obj_student_live.letztesUpdate = datetime.datetime.now()
+        obj_student_live.letztesUpdate = datetime.datetime.now().isoformat()
         is_data_changed = True
 
     return [None, 'Vielen Dank, dein Nachname wurde geändert.', is_data_changed]
@@ -168,27 +161,33 @@ def process_task_pruefung_anmelden(state_running_task, tagged_tokens, intent_tag
     # Prüfen, ob Kurs dem User bereits zugeordnet ist, und wenn ja, ob die Prüfung noch nicht bestanden und noch nicht angemeldet ist
     if obj_existing_pruefung:
         if obj_existing_pruefung['note'] is not None:
-            str_response = f"{obj_student['vorname'].split(' ')[0]}, Du hast die Prüfung im Fach \"{obj_course['name']}\" bereits mit der Note {obj_existing_pruefung['note']:.1f} bestanden."
+            str_response = f"{obj_student['vorname'].split(' ')[0]}, Du hast die Prüfung im Fach \"{
+                obj_course['name']}\" bereits mit der Note {obj_existing_pruefung['note']:.1f} bestanden."
             return [None, str_response, is_data_changed]
 
         if obj_existing_pruefung['isAngemeldet']:
-            str_response = f"{obj_student['vorname'].split(' ')[0]}, die Prüfung im Fach \"{obj_course['name']}\" ist bereits angemeldet."
+            str_response = f"{obj_student['vorname'].split(' ')[0]}, die Prüfung im Fach \"{
+                obj_course['name']}\" ist bereits angemeldet."
             return [None, str_response, is_data_changed]
 
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
     if intent_tag != 'zustimmung':
-        str_response = f"Okay {obj_student['vorname'].split(' ')[0]}, möchtest Du die Prüfung im Fach \"{obj_course['name']}\" bei {obj_course['lehrperson']} verbindlich anmelden?"
+        str_response = f"Okay {obj_student['vorname'].split(' ')[0]}, möchtest Du die Prüfung im Fach \"{
+            obj_course['name']}\" bei {obj_course['lehrperson']} verbindlich anmelden?"
         return [state_running_task, str_response, is_data_changed]
 
     # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
-    obj_student_live = next((s for s in arr_students if s['matnr'] == obj_student['matnr']), None)
+    obj_student_live = next(
+        (s for s in students if s['matnr'] == obj_student['matnr']), None)
     if obj_existing_pruefung:
-        next(p for p in obj_student_live['pruefungen'] if p['kursID'] == obj_course['id'])['isAngemeldet'] = True
+        next(p for p in obj_student_live['pruefungen'] if p['kursID'] == obj_course['id'])[
+            'isAngemeldet'] = True
     else:
-        obj_new_pruefung = {'kursID': obj_course['id'], 'isAngemeldet': True, 'note': None}
+        obj_new_pruefung = {
+            'kursID': obj_course['id'], 'isAngemeldet': True, 'note': None}
         obj_student_live['pruefungen'].append(obj_new_pruefung)
 
-    obj_student_live['letztesUpdate'] = datetime.now()
+    obj_student_live['letztesUpdate'] = datetime.now().isoformat()
     is_data_changed = True
 
     return [None, 'Die Prüfung wurde erfolgreich angemeldet.', is_data_changed]
@@ -217,7 +216,8 @@ def process_task_pruefung_abmelden(state_running_task, tagged_tokens, intent_tag
     # Prüfen, ob der Kurs dem User zugeordnet und die Prüfung angemeldet ist
     if not obj_existing_pruefung or not obj_existing_pruefung['isAngemeldet']:
         str_response = (
-            f"{obj_student['vorname'].split(' ')[0]}, Du kannst die Prüfung im Fach \"{obj_course['name']}\" nicht abmelden, "
+            f"{obj_student['vorname'].split(' ')[0]}, Du kannst die Prüfung im Fach \"{
+                obj_course['name']}\" nicht abmelden, "
             "da Du gar nicht angemeldet bist."
         )
         return [None, str_response, is_data_changed]
@@ -225,23 +225,28 @@ def process_task_pruefung_abmelden(state_running_task, tagged_tokens, intent_tag
     # Prüfen, ob der Kurs noch nicht bestanden ist
     if obj_existing_pruefung['note'] is not None:
         str_response = (
-            f"{obj_student['vorname'].split(' ')[0]}, Du kannst die Prüfung im Fach \"{obj_course['name']}\" nicht abmelden, "
-            f"da Du sie bereits mit der Note {obj_existing_pruefung['note']:.1f} bestanden hast."
+            f"{obj_student['vorname'].split(' ')[0]}, Du kannst die Prüfung im Fach \"{
+                obj_course['name']}\" nicht abmelden, "
+            f"da Du sie bereits mit der Note {
+                obj_existing_pruefung['note']:.1f} bestanden hast."
         )
         return [None, str_response, is_data_changed]
 
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
     if intent_tag != 'zustimmung':
         str_response = (
-            f"Okay {obj_student['vorname'].split(' ')[0]}, möchtest Du die Prüfung im Fach \"{obj_course['name']}\" "
+            f"Okay {obj_student['vorname'].split(' ')[0]}, möchtest Du die Prüfung im Fach \"{
+                obj_course['name']}\" "
             f"bei {obj_course['lehrperson']} wirklich abmelden?"
         )
         return [state_running_task, str_response, is_data_changed]
 
     # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
-    obj_student_live = next((s for s in arr_students if s['matnr'] == obj_student['matnr']), None)
-    next(p for p in obj_student_live['pruefungen'] if p['kursID'] == obj_course['id'])['isAngemeldet'] = False
-    obj_student_live['letztesUpdate'] = datetime.now()
+    obj_student_live = next(
+        (s for s in students if s['matnr'] == obj_student['matnr']), None)
+    next(p for p in obj_student_live['pruefungen'] if p['kursID'] == obj_course['id'])[
+        'isAngemeldet'] = False
+    obj_student_live['letztesUpdate'] = datetime.now().isoformat()
     is_data_changed = True
 
     return [None, 'Die Prüfung wurde erfolgreich abgemeldet.', is_data_changed]
@@ -269,18 +274,21 @@ def process_task_pruefung_status(state_running_task, tagged_tokens, intent_tag):
 
     # Annahme, dass der Kurs angemeldet ist
     str_response = (
-        f"{obj_student['vorname'].split(' ')[0]}, die Prüfung im Fach \"{obj_course['name']}\" ist angemeldet und noch nicht bestanden."
+        f"{obj_student['vorname'].split(' ')[0]}, die Prüfung im Fach \"{
+            obj_course['name']}\" ist angemeldet und noch nicht bestanden."
     )
 
     # Prüfen, ob der Kurs wirklich dem User zugeordnet und die Prüfung angemeldet ist
     if not obj_existing_pruefung or not obj_existing_pruefung['isAngemeldet']:
         str_response = (
-            f"{obj_student['vorname'].split(' ')[0]}, die Prüfung im Fach \"{obj_course['name']}\" ist weder angemeldet noch bestanden."
+            f"{obj_student['vorname'].split(' ')[0]}, die Prüfung im Fach \"{
+                obj_course['name']}\" ist weder angemeldet noch bestanden."
         )
     # Prüfen, ob der Kurs bestanden ist
     elif obj_existing_pruefung['note'] is not None:
         str_response = (
-            f"Glückwunsch {obj_student['vorname'].split(' ')[0]}, Du hast die Prüfung im Fach \"{obj_course['name']}\" "
+            f"Glückwunsch {obj_student['vorname'].split(' ')[0]}, Du hast die Prüfung im Fach \"{
+                obj_course['name']}\" "
             f"mit der Note {obj_existing_pruefung['note']:.1f} bestanden."
         )
 
