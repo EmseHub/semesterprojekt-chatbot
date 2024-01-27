@@ -4,14 +4,57 @@ from helpers import get_random_item_in_list
 from datetime import datetime
 import re
 
+# region     --------------------------- Daten ermitteln ---------------------------
 
-# Ermittlung des auszuführenden Tasks & Initiierung der Funktion
+
+def get_missing_student_information(current_task: str, message: str):
+    '''[Prototyp Alternative] Zusammengeführte Funktion zum Abfragen aller fehlenden Informationen
+    : Erfragt fehlende Informationen vom Studenten und gibt diese als Dictionary zurück.
+    : 
+    '''
+    result = {}
+
+    # ermitteln, welche Informationen fehlen/abgefragt werden sollen
+    match current_task:
+        case "adresse_aendern":
+            # todo
+            result = {}
+        case "nachname_aendern":
+            # todo
+            result = {}
+        case "pruefung_status":
+            # todo
+            result = {}
+        case "pruefung_anmelden":
+            # todo
+            result = {}
+        case "pruefung_abmelden":
+            # todo
+            result = {}
+
+    return result
+
+
+def get_missing_student_or_address_from_message():
+    '''Fehlende Informationen (Matrikelnummer oder Adresse) vom Studenten abfragen. 
+    '''
+    return None
+
+# endregion  --------------------------- Daten ermitteln ---------------------------
+
+
+# region --------------------------- Task-Funtkionen ---------------------------
+
+
 def process_task(state_running_task, tagged_tokens, intent):
+    '''Ermittlung des auszuführenden Tasks & Initiierung der Funktion'''
 
+    # Auf ursprünglichen Task zurückfallen, falls sich kein neuer Task ergibt
     new_state_running_task = state_running_task
     response = None
     is_data_changed = False
 
+    # Leere Eingabe, kein Intent ermittelt --> kein Task ausführbar
     if not tagged_tokens:
         return (new_state_running_task, response, is_data_changed)
 
@@ -54,7 +97,8 @@ def process_task(state_running_task, tagged_tokens, intent):
 def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
     is_data_changed = False
 
-    # TODO: Klären: Warum sollte hier jemals "ablehnung" drinstehen? Der Tag/Name des ermittelten Intents
+    # TODO: Prüfung fehlt noch
+    #       Klären: Warum sollte hier jemals "ablehnung" drinstehen? Der Tag/Name des ermittelten Intents
     #       wird hier doch nur 1:1 weitergegeben an den anhand des oben am Intent ausgewählten Task.
     #       D.h. wenn diese Funktion aufgerufen wurde, dann ist der Tag doch immer "adresse_aendern", oder?
     if intent_tag == 'ablehnung':
@@ -303,3 +347,6 @@ def process_task_pruefung_status(state_running_task, tagged_tokens, intent_tag):
         )
 
     return [None, str_response, is_data_changed]
+
+
+# endregion --------------------------- Task-Funtkionen ---------------------------
