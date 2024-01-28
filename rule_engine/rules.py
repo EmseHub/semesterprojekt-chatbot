@@ -1,8 +1,10 @@
-from data.data_service import students, courses
-from helpers.helpers import get_random_item_in_list
 
 from datetime import datetime
 import re
+
+from rule_engine.data_service import students, courses
+from rule_engine.helpers import get_random_item_in_list
+
 
 # region     --------------------------- Daten ermitteln ---------------------------
 

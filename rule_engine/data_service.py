@@ -1,4 +1,4 @@
-from helpers.helpers import parse_json_file
+from rule_engine.helpers import parse_json_file
 
 
 def get_students():

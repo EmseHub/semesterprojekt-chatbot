@@ -1,4 +1,4 @@
-from helpers.helpers import parse_json_file
+from rule_engine.helpers import parse_json_file
 
 parsed_intents = parse_json_file('rule_engine/intents.json')
 

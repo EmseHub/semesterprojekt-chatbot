@@ -1,7 +1,7 @@
 import re
 
-from data.data_service import students, courses
-from helpers.helpers import get_random_item_in_list
+from rule_engine.data_service import students, courses
+from rule_engine.helpers import get_random_item_in_list
 
 students = []
 
