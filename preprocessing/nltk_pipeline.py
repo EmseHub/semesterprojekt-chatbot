@@ -7,8 +7,10 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk import pos_tag, RegexpParser
 from HanTa import HanoverTagger as hanta
 
-# from .spelling_correction import autocorrect_tokens
+from .spelling_correction import autocorrect_word
+# from spelling_correction import autocorrect_word
 
+words_not_to_process = ['Muggel']
 hanover_tagger = hanta.HanoverTagger("morphmodel_ger.pgz")
 
 
@@ -56,9 +58,6 @@ def get_tagged_tokens_with_ner(raw_text):
     # Electra?
 
 
-# print(get_tagged_tokens_with_ner(""))
-
-
 def get_tagged_tokens(raw_text):
 
     diagnostic = {}
@@ -67,30 +66,35 @@ def get_tagged_tokens(raw_text):
     # Mehrfache Leerzeichen, Tabs und Zeilenumbrüche mit RegEx auf ein Leerzeichen reduzieren
     clean_text = re.sub("\\s+", " ", raw_text)
 
-    # Tokenization
-    tokens_sentence = sent_tokenize(clean_text, language)
-    tokens_word = word_tokenize(clean_text, language)
+    # Tokenization auf Wort-Ebene
+    tokens_original = word_tokenize(clean_text, language)
+    # tokens_sentence = sent_tokenize(clean_text, language)
 
     # Satzzeichen entfernen
-    filtered_tokens_word = [
-        token for token in tokens_word if token not in string.punctuation
+    tokens_original = [
+        token for token in tokens_original if token not in string.punctuation
     ]
 
-    # # Stop-Words entfernen (case-insensitive besser?)
-    # filtered_tokens_word = [
-    #     token for token in filtered_tokens_word if token not in stopwords.words(language)
+    # Tokens, die eine Mindestanzahl an Zeichen unterschreite entfernen
+    tokens_original = [
+        token for token in tokens_original if len(token) > 1
+    ]
+
+    # Stop-Words entfernen (case-insensitive besser?) --> Stop-Words nach HanTa erneut entfernen, anhand lemmata/Korrektur?
+    # tokens_original = [
+    #     token for token in tokens_original if token not in stopwords.words(language)
     # ]
 
-    # Tokens, die eine Mindestanzahl an Zeichen unterschreite entfernen
-    filtered_tokens_word = [
-        token for token in filtered_tokens_word if len(token) > 1
+    # Rechtschreibkorrektur
+    tokens_corrected = [
+        token if ("." in token or token in words_not_to_process) else autocorrect_word(token) for token in tokens_original
     ]
 
     # Parts-of-Speech-Tagging
 
     # ---NLTK---
     # Nur Englisch und Russisch
-    # tagged_tokens = pos_tag(filtered_tokens_word)
+    # tagged_tokens = pos_tag(tokens_original)
 
     # ---Hanover Tagger---
     # Deutsch, Niederländisch und Englisch
@@ -112,18 +116,30 @@ def get_tagged_tokens(raw_text):
 
     taglevel = 1  # Default ist 1
     casesensitive = False  # Default ist True
-    tagged_tokens = hanover_tagger.tag_sent(
-        filtered_tokens_word, taglevel, casesensitive
+    tokens_hannover_tagged = hanover_tagger.tag_sent(
+        tokens_corrected, taglevel, casesensitive
     )
+    # Ausgabe zu "wurde" ist etwa ('wurde', 'werden', 'VA(FIN)'
 
     # ---Weitere Optionen---
     # "Pattern" Library des CLiPS Research Center
     # https://datascience.blog.wzb.eu/2016/07/13/accurate-part-of-speech-tagging-of-german-texts-with-nltk/
 
-    # Stop Words erneut entfernen, anhand lemmata?
+    # Tags je Token zusammenführen und als Liste ausgeben
+    result_tagged_tokens = [
+        {
+            "original": tokens_original[i],
+            "korrigiert": tokens_corrected[i],
+            "lemma": tokens_hannover_tagged[i][1],
+            "pos": tokens_hannover_tagged[i][2]
+        }
+        for i in range(len(tokens_original))
+    ]
 
-    # Named-Entity-Recognition (Personen, Orte und Organisationen) --> In Regelsystem ausgelagert, damit bei unvollständigen Entitäten direkt Rückfragen gestellt werden können
-    # Benötigte Entitäten: Personen, Mat.-Nr, ...
+    return (result_tagged_tokens, diagnostic)
 
-    return ([tagged_token[0] for tagged_token in tagged_tokens], diagnostic)
-    # print(" ".join(filtered_tokens_word))
+
+# sample_message = "mein ist Muggel sauer"
+# sample_message = "Das ist eine Beispiel-Nachricht, Aber mit Fehlren und  Leerzeichen. Sie wurde z.B. verfasst von Dr. House und Mr. X, während der Hg. Homer ist."
+# print('---get_tagged_tokens(sample_message)----')
+# print(get_tagged_tokens(sample_message))
