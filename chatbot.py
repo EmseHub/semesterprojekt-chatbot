@@ -1,10 +1,13 @@
 from preprocessing import nltk_pipeline
-from rule_engine import intent_matching, rules
+from rule_engine import intent_matching, rules, entity_detection
 
 state_running_task = {}
 
 
 def get_response(message):
+    # Temp-Test:
+    return "NUR TEST!"
+
     (tagged_tokens, diagnostic) = nltk_pipeline.get_tagged_tokens(message)
     print("---Tagged Tokens---\n", tagged_tokens)
     print("---Diagnostic---\n", diagnostic)
