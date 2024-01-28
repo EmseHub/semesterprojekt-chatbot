@@ -1,4 +1,4 @@
-from helpers import parse_json_file
+from helpers.helpers import parse_json_file
 
 
 def get_students():
@@ -17,5 +17,6 @@ def set_courses(courses):
     pass
 
 
+# Zu Testzwecken zur Laufzeit gespeichert
 students = get_students()
 courses = get_courses()

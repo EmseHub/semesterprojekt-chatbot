@@ -1,5 +1,5 @@
-from data_service import students, courses
-from helpers import get_random_item_in_list
+from data.data_service import students, courses
+from helpers.helpers import get_random_item_in_list
 
 from datetime import datetime
 import re

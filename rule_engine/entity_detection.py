@@ -1,8 +1,9 @@
 import re
 
-from data_service import students, courses
-from helpers import get_random_item_in_list
+from data.data_service import students, courses
+from helpers.helpers import get_random_item_in_list
 
+students = []
 
 test_a = [
     {'original': 'Das', 'korrigiert': 'Das', 'lemma': 'der', 'pos': 'PDS'},
