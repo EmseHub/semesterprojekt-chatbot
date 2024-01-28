@@ -34,20 +34,20 @@
 
 #       https://github.com/sagorbrur/bengali_pyspellchecker
 
-    #from spellchecker import SpellChecker
-    #spell = SpellChecker(language='de')
+# from spellchecker import SpellChecker
+# spell = SpellChecker(language='de')
 
-    #corrected_word = spell.correction(word)
-    # print(corrected_word)
-    #print(spell.candidates(word))
+# corrected_word = spell.correction(word)
+# print(corrected_word)
+# print(spell.candidates(word))
 
-    #Falsche/fehlerhaftes Wort identifizieren
-    #corrected_word = spell.correction(word)
-    
-    #if corrected_word != None:
-     #   print("Korrektur: " + corrected_word)
-    #else:
-    #    print("Kein Fehler: " + word)
+# Falsche/fehlerhaftes Wort identifizieren
+# corrected_word = spell.correction(word)
+
+# if corrected_word != None:
+#   print("Korrektur: " + corrected_word)
+# else:
+#    print("Kein Fehler: " + word)
 
 
 #   HUNSPELL *********************************************************************
@@ -70,41 +70,17 @@
 import phunspell
 pspell = phunspell.Phunspell('de_DE')
 
+
 def autocorrect_word(word):
-
-    #Prüft, ob Wort bekannt/im Wörterbuch vorhanden (true/false)
+    # Prüft, ob Wort bekannt/im Wörterbuch vorhanden (true/false)
     if pspell.lookup(word) == False:
-        suggestions = pspell.suggest(word)
-
-        for index, suggestions in enumerate(suggestions):
-            if index == 0:
-                return suggestions
-
-        #for index, element in enumerate(suggestions):
-            #print(index, ":", element)
+        for suggestion in pspell.suggest(word):
+            return suggestion
     else:
         return word
 
 
-
-def autocorrect_tokens(tokens):
-    if not tokens:
-        # Liste ist leer...
-        return []
-
-    corrected_tokens = []
-    for token in tokens:
-        corrected_token = autocorrect_word(token)
-        corrected_tokens.append(corrected_token)
-
-    return corrected_tokens
-
-
 # Beispiel-Liste zum Testen
-sample_tokens = ["Dase", "its", "einne", "Beispil-Nachriecht",
-                 "Aber", "mit", "Fehlren", "von", "Dr.", "House"]
-sample_tokens = ["mein", "ist", "Zauberkunst",  "sauer"]
-
-# sample_tokens = ["Thsi", "comptuer", "extnsions"]
-
-print(autocorrect_tokens(sample_tokens))
+# sample_tokens = ["Dase", "its", "einne", "Beispil-Nachriecht", "Aber", "mit", "Fehlren", "von", "Dr.", "House"]
+# sample_tokens = ["meina", "its", "Muggel",  "saure"]
+# print([autocorrect_word(token) for token in sample_tokens])
