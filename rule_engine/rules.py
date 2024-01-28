@@ -47,7 +47,7 @@ def get_missing_student_or_address_from_message():
 
 # region --------------------------- Task-Funtkionen ---------------------------
 
-
+# TASK WÄHLEN
 def process_task(state_running_task, tagged_tokens, intent):
     '''Ermittlung des auszuführenden Tasks & Initiierung der Funktion'''
 
@@ -60,6 +60,7 @@ def process_task(state_running_task, tagged_tokens, intent):
     if not tagged_tokens:
         return (new_state_running_task, response, is_data_changed)
 
+    # Prozess anstoßen, falls noch ein Task vorliegt oder für den Intent vorgesehen ist
     if (state_running_task or intent["task"]):
         if not state_running_task:
             state_running_task = {"name": intent.task, "params": {}}
@@ -71,7 +72,7 @@ def process_task(state_running_task, tagged_tokens, intent):
 
         intent_tag = intent["tag"]
 
-        # Funktion für den entsprechenden Task ausführen
+        # Funktion/Prozess für den entsprechenden Task auswählen
         new_state_running_task, response, is_data_changed = (lambda: (
             {
                 'adresse_aendern': process_task_adresse_aendern,
@@ -89,6 +90,8 @@ def process_task(state_running_task, tagged_tokens, intent):
                 'Darf es sonst noch etwas sein?',
                 'Hast Du weitere Anliegen?'
             ])
+
+    # Kein Task für den Intent erforderlich --> Antwort auswählen
     else:
         response = get_random_item_in_list(intent["responses"])
 
@@ -99,10 +102,6 @@ def process_task(state_running_task, tagged_tokens, intent):
 def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
     is_data_changed = False
 
-    # TODO: Prüfung fehlt noch
-    #       Klären: Warum sollte hier jemals "ablehnung" drinstehen? Der Tag/Name des ermittelten Intents
-    #       wird hier doch nur 1:1 weitergegeben an den anhand des oben am Intent ausgewählten Task.
-    #       D.h. wenn diese Funktion aufgerufen wurde, dann ist der Tag doch immer "adresse_aendern", oder?
     if intent_tag == 'ablehnung':
         return [None, 'Ich breche die Adressänderung ab.', is_data_changed]
 
@@ -138,12 +137,12 @@ def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
 
     # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
 
-    # TODO: Soll "live" hier bedeuten, dass der Student sich mit seiner MatNr. authentisiert hat?
-    obj_student_live = next(
+    # Prüfen, ob der richtige Student erkannt wurde (wurde zuvor bereits die richtige Matr.Nr. genannt)
+    obj_aktueller_student = next(
         (s for s in students if s.matnr == obj_detected_data.objStudent.matnr), None)
-    if obj_student_live:
-        obj_student_live.adresse = {**obj_detected_data.objAddress}
-        obj_student_live.letztesUpdate = datetime.datetime.now().isoformat()
+    if obj_aktueller_student:
+        obj_aktueller_student.adresse = {**obj_detected_data.objAddress}
+        obj_aktueller_student.letztesUpdate = datetime.datetime.now().isoformat()
         is_data_changed = True
 
     return [None, 'Vielen Dank, die Adresse wurde geändert.', is_data_changed]
