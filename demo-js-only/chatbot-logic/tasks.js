@@ -16,14 +16,18 @@ function getStudentFromMessage(strMessageProcessed) {
         objResult.strQuery = getRandomItemInArray(['Ich bräuchte noch Deine Matrikelnummer.', 'Verrätst Du mir noch Deine Matrikelnummer?',]);
         return objResult;
     }
-    // Prüfen, ob Nummer einer Matrikelnummer entspricht
+    // Prüfen, ob Nummern im Text bekannten Matrikelnummern entsprechen
     const arrMatchingStudents = arrStudents.filter(s => arrNumbersInMessage.indexOf(s.matnr) !== -1);
     if (arrMatchingStudents.length === 0) {
         objResult.strQuery = 'Die angegebene Zahl stimmt mit keiner Matrikelnummer überein. Gib bitte Deine vollständige Matrikelnummer an.';
         return objResult;
     }
-    // Richtigen Treffer auswählen
-    objResult.objStudent = arrMatchingStudents.reduce((bestObj, curObj) => ((bestObj.matnr).length >= (curObj.matnr).length) ? bestObj : curObj);
+    if (arrMatchingStudents.length > 1) {
+        objResult.strQuery = 'Welche der angegebenen Matrikelnummern gehört zu Dir? Gib sie bitte erneut an.';
+        return objResult;
+    }
+    // Student eindeutig ermittelt
+    objResult.objStudent = arrMatchingStudents[0];
     return objResult;
 }
 
