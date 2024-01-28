@@ -15,28 +15,36 @@ def get_response(message):
     intent = intent_matching.get_intent(tagged_tokens)
     print("---Gefundener Intent---\n", intent)
 
-    (new_state_running_task, query, is_data_changed) = rules.process_task(
+    (new_state_running_task, response, is_data_changed) = rules.process_task(
         state_running_task, tagged_tokens, intent
     )
+    # TODO: state_running_task müsste hier noch mit dem neuen Wert überschrieben werden, damit ein ggf. neuer oder weiterhin
+    # bestehender Task in der neuen Iteration wieder an die Funktion process_task übergeben und dann weiter bearbeitet wird (?).
     print("---Running-Task---\n", new_state_running_task)
-    print("---Rückfrage---\n", query)
+    print("---Rückfrage---\n", response)
     print("---Daten verändert?---\n", is_data_changed)
 
     # print(tagged_tokens)
     # print(diagnostic)
     # print(new_state_running_task)
     # print(query)
-    return "TO DO"
+
+    # response ("query") ausgeben
+    return response
 
 
-# Input via Terminal (später ersetzt durch String vom Frontend)
-while True:
-    # message = input()
-    # print("Eingabe:\n" + message)
-    # if message.lower() == "exit":
-    #     break
+# COMMAND PROMPT EXEC
+if __name__ == "__main__":
+    # print("Okay, lass uns per Terminal chatten! (type 'exit' to cancel)")
+    while True:
+        # message = input()
+        # if message.lower() == "exit":
+        #     break
 
-    sample_message = "Das ist eine Beispiel-Nachricht, Aber mit Fehlren und  Leerzeichen. Sie wurde z.B. verfasst von Dr. House und Mr. X, während der Hg. Homer ist."
-    response = get_response(sample_message.strip())
-    # print(response)
-    break
+        # response = get_response(message.strip())
+        # print(response)
+
+        sample_message = "Das ist eine Beispiel-Nachricht, Aber mit Fehlren und  Leerzeichen. Sie wurde z.B. verfasst von Dr. House und Mr. X, während der Hg. Homer ist."
+        response = get_response(sample_message.strip())
+        print(response)
+        break
