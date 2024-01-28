@@ -9,6 +9,7 @@ hanta = "*"
 numpy = "*"
 pyspellchecker = "*"
 phunspell = "*"
+flask = "*"
 
 [dev-packages]
 
