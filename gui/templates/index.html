@@ -5,6 +5,34 @@
     <title>Test</title>
 </head>
 <body>
-    <h1>Hallo Leon!</h1>
+    <h1 id="heading">&copy;Hatbot</h1>
+    <hr>
+
+    <div id="container">
+        <div id="chat-area">
+            <div id="messages">
+                bisheriger Chat-Content
+                
+            </div>
+            <br>
+            <!-- test: show latest message -->
+            <div id="latest-message">
+                latest message
+            </div>
+            <div id="chat-input">
+
+                <form action="/response" method="post">
+                    <input type="text" id="input-message" name="message" placeholder="Schreibe deine Nachricht!">
+                    <input type="submit" id="btn-send-message" value="Senden">
+                </form>
+            </div>
+            
+        </div>
+
+
+
+
+    </div>
+
 </body>
 </html>
