@@ -1,9 +1,9 @@
 import re
 
 from rule_engine.data_service import students, courses
-from rule_engine.helpers import get_random_item_in_list
+from rule_engine.helpers import get_random_item_in_list, replace_diacritics
 
-students = []
+# Hinweis: Parameter "message_processed" bedeutet, dass Umlaute ersetzt wurden und Text in Lower Case ist
 
 test_a = [
     {'original': 'Das', 'korrigiert': 'Das', 'lemma': 'der', 'pos': 'PDS'},
@@ -38,43 +38,72 @@ test_a = [
 ]
 
 
-def get_student_from_message(message_processed):
-    obj_result = {"student": None, "query": ""}
+def detect_student_in_message(message_processed):
+    result = {"student": None, "query": ""}
 
     if not message_processed or not message_processed.strip():
-        return obj_result
+        return result
 
     # Prüfen, ob Nachricht Nummern enthält
     min_length_matnr = 6
     numbers_in_message = re.findall(r'\d+', message_processed)
 
     if not numbers_in_message or not any(len(nr) >= min_length_matnr for nr in numbers_in_message):
-        obj_result["query"] = get_random_item_in_list(
-            [
-                'Ich bräuchte noch Deine Matrikelnummer.',
-                'Verrätst Du mir noch Deine Matrikelnummer?'
-            ]
-        )
-        return obj_result
+        result["query"] = get_random_item_in_list([
+            "Ich bräuchte noch Deine Matrikelnummer.",
+            "Verrätst Du mir noch Deine Matrikelnummer?"
+        ])
+        return result
 
     # Prüfen, ob Nummern im Text bekannten Matrikelnummern entsprechen
     matching_students = [
-        s for s in students if (s["matnr"] in numbers_in_message)
+        student for student in students if (student["matnr"] in numbers_in_message)
     ]
 
     if not matching_students:
-        obj_result["query"] = 'Die angegebene Zahl stimmt mit keiner Matrikelnummer überein. Gib bitte Deine vollständige Matrikelnummer an.'
-        return obj_result
+        result["query"] = "Die angegebene Zahl stimmt mit keiner Matrikelnummer überein. Gib bitte Deine vollständige Matrikelnummer an."
+        return result
 
     if len(matching_students) > 1:
-        obj_result["query"] = 'Welche der angegebenen Matrikelnummern gehört zu Dir? Gib sie bitte erneut an.'
-        return obj_result
+        result["query"] = f"Welche der {len(
+            matching_students)} angegebenen Matrikelnummern gehört zu Dir? Gib sie bitte erneut an."
+        return result
 
-    # Student eindeutig zugeordnet
-    obj_result["student"] = matching_students[0]
-    return obj_result
+    # Student eindeutig ermittelt
+    result["student"] = matching_students[0]
+    return result
 
 
-test_result = get_student_from_message('1234567 1122334')
-print('---test_result---')
-print(test_result)
+def detect_course_in_message(message_processed):
+    result = {"course": None, "query": ""}
+
+    if not message_processed or not message_processed.strip():
+        return result
+
+    # Prüfen, ob die Nachricht den Namen des Kurses enthält
+    matching_courses = [
+        course for course in courses if replace_diacritics(course["name"].lower()) in message_processed
+    ]
+
+    if not matching_courses:
+        result["query"] = get_random_item_in_list([
+            "Wie lautet der Name des Kurses genau?",
+            "Wie ist die genaue Bezeichnung des Kurses?"
+        ])
+        return result
+
+    # Richtigen Treffer auswählen (Wenn Eingabe "Mathe Teil 2" ist, gibt es Treffer bei den Kursen "Mathe Teil 2" und "Mathe" --> Korrekt ist immer der Kurs mit dem längsten Namen)
+    result["course"] = max(
+        matching_courses, key=lambda course: len(course["name"])
+    )
+
+    return result
+
+
+student_test_result = detect_student_in_message("1234567 1122334")
+print("---student_test_result---")
+print(student_test_result)
+
+course_test_result = detect_course_in_message("muggelkunde")
+print("---course_test_result---")
+print(course_test_result)
