@@ -297,13 +297,13 @@
             "chatbot",
             "funktionen",
             "anbieten",
-            "können",
+            "koennen",
             "welche",
             "helfen"
         ],
         "responses": [
-            "Bei mir bist du genau richtig! Ich bin ein (C)hatbot der besonderen Art und helfe dir bei deinem Studentenleben in Hogwarts. Wenn du willst, kann ich zum Beispiel für dich Prüfungen an- und abmelden, dir Infos zu deinen Prüfungen geben und deine hinterlegten Daten wie Name und Adresse anpassen.\n\nWenn du mehr über mich und meine Entwicklung erfahren möchtest, schau mal unter https://github.com/EmseHub/semesterprojekt-chatbot.",
-            "Hilfe, Hilfe... jetzt mal ganz ruhig. Sag einmal sauber 'wingardium leviosa, setz mich nochmal auf und frage dann ganz höflich 'Oh mächtiger sprechender Hut, kannst du mir bitte helfen?'. SO wird ein Hut draus!"
+            "Bei mir bist Du genau richtig! Ich bin ein (C)hatbot der besonderen Art und helfe Dir bei Deinem Studentenleben in Hogwarts. Wenn Du willst, kann ich zum Beispiel Prüfungen für Dich an- und abmelden, Dir Infos zu deinen Prüfungen geben und deine hinterlegten Daten wie Name und Adresse anpassen.\n\nWenn Du mehr über mich und meine Entwicklung erfahren möchtest, schau mal unter https://github.com/EmseHub/semesterprojekt-chatbot.",
+            "Hilfe, Hilfe... jetzt mal ganz ruhig. Sag einmal sauber 'wingardium leviosa, setz mich nochmal auf und frage dann ganz höflich 'Oh mächtiger sprechender Hut, kannst Du mir bitte helfen?'. SO wird ein Hut draus!"
         ],
         "task": ""
     },
