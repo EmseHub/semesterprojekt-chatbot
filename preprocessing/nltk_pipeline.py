@@ -64,7 +64,7 @@ def get_tagged_tokens(raw_text):
     language = "german"
 
     # Mehrfache Leerzeichen, Tabs und Zeilenumbrüche mit RegEx auf ein Leerzeichen reduzieren
-    clean_text = re.sub("\\s+", " ", raw_text)
+    clean_text = re.sub(r"\s+", " ", raw_text)
 
     # Tokenization auf Wort-Ebene
     tokens_original = word_tokenize(clean_text, language)
