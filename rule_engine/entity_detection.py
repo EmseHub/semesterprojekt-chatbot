@@ -91,187 +91,244 @@ def detect_course_in_message(message_processed):
     return result
 
 
-def detect_address_in_message(detected_arguments, message_raw):
-    if not detected_arguments or not message_raw or not message_raw.strip():
-        return {'objDetectedData': {'objStudent': None, 'objAddress': None}, 'strQuery': None}
+def detect_address_in_message(detected_address_temp, message_raw):
 
-    tmp_detected_arguments = detected_arguments.copy()
-    strQuery = ''
+    # Falls bisher noch keine Adress-Angaben erkannt worden sind, Adresse als leeres Dictionary initialisieren
+    detected_address_new = {
+        **detected_address_temp
+    } if detected_address_temp else {}
 
-    # Prüfen, ob Matrikelnummer bereits angegeben und einem Student-Objekt zugeordnet wurde
-    if not tmp_detected_arguments['objStudent']:
-        strMessageProcessed = replace_diacritics(message_raw.lower())
-        objStudent, strQueryStudent = getStudentFromMessage(
-            strMessageProcessed)
-        tmp_detected_arguments['objStudent'] = objStudent
-        strQuery = strQueryStudent
+    result = {"address": detected_address_new, "query": ""}
 
-    # Prüfen, ob Adresse vollständig angegeben wurde
-    arrAddressKeys = ['strasse', 'hausnr', 'stadt', 'plz']
-    if not tmp_detected_arguments['objAddress'] or any(not tmp_detected_arguments['objAddress'][key] for key in arrAddressKeys):
-        objAddress = tmp_detected_arguments['objAddress'].copy(
-        ) if tmp_detected_arguments['objAddress'] else {'staat': 'Deutschland'}
+    if not message_raw or not message_raw.strip():
+        return result
 
-        # Prüfen, ob zuvor bereits Adress-Daten übermittelt worden sind
-        if not any(objAddress[key] for key in arrAddressKeys):
-            strMessageProcessed = message_raw.replace(
-                ',', ' ').replace('\s+', ' ').strip()
-            regexFullAddress = re.compile(
-                r'\b([a-zäöüß]{2,}(-?))*(\.?)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])', re.IGNORECASE)
+    # Falls Adresse noch gar nicht definiert ist (auch nicht unvollständig), versuche alle Attribute auf einmal auszulesen
+    if (not detected_address_new):
+        # Staat der neuen Adresse mit "Deutschland" initialisieren, da der Chatbot andere Staaten erstmal nicht berücksichtigt
+        detected_address_new["staat"] = "Deutschland"
 
-            arrFullAddress = regexFullAddress.findall(strMessageProcessed)
-            if arrFullAddress and len(arrFullAddress) != 0:
-                splitFullAddress = arrFullAddress[0].split(' ')
-                if len(splitFullAddress) > 3:
-                    objAddress['strasse'] = splitFullAddress[0]
-                    objAddress['hausnr'] = splitFullAddress[1]
-                    objAddress['plz'] = splitFullAddress[2]
-                    objAddress['stadt'] = splitFullAddress[3]
+        # Kommata durch Leerzeichen ersetzen
+        message_processed = message_raw.replace(',', ' ')
+        # Alle Varianten von "in" durch Leerzeichen ersetzen
+        message_processed = re.sub(
+            r"\s+in\s+", " ", message_processed, flags=re.IGNORECASE
+        )
+        # Jeden White Space auf ein Leerzeichen reduzieren
+        message_processed = re.sub(r"\s+", " ", message_processed).strip()
 
-        # Prüfen, ob Adresse oder Hausnummer fehlt und in aktueller Nachricht enthalten ist
-        if not objAddress['strasse'] or not objAddress['hausnr']:
-            def getStrasseAndHausnr(strGivenStrasse, strGivenHausnr, strMessageRaw):
-                regexStrasseAndHausnr = re.compile(
-                    r'\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)\s+\d{1,4}([a-z]*)\b', re.IGNORECASE)
-                regexStrasse = re.compile(
-                    r'\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)(?![a-z0-9äöüß-])', re.IGNORECASE)
-                regexDescrAndHausnr = re.compile(
-                    r'\b(hausnummer|hausnr(\.?))\s+\d{1,4}([a-z]*)\b', re.IGNORECASE)
-                regexHausnr = re.compile(r'\b\d{1,4}[a-z]*\b', re.IGNORECASE)
-                regexWordAndHausnr = re.compile(
-                    r'\b([a-zäöüß]{2,}(-?))+\s+\d{1,4}([a-z]*)\b', re.IGNORECASE)
+        #
+        regex_match = re.match(
+            r"\b([a-zäöüß]{2,}(-?))*(\.?)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])",
+            message_processed,
+            re.IGNORECASE
+        )
+        if (regex_match):
+            regex_match_string = regex_match.group()
+            print("regex_match_string: " + regex_match_string)
 
-                strStrasse = strGivenStrasse
-                strHausnr = strGivenHausnr
+            regex_match_splitted = regex_match_string.split()
+            if len(regex_match_splitted) > 3:
+                detected_address_new['strasse'] = regex_match_splitted[0]
+                detected_address_new['hausnr'] = regex_match_splitted[1]
+                detected_address_new['plz'] = regex_match_splitted[2]
+                detected_address_new['stadt'] = regex_match_splitted[3]
 
-                if not strStrasse and not strHausnr:
-                    arrStrasseAndHausnr = regexStrasseAndHausnr.findall(
-                        strMessageRaw)
-                    if arrStrasseAndHausnr and len(arrStrasseAndHausnr) != 0:
-                        splitStrasseAndHausnr = arrStrasseAndHausnr[0].split(
-                            ' ')
-                        if len(splitStrasseAndHausnr) > 1:
-                            return {'strStrasse': splitStrasseAndHausnr[0], 'strHausnr': splitStrasseAndHausnr[1]}
+    print("---detected_address_new---")
+    print(detected_address_new)
 
-                if not strStrasse:
-                    arrStrasse = regexStrasse.findall(strMessageRaw)
-                    if arrStrasse and len(arrStrasse) != 0:
-                        strStrasse = arrStrasse[0]
+    # Falls Adresse oder Hausnummer fehlt, versuche gezielt diese Attribute auszulesen
+    if not detected_address_new.get('strasse') or not detected_address_new.get('hausnr'):
 
-                if not strHausnr:
-                    arrDescrAndHausnr = regexDescrAndHausnr.findall(
-                        strMessageRaw)
-                    if arrDescrAndHausnr and len(arrDescrAndHausnr) != 0:
-                        splitDescrAndHausnr = arrDescrAndHausnr[0].split(' ')
-                        if len(splitDescrAndHausnr) > 1:
-                            strHausnr = splitDescrAndHausnr[1]
+        strasse = detected_address_new.get('strasse')
+        hausnr = detected_address_new.get('hausnr')
 
-                if strStrasse and strHausnr:
-                    return {'strStrasse': strStrasse, 'strHausnr': strHausnr}
+        # Falls Straße und Hausnummer fehlen, versuche bei auf einmal auszulesen
+        if not strasse and not hausnr:
+            strasse_and_hausnr = regexStrasseAndHausnr.findall(strMessageRaw)
+            if strasse_and_hausnr and len(strasse_and_hausnr) != 0:
+                splitStrasseAndHausnr = strasse_and_hausnr[0].split(
+                    ' ')
+                if len(splitStrasseAndHausnr) > 1:
+                    return {'strStrasse': splitStrasseAndHausnr[0], 'strHausnr': splitStrasseAndHausnr[1]}
 
-                if strStrasse:
-                    arrHausnr = regexHausnr.findall(strMessageRaw)
-                    if arrHausnr and len(arrHausnr) != 0:
-                        hausnrMatch = next(
-                            (hnr for hnr in arrHausnr if len(hnr) < 5), None)
-                        if hausnrMatch:
-                            strHausnr = hausnrMatch
-                            return {'strStrasse': strStrasse, 'strHausnr': strHausnr}
+        # Falls Straße (noch) fehlt, lies diese aus
+        if not strasse:
+            pass
 
-                arrWordAndHausnr = regexWordAndHausnr.findall(strMessageRaw)
-                if arrWordAndHausnr and len(arrWordAndHausnr) != 0:
-                    splitWordAndHausnr = arrWordAndHausnr[0].split(' ')
-                    if len(splitWordAndHausnr) > 1:
-                        strStrasse = splitWordAndHausnr[0]
-                        strHausnr = splitWordAndHausnr[1]
+        # Falls Hausnummer (noch) fehlt, lies diese aus
+        if not hausnr:
+            pass
 
+        # ALT
+
+        def getStrasseAndHausnr(strGivenStrasse, strGivenHausnr, strMessageRaw):
+            regexStrasseAndHausnr = re.compile(
+                r'\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)\s+\d{1,4}([a-z]*)\b', re.IGNORECASE)
+            regexStrasse = re.compile(
+                r'\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)(?![a-z0-9äöüß-])', re.IGNORECASE)
+            regexDescrAndHausnr = re.compile(
+                r'\b(hausnummer|hausnr(\.?))\s+\d{1,4}([a-z]*)\b', re.IGNORECASE)
+            regexHausnr = re.compile(r'\b\d{1,4}[a-z]*\b', re.IGNORECASE)
+            regexWordAndHausnr = re.compile(
+                r'\b([a-zäöüß]{2,}(-?))+\s+\d{1,4}([a-z]*)\b', re.IGNORECASE)
+
+            strStrasse = strGivenStrasse
+            strHausnr = strGivenHausnr
+
+            if not strStrasse and not strHausnr:
+                strasse_and_hausnr = regexStrasseAndHausnr.findall(
+                    strMessageRaw)
+                if strasse_and_hausnr and len(strasse_and_hausnr) != 0:
+                    splitStrasseAndHausnr = strasse_and_hausnr[0].split(
+                        ' ')
+                    if len(splitStrasseAndHausnr) > 1:
+                        return {'strStrasse': splitStrasseAndHausnr[0], 'strHausnr': splitStrasseAndHausnr[1]}
+
+            if not strStrasse:
+                arrStrasse = regexStrasse.findall(strMessageRaw)
+                if arrStrasse and len(arrStrasse) != 0:
+                    strStrasse = arrStrasse[0]
+
+            if not strHausnr:
+                arrDescrAndHausnr = regexDescrAndHausnr.findall(
+                    strMessageRaw)
+                if arrDescrAndHausnr and len(arrDescrAndHausnr) != 0:
+                    splitDescrAndHausnr = arrDescrAndHausnr[0].split(' ')
+                    if len(splitDescrAndHausnr) > 1:
+                        strHausnr = splitDescrAndHausnr[1]
+
+            if strStrasse and strHausnr:
                 return {'strStrasse': strStrasse, 'strHausnr': strHausnr}
 
-            result = getStrasseAndHausnr(
-                objAddress['strasse'], objAddress['hausnr'], message_raw)
-            objAddress['strasse'] = result['strStrasse']
-            objAddress['hausnr'] = result['strHausnr']
+            if strStrasse:
+                arrHausnr = regexHausnr.findall(strMessageRaw)
+                if arrHausnr and len(arrHausnr) != 0:
+                    hausnrMatch = next(
+                        (hnr for hnr in arrHausnr if len(hnr) < 5), None)
+                    if hausnrMatch:
+                        strHausnr = hausnrMatch
+                        return {'strStrasse': strStrasse, 'strHausnr': strHausnr}
 
-        if not objAddress['plz'] or not objAddress['stadt']:
-            def getStrassePlzAndStadt(strGivenPlz, strGivenStadt, strMessageRaw):
-                regexPlzAndStadt = re.compile(
-                    r'\b\d{5}(\,?)\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])', re.IGNORECASE)
-                regexPlz = re.compile(
-                    r'\b\d{5}(?![a-z0-9äöüß-])', re.IGNORECASE)
+            arrWordAndHausnr = regexWordAndHausnr.findall(strMessageRaw)
+            if arrWordAndHausnr and len(arrWordAndHausnr) != 0:
+                splitWordAndHausnr = arrWordAndHausnr[0].split(' ')
+                if len(splitWordAndHausnr) > 1:
+                    strStrasse = splitWordAndHausnr[0]
+                    strHausnr = splitWordAndHausnr[1]
 
-                strPlz = strGivenPlz
-                strStadt = strGivenStadt
-                strMessageProcessed = strMessageRaw.replace(
-                    ',', ' ').replace('\s+', ' ')
+            return {'strStrasse': strStrasse, 'strHausnr': strHausnr}
 
-                if not strStadt and not strPlz:
-                    arrPlzAndStadt = regexPlzAndStadt.findall(
-                        strMessageProcessed)
-                    if arrPlzAndStadt and len(arrPlzAndStadt) != 0:
-                        splitPlzAndStadt = arrPlzAndStadt[0].split(' ')
-                        if len(splitPlzAndStadt) > 1:
-                            return {'strPlz': splitPlzAndStadt[0], 'strStadt': splitPlzAndStadt[1]}
+        result = getStrasseAndHausnr(
+            detected_address_new['strasse'], detected_address_new['hausnr'], message_raw
+        )
+        detected_address_new['strasse'] = result['strStrasse']
+        detected_address_new['hausnr'] = result['strHausnr']
 
-                if not strPlz:
-                    arrPlz = regexPlz.findall(strMessageProcessed)
-                    if arrPlz and len(arrPlz) != 0:
-                        strPlz = arrPlz[0]
+    if not detected_address_new['plz'] or not detected_address_new['stadt']:
+        def getStrassePlzAndStadt(strGivenPlz, strGivenStadt, strMessageRaw):
+            regexPlzAndStadt = re.compile(
+                r'\b\d{5}(\,?)\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])', re.IGNORECASE)
+            regexPlz = re.compile(
+                r'\b\d{5}(?![a-z0-9äöüß-])', re.IGNORECASE)
 
-                if not strStadt and strPlz:
-                    splitMessage = strMessageProcessed.split(' ')
-                    indexOfPlz = splitMessage.index(strPlz)
-                    if indexOfPlz != -1 and len(splitMessage) > (indexOfPlz + 1):
-                        strNextWord = splitMessage[indexOfPlz + 1]
-                        strNextWord = replace_diacritics(strNextWord.lower())
-                        objPostalCode = next((pc for pc in arrPostalCodes if replace_diacritics(
-                            pc['city'].lower()) == strNextWord), None)
-                        if objPostalCode:
-                            strStadt = objPostalCode['city']
-                            return {'strPlz': strPlz, 'strStadt': strStadt}
+            strPlz = strGivenPlz
+            strStadt = strGivenStadt
+            message_processed = strMessageRaw.replace(',', ' ').strip()
+            message_processed = re.sub(r"\s+", " ", message_processed)
 
-                        objPostalCode = next(
-                            (pc for pc in arrPostalCodes if pc['zipcode'] == strPlz), None)
-                        if objPostalCode:
-                            strStadt = objPostalCode['city']
-                            return {'strPlz': strPlz, 'strStadt': strStadt}
+            if not strStadt and not strPlz:
+                arrPlzAndStadt = regexPlzAndStadt.findall(
+                    message_processed)
+                if arrPlzAndStadt and len(arrPlzAndStadt) != 0:
+                    splitPlzAndStadt = arrPlzAndStadt[0].split(' ')
+                    if len(splitPlzAndStadt) > 1:
+                        return {'strPlz': splitPlzAndStadt[0], 'strStadt': splitPlzAndStadt[1]}
 
-                return {'strPlz': strPlz, 'strStadt': strStadt}
+            if not strPlz:
+                arrPlz = regexPlz.findall(message_processed)
+                if arrPlz and len(arrPlz) != 0:
+                    strPlz = arrPlz[0]
 
-            result = getStrassePlzAndStadt(
-                objAddress['plz'], objAddress['stadt'], message_raw)
-            objAddress['plz'] = result['strPlz']
-            objAddress['stadt'] = result['strStadt']
+            if not strStadt and strPlz:
+                splitMessage = message_processed.split(' ')
+                indexOfPlz = splitMessage.index(strPlz)
+                if indexOfPlz != -1 and len(splitMessage) > (indexOfPlz + 1):
+                    strNextWord = splitMessage[indexOfPlz + 1]
+                    strNextWord = replace_diacritics(strNextWord.lower())
+                    objPostalCode = next((pc for pc in arrPostalCodes if replace_diacritics(
+                        pc['city'].lower()) == strNextWord), None)
+                    if objPostalCode:
+                        strStadt = objPostalCode['city']
+                        return {'strPlz': strPlz, 'strStadt': strStadt}
 
-        tmp_detected_arguments['objAddress'] = objAddress
+                    objPostalCode = next(
+                        (pc for pc in arrPostalCodes if pc['zipcode'] == strPlz), None)
+                    if objPostalCode:
+                        strStadt = objPostalCode['city']
+                        return {'strPlz': strPlz, 'strStadt': strStadt}
 
-    if not any(tmp_detected_arguments['objAddress'][key] for key in arrAddressKeys):
-        if tmp_detected_arguments['objStudent']:
-            strQuery += f" Okay {tmp_detected_arguments['objStudent']['vorname'].split(' ')[
+            return {'strPlz': strPlz, 'strStadt': strStadt}
+
+        result = getStrassePlzAndStadt(
+            detected_address_new['plz'], detected_address_new['stadt'], message_raw
+        )
+        detected_address_new['plz'] = result['strPlz']
+        detected_address_new['stadt'] = result['strStadt']
+
+    # Angaben, die eine Adresse aufweisen muss
+    address_keys = ['strasse', 'hausnr', 'stadt', 'plz']
+
+    # Prüfen, ob Adresse noch gar nicht oder unvollständig definiert ist
+    if not detected_address_new or any(not key in detected_address_new for key in address_keys):
+        pass
+
+    if not any(detected_address_new[key] for key in address_keys):
+        if detected_address_new['student']:
+            query += f" Okay {detected_address_new['student']['vorname'].split(' ')[
                 0]}, danke."
-        strQuery += " Gib Deine neue Adresse gerne im folgenden Format an: Winkelgasse 93, 12345 Zauberstadt"
+        query += " Gib Deine neue Adresse gerne im folgenden Format an: Winkelgasse 93, 12345 Zauberstadt"
     else:
-        if not tmp_detected_arguments['objAddress']['strasse'] and not tmp_detected_arguments['objAddress']['hausnr']:
-            strQuery += " Ich benötige noch den Straßennamen und die Hausnummer."
-        elif not tmp_detected_arguments['objAddress']['strasse']:
-            strQuery += " Es fehlt noch der Straßenname."
-        elif not tmp_detected_arguments['objAddress']['hausnr']:
-            strQuery += " Es fehlt noch die Hausnummer."
+        if not detected_address_new['strasse'] and not detected_address_new['hausnr']:
+            query += " Ich benötige noch den Straßennamen und die Hausnummer."
+        elif not detected_address_new['strasse']:
+            query += " Es fehlt noch der Straßenname."
+        elif not detected_address_new['hausnr']:
+            query += " Es fehlt noch die Hausnummer."
 
-        if not tmp_detected_arguments['objAddress']['plz'] and not tmp_detected_arguments['objAddress']['stadt']:
-            strQuery += " Verrätst Du mir auch die PLZ und den Ort, in dem zukünftig residieren wirst?"
-        elif not tmp_detected_arguments['objAddress']['plz']:
-            strQuery += " Jetzt fehlt mir nur noch die PLZ Deiner neuen Anschrift."
-        elif not tmp_detected_arguments['objAddress']['stadt']:
-            strQuery += " Jetzt fehlt mir nur noch der Name des Ortes."
+        if not detected_address_new['plz'] and not detected_address_new['stadt']:
+            query += " Verrätst Du mir auch die PLZ und den Ort, in dem zukünftig residieren wirst?"
+        elif not detected_address_new['plz']:
+            query += " Jetzt fehlt mir nur noch die PLZ Deiner neuen Anschrift."
+        elif not detected_address_new['stadt']:
+            query += " Jetzt fehlt mir nur noch der Name des Ortes."
 
-    strQuery = strQuery.strip()
-    return {'objDetectedData': tmp_detected_arguments, 'strQuery': strQuery}
+    query = query.strip()
+    # return result
+    return {'address': detected_address_new, 'query': query}
 
 
-student_test_result = detect_student_in_message("1234567 1122334")
-print("---student_test_result---")
-print(student_test_result)
+# student_test_result = detect_student_in_message("1234567 1122334")
+# print("---student_test_result---")
+# print(student_test_result)
 
-course_test_result = detect_course_in_message("muggelkunde")
-print("---course_test_result---")
-print(course_test_result)
+# course_test_result = detect_course_in_message("muggelkunde")
+# print("---course_test_result---")
+# print(course_test_result)
+
+
+my_dictionary = {"a": 55}
+print('my_dictionary.get("a")')
+print(my_dictionary.get("a"))
+if (my_dictionary.get("a")):
+    print('jup')
+
+
+# address_test_result = detect_address_in_message(
+#     {"strasse": None}, "Müllerweg 5 in 41836 Htown"
+# )
+address_test_result = detect_address_in_message(
+    None, "Müllerweg in 41836 Htown"
+)
+print("---address_test_result---")
+print(address_test_result)
