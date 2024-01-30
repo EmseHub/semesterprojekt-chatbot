@@ -3,6 +3,7 @@ import re
 from rule_engine.data_service import students, courses
 from rule_engine.helpers import get_random_item_in_list, replace_diacritics
 
+# Hinweis: Parameter "message_raw" bedeutet, dass der Originaltext übergeben wurde – unverändert, bis auf die Tatsache, dass jeder White Space auf ein Leerzeichen reduziert ist
 # Hinweis: Parameter "message_processed" bedeutet, dass Umlaute ersetzt wurden und Text in Lower Case ist
 
 test_a = [
@@ -98,28 +99,92 @@ def detect_address_in_message(detected_address_temp, message_raw):
         **detected_address_temp
     } if detected_address_temp else {}
 
-    result = {"address": detected_address_new, "query": ""}
-
     if not message_raw or not message_raw.strip():
-        return result
+        return {"address": detected_address_new, "query": ""}
+
+    # Kommata durch Leerzeichen ersetzen
+    message_processed = message_raw.replace(',', ' ')
+    # Alle Varianten von "in" durch Leerzeichen ersetzen
+    message_processed = re.sub(
+        r"\s+in\s+", " ", message_processed, flags=re.IGNORECASE
+    )
+    # Jeden White Space auf ein Leerzeichen reduzieren
+    message_processed = re.sub(r"\s+", " ", message_processed).strip()
+
+    # -----DEL------
+    message_processed = "Müllerweg 5 in 41838f Htown"
+    message_processed = "dameine neue straße ist die hammer strsaße 44 41836 shammer-boogie str dsfall sonst kann weg "
+    message_processed = "Meine Adresse ist Ein-Beispiel Weg 55 12345 Musterstadt okay?"
+    message_processed = "Meine Adresse ist Sauer-weg str "
+
+    # Adress-Attribute initialiseren mit bereits erkannten Werten oder None
+    strasse = detected_address_new.get("strasse")
+    hausnr = detected_address_new.get("hausnr")
+    plz = detected_address_new.get("plz")
+    stadt = detected_address_new.get("stadt")
 
     # Falls Adresse noch gar nicht definiert ist (auch nicht unvollständig), versuche alle Attribute auf einmal auszulesen
     if (not detected_address_new):
         # Staat der neuen Adresse mit "Deutschland" initialisieren, da der Chatbot andere Staaten erstmal nicht berücksichtigt
         detected_address_new["staat"] = "Deutschland"
-
-        # Kommata durch Leerzeichen ersetzen
-        message_processed = message_raw.replace(',', ' ')
-        # Alle Varianten von "in" durch Leerzeichen ersetzen
-        message_processed = re.sub(
-            r"\s+in\s+", " ", message_processed, flags=re.IGNORECASE
+        # Mit RegEx Adressen-Syntax erkennen (Musterstr. 55 12345 Musterstadt)
+        regex_match = re.search(
+            r"\b((([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|([a-zäöüß]{2,}(-?))*)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])",
+            message_processed,
+            re.IGNORECASE
         )
-        # Jeden White Space auf ein Leerzeichen reduzieren
-        message_processed = re.sub(r"\s+", " ", message_processed).strip()
+        if (regex_match):
+            regex_match_string = regex_match.group()
+            # "Ein-Beispiel Weg 55 12345 Musterstadt" an der ersten Ziffer in zwei Substrings aufteilen, damit Leerzeichen im Straßennamen nicht als Trenner dient
+            regex_match_string_splitted_by_1st_digit = re.split(
+                r'(\d+.*)',
+                regex_match_string
+            )
+            # ["Ein-Beispiel Weg ", "55 12345 Musterstadt", ""]
+            regex_match_string_before_1st_digit = regex_match_string_splitted_by_1st_digit[0]
+            # "Ein-Beispiel Weg " verwendet für Straße
+            regex_match_string_from_1st_digit = regex_match_string_splitted_by_1st_digit[1]
+            regex_match_string_from_1st_digit_splitted = regex_match_string_from_1st_digit.strip().split()
+            # ["55", "12345", "Musterstadt"] verwendet für Rest
+            if len(regex_match_string_from_1st_digit_splitted) > 2:
+                # Erkannte Adress-Angaben zuweisen
+                strasse = regex_match_string_before_1st_digit.strip()
+                hausnr = regex_match_string_from_1st_digit_splitted[0]
+                plz = regex_match_string_from_1st_digit_splitted[1]
+                stadt = regex_match_string_from_1st_digit_splitted[2]
 
-        #
-        regex_match = re.match(
-            r"\b([a-zäöüß]{2,}(-?))*(\.?)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])",
+    # Falls Straße und Hausnummer fehlen, versuche gezielt beide auf einmal auszulesen
+    if not strasse and not hausnr:
+        # Mit RegEx Straße-Hausnummer-Syntax erkennen (Musterstr. 55)
+        regex_match = re.search(
+            r"\b((([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|([a-zäöüß]{2,}(-?))*)\s+\d{1,4}([a-z]*)\b",
+            message_processed,
+            re.IGNORECASE
+        )
+        print(message_processed)
+        print(regex_match)
+        if (regex_match):
+            regex_match_string = regex_match.group()
+            # "Ein-Beispiel Weg 55" an der ersten Ziffer in zwei Substrings aufteilen, damit Leerzeichen im Straßennamen nicht als Trenner dient
+            regex_match_string_splitted_by_1st_digit = re.split(
+                r'(\d+.*)',
+                regex_match_string
+            )
+            # ["Ein-Beispiel Weg ", "55", ""]
+            regex_match_string_before_1st_digit = regex_match_string_splitted_by_1st_digit[0]
+            # "Ein-Beispiel Weg " verwendet für Straße
+            regex_match_string_from_1st_digit = regex_match_string_splitted_by_1st_digit[1]
+            # "55" verwendet für Hausnummer
+            if len(regex_match_string_splitted_by_1st_digit) > 1:
+                # Erkannte Adress-Angaben zuweisen
+                strasse = regex_match_string_splitted_by_1st_digit[0].strip()
+                hausnr = regex_match_string_splitted_by_1st_digit[1].strip()
+
+    # Falls Straße noch fehlt, versuche gezielt diese auszulesen
+    if not strasse:
+        # Mit RegEx Straßen-Syntax erkennen (Musterstr. 55)
+        regex_match = re.search(
+            r"\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg)(?![a-z0-9äöüß-])",
             message_processed,
             re.IGNORECASE
         )
@@ -128,40 +193,36 @@ def detect_address_in_message(detected_address_temp, message_raw):
             print("regex_match_string: " + regex_match_string)
 
             regex_match_splitted = regex_match_string.split()
-            if len(regex_match_splitted) > 3:
-                detected_address_new['strasse'] = regex_match_splitted[0]
-                detected_address_new['hausnr'] = regex_match_splitted[1]
-                detected_address_new['plz'] = regex_match_splitted[2]
-                detected_address_new['stadt'] = regex_match_splitted[3]
+            if len(regex_match_splitted) != 0:
+                strasse = regex_match_splitted[0]
 
     print("---detected_address_new---")
-    print(detected_address_new)
+    print("strasse = " + (strasse or ''))
+    print("hausnr = " + (hausnr or ''))
+    print("plz = " + (plz or ''))
+    print("stadt = " + (stadt or ''))
 
-    # Falls Adresse oder Hausnummer fehlt, versuche gezielt diese Attribute auszulesen
-    if not detected_address_new.get('strasse') or not detected_address_new.get('hausnr'):
+    return {"address": detected_address_new, "query": ""}
 
-        strasse = detected_address_new.get('strasse')
-        hausnr = detected_address_new.get('hausnr')
+    # Falls Hausnummer (noch) fehlt, lies diese aus
+    if not hausnr:
+        # Mit RegEx Straße-Hausnummer-Syntax erkennen (Musterstr. 55)
+        regex_match = re.search(
+            r"\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg)\s+\d{1,4}([a-z]*)\b",
+            message_processed,
+            re.IGNORECASE
+        )
+        if (regex_match):
+            regex_match_string = regex_match.group()
+            print("regex_match_string: " + regex_match_string)
 
-        # Falls Straße und Hausnummer fehlen, versuche bei auf einmal auszulesen
-        if not strasse and not hausnr:
-            strasse_and_hausnr = regexStrasseAndHausnr.findall(strMessageRaw)
-            if strasse_and_hausnr and len(strasse_and_hausnr) != 0:
-                splitStrasseAndHausnr = strasse_and_hausnr[0].split(
-                    ' ')
-                if len(splitStrasseAndHausnr) > 1:
-                    return {'strStrasse': splitStrasseAndHausnr[0], 'strHausnr': splitStrasseAndHausnr[1]}
+            regex_match_splitted = regex_match_string.split()
+            if len(regex_match_splitted) > 1:
+                strasse = regex_match_splitted[0]
+                hausnr = regex_match_splitted[1]
 
-        # Falls Straße (noch) fehlt, lies diese aus
-        if not strasse:
-            pass
-
-        # Falls Hausnummer (noch) fehlt, lies diese aus
-        if not hausnr:
-            pass
-
-        # ALT
-
+    # ALT
+    if not True:
         def getStrasseAndHausnr(strGivenStrasse, strGivenHausnr, strMessageRaw):
             regexStrasseAndHausnr = re.compile(
                 r'\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)\s+\d{1,4}([a-z]*)\b', re.IGNORECASE)
@@ -317,18 +378,11 @@ def detect_address_in_message(detected_address_temp, message_raw):
 # print(course_test_result)
 
 
-my_dictionary = {"a": 55}
-print('my_dictionary.get("a")')
-print(my_dictionary.get("a"))
-if (my_dictionary.get("a")):
-    print('jup')
-
-
 # address_test_result = detect_address_in_message(
 #     {"strasse": None}, "Müllerweg 5 in 41836 Htown"
 # )
 address_test_result = detect_address_in_message(
-    None, "Müllerweg in 41836 Htown"
+    None, "Müllerweg 5 in 41838f Htown"
 )
 print("---address_test_result---")
 print(address_test_result)
