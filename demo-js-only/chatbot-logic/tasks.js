@@ -70,16 +70,26 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
         // Prüfen, ob zuvor bereits Adress-Daten übermittelt worden sind
         if (!arrAddressKeys.some(key => objAddress[key])) {
             const strMessageProcessed = strMessageRaw.replaceAll(',', ' ').replace(/\s+in\s+/gi, ' ').replace(/\s+/g, ' ');
-            const regexFullAddress = /\b([a-zäöüß]{2,}(-?))*(\.?)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])/gi;
+            // const regexFullAddress = /\b([a-zäöüß]{2,}(-?))*(\.?)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])/gi;
+            const regexFullAddress = /\b((([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|([a-zäöüß]{2,}(-?))*)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])/gi;
 
             const arrFullAddress = strMessageProcessed.match(regexFullAddress);
             if (arrFullAddress && arrFullAddress.length !== 0) {
-                const splitFullAddress = arrFullAddress[0].split(' '); // Blastr. 5 50737 Köln
-                if (splitFullAddress.length > 3) {
-                    objAddress.strasse = splitFullAddress[0];
-                    objAddress.hausnr = splitFullAddress[1];
-                    objAddress.plz = splitFullAddress[2];
-                    objAddress.stadt = splitFullAddress[3];
+                // const splitFullAddress = arrFullAddress[0].split(' '); // Blastr. 8 50737 Köln oder Bla-Bla Straße 8 50737 Köln
+
+                const strFullAddress = arrFullAddress[0]; // Blastr. 8 50737 Köln oder Bla-Bla Straße 8 50737 Köln
+                const arrFullAddressSplittedByFirstNumber = strFullAddress.split(/(\d+.*)/); // Aufteilen in [0] für Straße und [1] für Rest --> [ "Bla-Bla Straße ", "8 50737 Köln", "" ]
+
+                const strSplitPartA = arrFullAddressSplittedByFirstNumber[0].trim(); // "Bla-Bla Straße"
+                const strSplitPartB = arrFullAddressSplittedByFirstNumber[1].trim(); // "8 50737 Köln"
+
+                const arrSplitPartB = strSplitPartB.split(' ');
+
+                if (arrSplitPartB.length > 2) {
+                    objAddress.strasse = strSplitPartA;
+                    objAddress.hausnr = arrSplitPartB[0];
+                    objAddress.plz = arrSplitPartB[1];
+                    objAddress.stadt = arrSplitPartB[2];
                 }
             }
         }
@@ -87,9 +97,10 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
         if (!objAddress.strasse || !objAddress.hausnr) { // TO DO
             const getStrasseAndHausnr = (strGivenStrasse, strGivenHausnr, strMessageRaw) => {
                 // Wort(-Wort-) && WS? && str/str./straße/strasse && WS && Nr+
-                const regexStrasseAndHausnr = /\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)\s+\d{1,4}([a-z]*)\b/gi;
+                // const regexStrasseAndHausnr = /\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg)\s+\d{1,4}([a-z]*)\b/gi;
+                const regexStrasseAndHausnr = /\b((([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|([a-zäöüß]{2,}(-?))*)\s+\d{1,4}([a-z]*)\b/gi;
                 // Wort(-Wort-) && WS? && str/str./straße/strasse am Ende
-                const regexStrasse = /\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse)(?![a-z0-9äöüß-])/gi;
+                const regexStrasse = /\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg)(?![a-z0-9äöüß-])/gi;
                 // (hausnummer || hausnr) && WS && Zahl+
                 const regexDescrAndHausnr = /\b(hausnummer|hausnr(\.?))\s+\d{1,4}([a-z]*)\b/gi;
                 // (hausnummer || hausnr) && WS && Zahl+
@@ -104,9 +115,15 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
                 if (!strStrasse && !strHausnr) {
                     const arrStrasseAndHausnr = strMessageRaw.match(regexStrasseAndHausnr);
                     if (arrStrasseAndHausnr && arrStrasseAndHausnr.length !== 0) {
-                        const splitStrasseAndHausnr = arrStrasseAndHausnr[0].split(' ');
-                        if (splitStrasseAndHausnr.length > 1) {
-                            return { strStrasse: splitStrasseAndHausnr[0], strHausnr: splitStrasseAndHausnr[1] };
+                        // const splitStrasseAndHausnr = arrStrasseAndHausnr[0].split(' ');
+                        const strStrasseAndHausnr = arrStrasseAndHausnr[0]; // Blastr. 8 oder Bla-Bla Straße 8
+                        const arrStrasseAndHausnrSplittedByFirstNumber = strStrasseAndHausnr.split(/(\d+.*)/); // Aufteilen in [0] für Straße und [1] für Rest --> [ "Bla-Bla Straße ", "8", "" ]
+
+                        const strSplitPartA = arrStrasseAndHausnrSplittedByFirstNumber[0].trim(); // "Bla-Bla Straße"
+                        const strSplitPartB = arrStrasseAndHausnrSplittedByFirstNumber[1].trim(); // "8"
+
+                        if (arrStrasseAndHausnrSplittedByFirstNumber.length > 1) {
+                            return { strStrasse: strSplitPartA, strHausnr: strSplitPartB };
                         }
                     }
                 }
@@ -259,7 +276,7 @@ function getReferencedPruefungFromMessage(objGivenData, strMessageRaw) {
     if (!objGivenData || !strMessageRaw || !strMessageRaw.trim()) { return [objPruefung, objGivenData, null]; }
     // Prüfen, welche Angaben noch fehlen und ob sie in der aktuellen Nachricht enthalten sind    
     const { objStudent, objCourse, strQuery } = getMissingStudentOrCourseFromMessage(objGivenData, strMessageRaw);
-    const objUpdatedData = { objStudent, objCourse };    
+    const objUpdatedData = { objStudent, objCourse };
     // Falls, alle notwendigen Daten vorhanden sind, Kurs in den dem User zugeordneten Prüfungen finden (wenn nicht, wird Rückfrage weitergeben)
     if (objStudent && objCourse) { objPruefung = objStudent.pruefungen.find(p => p.kursID === objCourse.id); }
     return [objPruefung, objUpdatedData, strQuery];
