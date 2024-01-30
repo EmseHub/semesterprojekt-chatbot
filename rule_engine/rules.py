@@ -48,7 +48,7 @@ def get_missing_student_or_address_from_message():
 # region --------------------------- Task-Funtkionen ---------------------------
 
 # TASK WÄHLEN
-def process_task(state_running_task, tagged_tokens, intent):
+def process_task(state_running_task, tagged_tokens, message_raw, intent):
     '''Ermittlung des auszuführenden Tasks & Initiierung der Funktion'''
 
     # Auf ursprünglichen Task zurückfallen, falls sich kein neuer Task ergibt
@@ -56,9 +56,11 @@ def process_task(state_running_task, tagged_tokens, intent):
     response = None
     is_data_changed = False
 
-    # Leere Eingabe, kein Intent ermittelt --> kein Task ausführbar
+    # Leere Eingabe, keine Tokens ermittelt
     if not tagged_tokens:
         return (new_state_running_task, response, is_data_changed)
+
+    message = re.sub(r"\s+", " ", message_raw).strip()
 
     # Prozess anstoßen, falls noch ein Task vorliegt oder für den Intent vorgesehen ist
     if (state_running_task or intent["task"]):
@@ -81,7 +83,7 @@ def process_task(state_running_task, tagged_tokens, intent):
                 'pruefung_abmelden': process_task_pruefung_abmelden,
                 'pruefung_status': process_task_pruefung_status
             }.get(running_task_name, lambda *args: [None, response, is_data_changed])
-        )(state_running_task, tagged_tokens, intent_tag))()
+        )(state_running_task, tagged_tokens, message, intent_tag))()
 
         # Task abgeschlossen oder abgebrochen --> Anschlussfrage ergänzen
         if not state_running_task:
@@ -99,7 +101,7 @@ def process_task(state_running_task, tagged_tokens, intent):
 
 
 # ADRESSE ÄNDERN
-def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
+def process_task_adresse_aendern(state_running_task, tagged_tokens, message, intent_tag):
     is_data_changed = False
 
     if intent_tag == 'ablehnung':
@@ -149,7 +151,7 @@ def process_task_adresse_aendern(state_running_task, tagged_tokens, intent_tag):
 
 
 # NACHNAME ÄNDERN
-def process_task_nachname_aendern(state_running_task, tagged_tokens, intent_tag):
+def process_task_nachname_aendern(state_running_task, tagged_tokens, message, intent_tag):
     is_data_changed = False
 
     if intent_tag == 'ablehnung':
@@ -191,7 +193,7 @@ def process_task_nachname_aendern(state_running_task, tagged_tokens, intent_tag)
 
 
 # PRÜFUNG ANMELDEN
-def process_task_pruefung_anmelden(state_running_task, tagged_tokens, intent_tag):
+def process_task_pruefung_anmelden(state_running_task, tagged_tokens, message, intent_tag):
     is_data_changed = False
 
     if intent_tag == 'ablehnung':
@@ -247,7 +249,7 @@ def process_task_pruefung_anmelden(state_running_task, tagged_tokens, intent_tag
 
 
 # PRÜFUNG ABMELDEN
-def process_task_pruefung_abmelden(state_running_task, tagged_tokens, intent_tag):
+def process_task_pruefung_abmelden(state_running_task, tagged_tokens, message, intent_tag):
     is_data_changed = False
 
     if intent_tag == 'ablehnung':
@@ -307,7 +309,7 @@ def process_task_pruefung_abmelden(state_running_task, tagged_tokens, intent_tag
 
 
 # PRÜFUNGSSTATUS ABFRAGEN
-def process_task_pruefung_status(state_running_task, tagged_tokens, intent_tag):
+def process_task_pruefung_status(state_running_task, tagged_tokens, message, intent_tag):
     is_data_changed = False
 
     if intent_tag == 'ablehnung':

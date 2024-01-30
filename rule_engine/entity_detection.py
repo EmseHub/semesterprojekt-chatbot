@@ -115,7 +115,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
     message_processed = "Müllerweg 5 in 41838f Htown"
     message_processed = "dameine neue straße ist die hammer strsaße 44 41836 shammer-boogie str dsfall sonst kann weg "
     message_processed = "Meine Adresse ist Ein-Beispiel Weg 55 12345 Musterstadt okay?"
-    message_processed = "Meine Adresse ist Sauer-weg str "
+    message_processed = "Meine Adresse ist Sauer-weg straße "
 
     # Adress-Attribute initialiseren mit bereits erkannten Werten oder None
     strasse = detected_address_new.get("strasse")
@@ -180,7 +180,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
                 strasse = regex_match_string_splitted_by_1st_digit[0].strip()
                 hausnr = regex_match_string_splitted_by_1st_digit[1].strip()
 
-    # Falls Straße noch fehlt, versuche gezielt diese auszulesen
+    # Falls Straße noch fehlt, versuche diese gezielt auszulesen
     if not strasse:
         # Mit RegEx Straßen-Syntax erkennen (Musterstr. 55)
         regex_match = re.search(
@@ -190,11 +190,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
         )
         if (regex_match):
             regex_match_string = regex_match.group()
-            print("regex_match_string: " + regex_match_string)
-
-            regex_match_splitted = regex_match_string.split()
-            if len(regex_match_splitted) != 0:
-                strasse = regex_match_splitted[0]
+            strasse = regex_match_string.strip()
 
     print("---detected_address_new---")
     print("strasse = " + (strasse or ''))
@@ -204,7 +200,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
 
     return {"address": detected_address_new, "query": ""}
 
-    # Falls Hausnummer (noch) fehlt, lies diese aus
+    # Falls Hausnummer noch fehlt, versuche diese gezielt auszulesen
     if not hausnr:
         # Mit RegEx Straße-Hausnummer-Syntax erkennen (Musterstr. 55)
         regex_match = re.search(
@@ -286,6 +282,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
         detected_address_new['strasse'] = result['strStrasse']
         detected_address_new['hausnr'] = result['strHausnr']
 
+    # Falls PLZ und Ort fehlen, versuche gezielt beide auf einmal auszulesen
     if not detected_address_new['plz'] or not detected_address_new['stadt']:
         def getStrassePlzAndStadt(strGivenPlz, strGivenStadt, strMessageRaw):
             regexPlzAndStadt = re.compile(
