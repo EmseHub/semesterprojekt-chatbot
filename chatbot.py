@@ -6,7 +6,7 @@ state_running_task = {}
 
 def get_response(message):
     # Temp-Test:
-    return "NUR TEST!"
+    return ""
 
     (tagged_tokens, diagnostic) = nltk_pipeline.get_tagged_tokens(message)
     print("---Tagged Tokens---\n", tagged_tokens)

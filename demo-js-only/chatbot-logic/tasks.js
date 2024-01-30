@@ -102,7 +102,9 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
                 // Wort(-Wort-) && WS? && str/str./straße/strasse am Ende
                 const regexStrasse = /\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg)(?![a-z0-9äöüß-])/gi;
                 // (hausnummer || hausnr) && WS && Zahl+
-                const regexDescrAndHausnr = /\b(hausnummer|hausnr(\.?))\s+\d{1,4}([a-z]*)\b/gi;
+                // const regexDescrAndHausnr = /\b(hausnummer|hausnr(\.?))\s+\d{1,4}([a-z]*)\b/gi;
+                // (hausnummer || nummer || hausnr || nr) && WS && Zahl+                
+                const regexDescrAndHausnr = /\b(hausnummer|nummer|hausnr(\.?)|nr(\.?))(\s+(lautet|ist(\s+die)?))*\s+\d{1,4}([a-z]*)\b/gi;
                 // (hausnummer || hausnr) && WS && Zahl+
                 const regexHausnr = /\b\d{1,4}[a-z]*\b/gi;
                 // Wort(-Wort-) && WS && Nr+
@@ -136,8 +138,8 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
                 if (!strHausnr) {
                     const arrDescrAndHausnr = strMessageRaw.match(regexDescrAndHausnr);
                     if (arrDescrAndHausnr && arrDescrAndHausnr.length !== 0) {
-                        const splitDescrAndHausnr = arrDescrAndHausnr[0].split(' '); // String ist etwa 'Hausnummer 3a'
-                        if (splitDescrAndHausnr.length > 1) { strHausnr = splitDescrAndHausnr[1]; }
+                        const splitDescrAndHausnr = arrDescrAndHausnr[0].trim().split(' '); // String ist etwa 'Hausnummer 3a'
+                        if (splitDescrAndHausnr.length > 1) { strHausnr = splitDescrAndHausnr[splitDescrAndHausnr.length - 1]; }
                     }
                 }
                 // Prüfen, ob Straße und Hausnummer mittlerweile gefunden
@@ -210,7 +212,7 @@ function getMissingStudentOrAddressFromMessage(objGivenData, strMessageRaw) {
                                 return { strPlz, strStadt };
                             }
                         }
-                        // Stadt via PLZ azs Postal-Codes-DB auslesen 
+                        // Stadt via PLZ aus Postal-Codes-DB auslesen 
                         const objPostalCode = arrPostalCodes.find(pc => pc.zipcode === strPlz);
                         if (objPostalCode) {
                             strStadt = objPostalCode.city;
