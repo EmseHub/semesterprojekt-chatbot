@@ -292,7 +292,7 @@
     },
     {
         "tag": "hilfe",
-        "min_hits": 2,
+        "min_hits": 3,
         "patterns": [
             "hilfe",
             "chatbot",
@@ -300,7 +300,11 @@
             "anbieten",
             "koennen",
             "welche",
-            "helfen"
+            "sich",
+            "helfen",
+            "was",
+            "alles",
+            "brauchen"
         ],
         "responses": [
             "Bei mir bist Du genau richtig! Ich bin ein (C)hatbot der besonderen Art und helfe Dir bei Deinem Studentenleben in Hogwarts. Wenn Du willst, kann ich zum Beispiel Prüfungen für Dich an- und abmelden, Dir Infos zu Deinen Prüfungen geben und Deine hinterlegten Daten wie Name und Adresse anpassen.\n\nWenn Du mehr über mich und meine Entwicklung erfahren möchtest, schau mal unter https://github.com/EmseHub/semesterprojekt-chatbot.",
