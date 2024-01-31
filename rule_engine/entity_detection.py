@@ -318,6 +318,16 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
     message_processed = re.sub(
         r"\bjetzt\b", " ", message_processed, flags=re.IGNORECASE
     )
+    # Varianten von Matrikelnummer entfernen
+    message_processed = re.sub(
+        r"\bmatrikelnummer\b", " ", message_processed, flags=re.IGNORECASE
+    )
+    message_processed = re.sub(
+        r"\bmatrikelnr\b", " ", message_processed, flags=re.IGNORECASE
+    )
+    message_processed = re.sub(
+        r"\bmatnr\b", " ", message_processed, flags=re.IGNORECASE
+    )
     # Jeden White Space auf ein Leerzeichen reduzieren
     message_processed = re.sub(r"\s+", " ", message_processed).strip()
 

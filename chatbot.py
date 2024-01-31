@@ -7,12 +7,12 @@ from rule_engine import intent_matching, rules
 from rule_engine.data_service import students
 
 
-state_running_task = {}
+state_running_task = tagged_tokens = {}
 
 
 def get_response(message):
 
-    global state_running_task
+    global state_running_task, tagged_tokens
 
     # Temp-Test:
     # return ""
@@ -45,15 +45,24 @@ def get_response(message):
 # COMMAND PROMPT EXEC
 if __name__ == "__main__":
 
-    # state_running_task = {}
+    # state_running_task = tagged_tokens = {}
 
-    print('Okay, lass uns per Terminal chatten!\n(Gib "task" ein, um den Stand des aktuell bearbeiteten Task auszugeben, und "data", um Studierendendaten auszugeben. Gib "exit" ein, um den Chat zu beenden.)')
+    opening_messsage = 'Okay, lass uns per Terminal chatten!\n' + \
+        '[Eingabe "task": Stand des aktuell bearbeiteten Tasks ausgeben]\n' + \
+        '[Eingabe "tokens": Ermittelte Tokens der letzten Nachricht ausgeben]\n' + \
+        '[Eingabe "data": Studierendendaten ausgeben]\n' + \
+        '[Eingabe "exit": Chat beenden]'
+    print(opening_messsage)
 
     while True:
         message = input()
 
         if message.lower() == "task":
             print(json.dumps(state_running_task, indent=4))
+            continue
+
+        elif message.lower() == "tokens":
+            print(json.dumps(tagged_tokens, indent=4))
             continue
 
         elif message.lower() == "data":
