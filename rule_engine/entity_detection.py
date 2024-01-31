@@ -124,10 +124,14 @@ def detect_address_in_message(detected_address_temp, message_raw):
         detected_address_new["staat"] = "Deutschland"
         # Mit RegEx Adressen-Syntax erkennen (Musterstr. 55 12345 Musterstadt)
         regex_match = re.search(
-            r"\b((([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|([a-zäöüß]{2,}(-?))*)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])",
-            message_processed,
-            re.IGNORECASE
+            r"\b((([A-Za-zÄÖÜäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|(([A-ZÄÖÜa-zäöüß]{2,}-?)*)|((\b[A-ZÄÖÜ][a-zäöüß]+(\s*))*))\s+\d{1,4}([A-Za-z]*)\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)*)|(([A-Za-zÄÖÜäöüß]{2,}-?)*))(?![A-Za-z0-9ÄÖÜäöüß-])",
+            message_processed
         )
+        # regex_match = re.search(
+        #     r"\b((([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|([a-zäöüß]{2,}(-?))*)\s+\d{1,4}([a-z]*)\s+\d{5}\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])",
+        #     message_processed,
+        #     re.IGNORECASE
+        # )
         if (regex_match):
             regex_match_string = regex_match.group()
             # "Ein-Beispiel Weg 55 12345 Musterstadt" an der ersten Ziffer in zwei Substrings aufteilen, damit Leerzeichen im Straßennamen nicht als Trenner dient
@@ -147,6 +151,15 @@ def detect_address_in_message(detected_address_temp, message_raw):
                 hausnr = regex_match_string_from_1st_digit_splitted[0]
                 plz = regex_match_string_from_1st_digit_splitted[1]
                 stadt = regex_match_string_from_1st_digit_splitted[2]
+                # Falls erkannter Wert für Stadt ein Substring des DB-Wertes ist, DB-Wert übernehmen
+                stadt_in_data = next(
+                    (postal_code for postal_code in parsed_postal_codes if (
+                        postal_code["zipcode"] == plz
+                        and replace_diacritics(stadt.lower()) in replace_diacritics(postal_code["city"].lower())
+                    )), None
+                )
+                if (stadt_in_data):
+                    stadt = stadt_in_data["city"]
 
     # Falls Straße und Hausnummer fehlen, versuche gezielt beide auf einmal auszulesen
     if (not strasse and not hausnr):
@@ -379,15 +392,15 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
             )),
             None
         )
-        if (surname_from_token):
+        if (surname_from_token and surname_from_token["original"][0].isupper()):
             potential_surname = surname_from_token["original"]
 
     # Falls kein Nachname gefunden wurde, prüfe, ob es nur einen Token gibt, der angegeben wurde
-    if (not potential_surname and len(tagged_tokens) == 1):
+    if (not potential_surname and len(tagged_tokens) == 1 and tagged_tokens[0]["original"][0].isupper()):
         potential_surname = tagged_tokens[0]["original"]
 
     # Prüfen, ob der gefundene Nachname gültig und auch wirklich neu ist
-    if (potential_surname and len(potential_surname) > 1 and replace_diacritics(potential_surname.lower()) != replace_diacritics(student["nachname"].lower()) and potential_surname[0].isupper()):
+    if (potential_surname and len(potential_surname) > 1 and replace_diacritics(potential_surname.lower()) != replace_diacritics(student["nachname"].lower())):
         # Satzzeichen entfernen
         potential_surname = re.sub(
             r"[^A-Za-zÄÖÜäöüß\s-]", "", potential_surname
@@ -403,21 +416,23 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
     return result
 
 
-# student_test_result = detect_student_in_message("1234567 1122334")
 # print("---student_test_result---")
+# student_test_result = detect_student_in_message("1234567 1122334")
 # print(student_test_result)
 
 
-# course_test_result = detect_course_in_message("muggelkunde")
 # print("---course_test_result---")
+# course_test_result = detect_course_in_message("muggelkunde")
 # print(course_test_result)
 
 
-# address_test_result = detect_address_in_message(None, "Müllerweg 5 in 50737")
-# print("---address_test_result---")
-# print(address_test_result)
+print("---address_test_result---")
+address_test_result = detect_address_in_message(
+    None, "Meine neue Adresse ist Am Hang 5 in 31812 Bad Pyrmont, kannst du das übernehmen?")
+print(address_test_result)
 
 
+print("---new_surname_test_result---")
 test_tokens = [
     {'original': 'Fehlren', 'korrigiert': 'Fehlern', 'lemma': 'Fehler', 'pos': 'NN'},
     {'original': 'House', 'korrigiert': 'Hose', 'lemma': 'Hose', 'pos': 'NN'},
@@ -430,7 +445,6 @@ test_tokens = [
 new_surname_test_result = detect_new_surname_in_message(
     students[0],
     test_tokens,
-    "Ich heiße nicht mehr Harry James Potter, sondern mein Name ist jetzt Harry James Wattsefak"
+    "Meine neuer Name lautet: Harry James van der Shit"
 )
-print("---new_surname_test_result---")
 print(new_surname_test_result)
