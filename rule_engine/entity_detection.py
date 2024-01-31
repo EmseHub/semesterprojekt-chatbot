@@ -3,42 +3,10 @@ import re
 from rule_engine.data_service import students, courses
 from rule_engine.helpers import parse_json_file, get_random_item_in_list, replace_diacritics
 
-parsed_postal_codes = parse_json_file('rule_engine/postal-codes.json')
+parsed_postal_codes = parse_json_file("rule_engine/postal-codes.json")
 
 # Hinweis: Parameter "message_raw" bedeutet, dass der Originaltext übergeben wurde – unverändert, bis auf die Tatsache, dass jeder White Space auf ein Leerzeichen reduziert ist
 # Hinweis: Parameter "message_processed" bedeutet, dass Umlaute ersetzt wurden und Text in Lower Case ist
-
-test_a = [
-    {'original': 'Das', 'korrigiert': 'Das', 'lemma': 'der', 'pos': 'PDS'},
-    {'original': 'ist', 'korrigiert': 'ist',
-        'lemma': 'sein', 'pos': 'VA(FIN)'},
-    {'original': 'eine', 'korrigiert': 'eine', 'lemma': 'ein', 'pos': 'ART'},
-    {'original': 'Beispiel-Nachricht', 'korrigiert': 'Beispiel-Nachricht',
-        'lemma': 'Beispiel-nachricht', 'pos': 'NN'},
-    {'original': 'Aber', 'korrigiert': 'Aber', 'lemma': 'aber', 'pos': 'ADV'},
-    {'original': 'mit', 'korrigiert': 'mit', 'lemma': 'mit', 'pos': 'APPR'},
-    {'original': 'Fehlren', 'korrigiert': 'Fehlern', 'lemma': 'Fehler', 'pos': 'NN'},
-    {'original': 'und', 'korrigiert': 'und', 'lemma': 'und', 'pos': 'KON'},
-    {'original': 'Leerzeichen', 'korrigiert': 'Leerzeichen',
-        'lemma': 'Leerzeichen', 'pos': 'NN'},
-    {'original': 'Sie', 'korrigiert': 'Sie', 'lemma': 'sie', 'pos': 'PPER'},
-    {'original': 'wurde', 'korrigiert': 'wurde',
-        'lemma': 'werden', 'pos': 'VA(FIN)'},
-    {'original': 'z.B.', 'korrigiert': 'z.B.', 'lemma': 'Z.b.', 'pos': 'NE'},
-    {'original': 'verfasst', 'korrigiert': 'verfasst',
-        'lemma': 'verfasst', 'pos': 'ADJ(D)'},
-    {'original': 'von', 'korrigiert': 'von', 'lemma': 'von', 'pos': 'APPR'},
-    {'original': 'Dr.', 'korrigiert': 'Dr.', 'lemma': 'Dr.', 'pos': 'NN'},
-    {'original': 'House', 'korrigiert': 'Hose', 'lemma': 'Hose', 'pos': 'NN'},
-    {'original': 'und', 'korrigiert': 'und', 'lemma': 'und', 'pos': 'KON'},
-    {'original': 'Mr', 'korrigiert': 'Mr', 'lemma': 'mr', 'pos': 'XY'},
-    {'original': 'während', 'korrigiert': 'während',
-        'lemma': 'während', 'pos': 'APPR'},
-    {'original': 'der', 'korrigiert': 'der', 'lemma': 'der', 'pos': 'ART'},
-    {'original': 'Hg.', 'korrigiert': 'Hg.', 'lemma': 'Hg.', 'pos': 'NE'},
-    {'original': 'Homer', 'korrigiert': 'Homer', 'lemma': 'Homer', 'pos': 'NE'},
-    {'original': 'ist', 'korrigiert': 'ist', 'lemma': 'sein', 'pos': 'VA(FIN)'}
-]
 
 
 def detect_student_in_message(message_processed):
@@ -104,7 +72,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
         return {"address": detected_address_new, "query": ""}
 
     # Kommata durch Leerzeichen ersetzen
-    message_processed = message_raw.replace(',', ' ')
+    message_processed = message_raw.replace(",", " ")
     # Alle Varianten von "in" durch Leerzeichen ersetzen
     message_processed = re.sub(
         r"\s+in\s+", " ", message_processed, flags=re.IGNORECASE
@@ -429,25 +397,25 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
 # print(course_test_result)
 
 
-print("---address_test_result---")
-address_test_result = detect_address_in_message(
-    None, "Meine neue Adresse ist Am-Hang 5 in 31812 Fra Kpyrmont, kannst du das übernehmen?")
-print(address_test_result)
+# print("---address_test_result---")
+# address_test_result = detect_address_in_message(
+#     None, "Meine neue Adresse ist Am Hang 5 in 31812 Bad, kannst du das übernehmen?")
+# print(address_test_result)
 
 
-print("---new_surname_test_result---")
-test_tokens = [
-    {'original': 'Fehlren', 'korrigiert': 'Fehlern', 'lemma': 'Fehler', 'pos': 'NN'},
-    {'original': 'House', 'korrigiert': 'Hose', 'lemma': 'Hose', 'pos': 'NN'},
-    {'original': 'Homer', 'korrigiert': 'Homer', 'lemma': 'Homer', 'pos': 'NE'},
-    {'original': 'Potter', 'korrigiert': 'Potter', 'lemma': 'Potter', 'pos': 'NE'}
-]
-test_tokens = [
-    {'original': 'Plotter', 'korrigiert': 'Fehlern', 'lemma': 'Fehler', 'pos': 'NN'}
-]
-new_surname_test_result = detect_new_surname_in_message(
-    students[0],
-    test_tokens,
-    "Meine neuer Name lautet: Harry James van der Shit"
-)
-print(new_surname_test_result)
+# print("---new_surname_test_result---")
+# test_tokens = [
+#     {'original': 'Fehlren', 'korrigiert': 'Fehlern', 'lemma': 'Fehler', 'pos': 'NN'},
+#     {'original': 'House', 'korrigiert': 'Hose', 'lemma': 'Hose', 'pos': 'NN'},
+#     {'original': 'Homer', 'korrigiert': 'Homer', 'lemma': 'Homer', 'pos': 'NE'},
+#     {'original': 'Potter', 'korrigiert': 'Potter', 'lemma': 'Potter', 'pos': 'NE'}
+# ]
+# test_tokens = [
+#     {'original': 'Plotter', 'korrigiert': 'Fehlern', 'lemma': 'Fehler', 'pos': 'NN'}
+# ]
+# new_surname_test_result = detect_new_surname_in_message(
+#     students[0],
+#     test_tokens,
+#     "Meine neuer Name lautet: Harry James van der Shit"
+# )
+# print(new_surname_test_result)

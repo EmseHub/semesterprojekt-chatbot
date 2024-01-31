@@ -61,149 +61,136 @@ def process_task(state_running_task, tagged_tokens, message_raw, intent):
 
     # Leere Eingabe, keine Tokens ermittelt
     if (not tagged_tokens or not message_raw):
-        return (new_state_running_task, response, is_data_changed)
+        return (state_running_task, response, is_data_changed)
 
     message_raw_simple = re.sub(r"\s+", " ", message_raw).strip()
-    message_processed = replace_diacritics(message_raw.lower())
+    message_processed = replace_diacritics(message_raw_simple.lower())
 
-    # Prozess anstoßen, falls noch ein Task vorliegt oder für den Intent vorgesehen ist
-    if (state_running_task or intent["task"]):
+    # Prüfen, ob es noch entweder noch einen offenen Task gibt, oder die Eröffnung eines neuen aus dem Intent hervorgeht
+    if (state_running_task or intent.get("task")):
         if not state_running_task:
-            state_running_task = {"name": intent.task, "params": {}}
+            state_running_task = {"name": intent.get("task"), "params": {}}
 
-        running_task_name = state_running_task["name"]
+        running_task_name = state_running_task.get("name")
 
         response = f'Für die Aufgabe "{
             running_task_name}" ist leider noch kein Ablauf definiert...'
 
         intent_tag = intent["tag"]
 
+        if (running_task_name == "adresse_aendern"):
+            state_running_task, response, is_data_changed = itemgetter("state_running_task", "response", "is_data_changed")(
+                process_task_adresse_aendern(
+                    state_running_task, message_raw_simple, message_processed, intent_tag
+                )
+            )
+            # print(
+            #     next((s for s in students if (s["matnr"] == "1234567")), None)
+            # )
+
+        elif (running_task_name == "nachname_aendern"):
+            state_running_task, response, is_data_changed = process_task_nachname_aendern(
+                state_running_task, tagged_tokens,  message_raw_simple, intent_tag
+            )
+        elif (running_task_name == "pruefung_anmelden"):
+            state_running_task, response, is_data_changed = process_task_pruefung_anmelden(
+                state_running_task, tagged_tokens,  message_raw_simple, intent_tag
+            )
+        elif (running_task_name == "pruefung_abmelden"):
+            state_running_task, response, is_data_changed = process_task_pruefung_abmelden(
+                state_running_task, tagged_tokens,  message_raw_simple, intent_tag
+            )
+        elif (running_task_name == "pruefung_status"):
+            state_running_task, response, is_data_changed = process_task_pruefung_status(
+                state_running_task, tagged_tokens,  message_raw_simple, intent_tag
+            )
+        else:
+            state_running_task, response, is_data_changed = (
+                None, response, is_data_changed)
+
         # Funktion/Prozess für den entsprechenden Task auswählen
-        new_state_running_task, response, is_data_changed = (lambda: (
-            {
-                'adresse_aendern': process_task_adresse_aendern,
-                'nachname_aendern': process_task_nachname_aendern,
-                'pruefung_anmelden': process_task_pruefung_anmelden,
-                'pruefung_abmelden': process_task_pruefung_abmelden,
-                'pruefung_status': process_task_pruefung_status
-            }.get(running_task_name, lambda *args: [None, response, is_data_changed])
-        )(state_running_task, tagged_tokens, message_raw_simple, intent_tag))()
+        # state_running_task, response, is_data_changed = (lambda: (
+        #     {
+        #         "adresse_aendern": process_task_adresse_aendern,
+        #         "nachname_aendern": process_task_nachname_aendern,
+        #         "pruefung_anmelden": process_task_pruefung_anmelden,
+        #         "pruefung_abmelden": process_task_pruefung_abmelden,
+        #         "pruefung_status": process_task_pruefung_status
+        #     }.get(running_task_name, lambda *args: [None, response, is_data_changed])
+        # )(state_running_task, tagged_tokens, message_raw_simple, intent_tag))()
 
-        # Task abgeschlossen oder abgebrochen --> Anschlussfrage ergänzen
-        if not state_running_task:
-            response += ' ' + get_random_item_in_list([
-                'Kann ich sonst noch etwas für Dich tun?',
-                'Darf es sonst noch etwas sein?',
-                'Hast Du weitere Anliegen?'
-            ])
+        # # Task abgeschlossen oder abgebrochen --> Anschlussfrage ergänzen
+        # if not state_running_task:
+        #     response += " " + get_random_item_in_list([
+        #         "Kann ich sonst noch etwas für Dich tun?",
+        #         "Darf es sonst noch etwas sein?",
+        #         "Hast Du weitere Anliegen?"
+        #     ])
 
-    # Kein Task für den Intent erforderlich --> Antwort auswählen
+    # Es läuft kein Taskt oKein Task für den Intent erforderlich --> Antwort auswählen
     else:
         response = get_random_item_in_list(intent["responses"])
 
-    return (new_state_running_task, response, is_data_changed)
+    # return (state_running_task, response, is_data_changed)
+    return {"state_running_task": state_running_task, "response": response, "is_data_changed": is_data_changed}
 
 
 # ADRESSE ÄNDERN
 def process_task_adresse_aendern(state_running_task, message_raw, message_processed, intent_tag):
+    if (not state_running_task or not message_raw or not message_processed or not intent_tag):
+        return {"state_running_task": None, "response": None, "is_data_changed": False}
 
+    if intent_tag == "ablehnung":
+        return {"state_running_task": None, "response": "Ich breche die Adressänderung ab.", "is_data_changed": False}
+
+    # Was bisher an Werten für die Erledigung des Tasks ermittelt wurde
+    student = state_running_task["params"].get("student")
+    address = state_running_task["params"].get("address")
+
+    # String mit Rückfragen bei unvollständigen Angaben
     query = ""
-    is_data_changed = False
-
-    if intent_tag == 'ablehnung':
-        task_result = {
-            "running_task": None, "response": "Ich breche die Adressänderung ab.", "is_data_changed": is_data_changed
-        }
-        return task_result
 
     # Falls dem Task noch kein Student zugeordnet wurde, versuche diesen anhand einer Matrikelnummer im Text zu ermitteln
-    if (not state_running_task["params"].get("student")):
-        student, query_student = itemgetter('student', 'query')(
+    if (not student):
+        student, query_student = itemgetter("student", "query")(
             detect_student_in_message(message_processed)
         )
-        if (student):
-            state_running_task["params"]["student"] = student
-        else:
-            query = query_student
+        query = query_student
 
-    # Was bisher über die neue Adresse ermittelt wurde
-    detected_address = state_running_task["params"].get("address")
     # Angaben, die eine Adresse aufweisen muss
-    address_keys = ['strasse', 'hausnr', 'stadt', 'plz']
+    address_keys = ["strasse", "hausnr", "stadt", "plz"]
 
-    # Falls dem Task noch keine neue vollständige neue Adresse zugeordnet wurde, versuche diese dem Text zu entnehmen
-    if (not detected_address or any(not detected_address.get(key) for key in address_keys)):
-        address, query_address = itemgetter('address', 'query')(
-            detect_address_in_message(detected_address, message_raw)
+    # Falls dem Task noch keine vollständige neue Adresse zugeordnet wurde, versuche diese dem Text zu entnehmen
+    if (not address or any(not address.get(key) for key in address_keys)):
+        address, query_address = itemgetter("address", "query")(
+            detect_address_in_message(address, message_raw)
         )
-        state_running_task["params"]["address"] = address
         query += (" " + query_address)
 
-    # Ende
+    state_running_task["params"]["student"] = student
+    state_running_task["params"]["address"] = address
     query = query.strip()
 
-
-def process_task_adresse_aendern_OLD(state_running_task, tagged_tokens, message, intent_tag):
-    is_data_changed = False
-
-    if intent_tag == 'ablehnung':
-        task_result = {
-            "running_task": None, "response": "Ich breche die Adressänderung ab.", "is_data_changed": is_data_changed
-        }
-        return task_result
-
-    if (not state_running_task or not tagged_tokens or not message):
-        return [state_running_task, None, is_data_changed]
-
-    # Daten in Nachricht erkennen
-    # TODO: Funktion get_missing_student_information() implementieren
-
-    response = "TOOO DOOOOOO"
-    # response += f" Okay {detected_address_new['student']['vorname'].split(' ')[0]}, danke."
-
-    address, query = detect_address_in_message(
-        detected_address_temp, message_raw
-    )
-
-    obj_detected_data, str_query = get_missing_student_or_address_from_message(
-        {**state_running_task.params}, tagged_tokens
-    )
-    state_running_task.params = obj_detected_data
-
-    # Prüfen, ob alle Daten vorliegen
-    # Staat außen vor da erstmal nur Deutschland betrachtet
-
-    # Angaben, die eine Adresse aufweisen muss
-    address_keys = ['strasse', 'hausnr', 'stadt', 'plz']
-
-    if not (
-        obj_detected_data.objStudent
-        or obj_detected_data.objAddress
-        or any(not obj_detected_data.objAddress[key] for key in address_keys)
-    ):
-        return [state_running_task, str_query, is_data_changed]
+    # Prüfen, ob noch Rückfragen vorliegen, oder alle relevanten Daten vorhanden sind
+    if (query):
+        return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
-    if intent_tag != 'zustimmung':
-        str_response = (
-            f'Nun denn, {obj_detected_data.objStudent.vorname.split(
-                " ")[0]}, ich ändere Deine Adresse zu "{obj_detected_data.objAddress.strasse} '
-            f'{obj_detected_data.objAddress.hausnr}, {obj_detected_data.objAddress.plz} {
-                obj_detected_data.objAddress.stadt}", okay?'
+    if (intent_tag != "zustimmung"):
+        query = (
+            f'Nun denn, {student["vorname"].split()[0]}, ich ändere Deine Adresse zu "{
+                address["strasse"]} {address["hausnr"]}, {address["plz"]} {address["stadt"]}", okay?'
         )
-        return [state_running_task, str_response, is_data_changed]
+        return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
-    # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
+    # Da, alle Daten vorhanden und Vorgang bestätigt, kann Datensatz nun in DB aktualisert und Running Task zurückgesetzt werden
+    student = next(
+        (s for s in students if (s["matnr"] == student["matnr"])), student
+    )
+    student["adresse"] = {**address}
+    student["letztesUpdate"] = datetime.now().isoformat()
 
-    # Prüfen, ob der richtige Student erkannt wurde (wurde zuvor bereits die richtige Matr.Nr. genannt)
-    obj_aktueller_student = next(
-        (s for s in students if s.matnr == obj_detected_data.objStudent.matnr), None)
-    if obj_aktueller_student:
-        obj_aktueller_student.adresse = {**obj_detected_data.objAddress}
-        obj_aktueller_student.letztesUpdate = datetime.datetime.now().isoformat()
-        is_data_changed = True
-
-    return [None, 'Vielen Dank, die Adresse wurde geändert.', is_data_changed]
+    return {"state_running_task": None, "response": "Vielen Dank, die Adresse wurde geändert.", "is_data_changed": True}
 
 
 # NACHNAME ÄNDERN
@@ -242,7 +229,7 @@ def process_task_nachname_aendern(state_running_task, tagged_tokens, message, in
         (s for s in students if s.matnr == obj_detected_data.objStudent.matnr), None)
     if obj_student_live:
         obj_student_live.nachname = {**obj_detected_data.objStudent}
-        obj_student_live.letztesUpdate = datetime.datetime.now().isoformat()
+        obj_student_live.letztesUpdate = datetime.now().isoformat()
         is_data_changed = True
 
     return [None, 'Vielen Dank, dein Nachname wurde geändert.', is_data_changed]

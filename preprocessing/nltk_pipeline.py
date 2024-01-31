@@ -14,7 +14,7 @@ words_not_to_process = ['Muggel']
 hanover_tagger = hanta.HanoverTagger("morphmodel_ger.pgz")
 
 
-def get_tagged_tokens_with_ner(raw_text):
+def get_tagged_tokens_with_ner(text_raw):
     print("------- NER -------")
     from nltk.chunk import tree2conlltags
 
@@ -58,13 +58,12 @@ def get_tagged_tokens_with_ner(raw_text):
     # Electra?
 
 
-def get_tagged_tokens(raw_text):
+def get_tagged_tokens(text_raw):
 
-    diagnostic = {}
     language = "german"
 
     # Mehrfache Leerzeichen, Tabs und Zeilenumbrüche mit RegEx auf ein Leerzeichen reduzieren
-    clean_text = re.sub(r"\s+", " ", raw_text)
+    clean_text = re.sub(r"\s+", " ", text_raw)
 
     # Tokenization auf Wort-Ebene
     tokens_original = word_tokenize(clean_text, language)
@@ -109,17 +108,13 @@ def get_tagged_tokens(raw_text):
     # https://homepage.ruhr-uni-bochum.de/stephen.berman/Korpuslinguistik/Tagsets-STTS.html
     # https://www.ims.uni-stuttgart.de/documents/ressourcen/korpora/tiger-corpus/annotation/tiger_scheme-morph.pdf (pp 26/27)
 
-    # print(hanover_tagger.analyze("Zauberkunde"))
-    # print(hanover_tagger.analyze("Dortmund"))
-    # print(hanover_tagger.analyze("Meyer"))
-    # print(hanover_tagger.analyze("Stein"))
-
     taglevel = 1  # Default ist 1
     casesensitive = False  # Default ist True
     tokens_hannover_tagged = hanover_tagger.tag_sent(
         tokens_corrected, taglevel, casesensitive
     )
-    # Ausgabe zu "wurde" ist etwa ('wurde', 'werden', 'VA(FIN)'
+    # tokens_hannover_tagged = [ hanover_tagger.analyze(token) for token in tokens_corrected ]
+    # print(hanover_tagger.analyze("wurde")) --> Ausgabe zu "wurde" ist ('wurde', 'werden', 'VA(FIN)'
 
     # ---Weitere Optionen---
     # "Pattern" Library des CLiPS Research Center
@@ -136,7 +131,7 @@ def get_tagged_tokens(raw_text):
         for i in range(len(tokens_original))
     ]
 
-    return (result_tagged_tokens, diagnostic)
+    return result_tagged_tokens
 
 
 # sample_message = "mein ist Muggel sauer"

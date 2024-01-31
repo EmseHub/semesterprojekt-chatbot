@@ -75,9 +75,8 @@ def autocorrect_word(word):
     # Prüft, ob Wort bekannt/im Wörterbuch vorhanden (true/false)
     if pspell.lookup(word) == False:
         for suggestion in pspell.suggest(word):
-            return suggestion
-    else:
-        return word
+            return suggestion if suggestion else word
+    return word
 
 
 # Beispiel-Liste zum Testen
