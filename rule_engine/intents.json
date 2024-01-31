@@ -119,6 +119,7 @@
         "patterns": [
             "pruefung",
             "pruefungsleistung",
+            "pruefungsstatus",
             "klausur",
             "status",
             "note",

@@ -55,11 +55,13 @@ if __name__ == "__main__":
     print(opening_messsage)
 
     while True:
-        message = input()
+        message = input().strip()
 
-        if message.lower() == "task":
-            print(json.dumps(state_running_task, indent=4))
+        if (not message):
             continue
+
+        elif message.lower() == "task":
+            print(json.dumps(state_running_task, indent=4))
 
         elif message.lower() == "tokens":
             print(json.dumps(tagged_tokens, indent=4))
