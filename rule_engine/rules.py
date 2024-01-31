@@ -54,20 +54,16 @@ def get_missing_student_or_address_from_message():
 def process_task(state_running_task, tagged_tokens, message_raw, intent):
     '''Ermittlung des auszuführenden Tasks & Initiierung der Funktion'''
 
-    # Auf ursprünglichen Task zurückfallen, falls sich kein neuer Task ergibt
-    new_state_running_task = state_running_task
     response = None
     is_data_changed = False
 
-    # Leere Eingabe, keine Tokens ermittelt
+    # Prüfen, ob eine Nachricht und Tokens vorhanden sind
     if (not tagged_tokens or not message_raw):
-        return (state_running_task, response, is_data_changed)
+        return {"state_running_task": state_running_task, "response": response, "is_data_changed": is_data_changed}
 
-    message_raw_simple = re.sub(r"\s+", " ", message_raw).strip()
-    message_processed = replace_diacritics(message_raw_simple.lower())
-
-    # Prüfen, ob es noch entweder noch einen offenen Task gibt, oder die Eröffnung eines neuen aus dem Intent hervorgeht
+    # Prüfen, ob es noch entweder noch einen offenen Task gibt, oder die Eröffnung eines neuen Tasks aus dem Intent hervorgeht
     if (state_running_task or intent.get("task")):
+
         if not state_running_task:
             state_running_task = {"name": intent.get("task"), "params": {}}
 
@@ -76,6 +72,8 @@ def process_task(state_running_task, tagged_tokens, message_raw, intent):
         response = f'Für die Aufgabe "{
             running_task_name}" ist leider noch kein Ablauf definiert...'
 
+        message_raw_simple = re.sub(r"\s+", " ", message_raw).strip()
+        message_processed = replace_diacritics(message_raw_simple.lower())
         intent_tag = intent["tag"]
 
         if (running_task_name == "adresse_aendern"):
@@ -119,15 +117,15 @@ def process_task(state_running_task, tagged_tokens, message_raw, intent):
         #     }.get(running_task_name, lambda *args: [None, response, is_data_changed])
         # )(state_running_task, tagged_tokens, message_raw_simple, intent_tag))()
 
-        # # Task abgeschlossen oder abgebrochen --> Anschlussfrage ergänzen
-        # if not state_running_task:
-        #     response += " " + get_random_item_in_list([
-        #         "Kann ich sonst noch etwas für Dich tun?",
-        #         "Darf es sonst noch etwas sein?",
-        #         "Hast Du weitere Anliegen?"
-        #     ])
+        # Task abgeschlossen oder abgebrochen -> Anschlussfrage ergänzen
+        if not state_running_task:
+            response += " " + get_random_item_in_list([
+                "Kann ich sonst noch etwas für Dich tun?",
+                "Darf es sonst noch etwas sein?",
+                "Hast Du weitere Anliegen?"
+            ])
 
-    # Es läuft kein Taskt oKein Task für den Intent erforderlich --> Antwort auswählen
+    # Es ist kein Task offen und soll auch kein neuer gestartet werden (einfach nur Antwort auf Nachricht)
     else:
         response = get_random_item_in_list(intent["responses"])
 

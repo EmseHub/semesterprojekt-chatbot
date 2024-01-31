@@ -74,9 +74,9 @@ def get_tagged_tokens(text_raw):
         token for token in tokens_original if token not in string.punctuation
     ]
 
-    # Tokens, die eine Mindestanzahl an Zeichen unterschreite entfernen
+    # Tokens, die eine Mindestanzahl an Zeichen unterschreiten, entfernen
     tokens_original = [
-        token for token in tokens_original if len(token) > 1
+        token for token in tokens_original if len(token) > 0
     ]
 
     # Stop-Words entfernen (case-insensitive besser?) --> Stop-Words nach HanTa erneut entfernen, anhand lemmata/Korrektur?

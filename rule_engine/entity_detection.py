@@ -93,7 +93,9 @@ def detect_address_in_message(detected_address_temp, message_raw):
         # Mit RegEx Adressen-Syntax erkennen (Musterstr. 55 12345 Musterstadt)
         regex_match = re.search(
             # r"\b((([A-Za-zÄÖÜäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|(([A-ZÄÖÜa-zäöüß]{2,}-?)*)|((\b[A-ZÄÖÜ][a-zäöüß]+(\s*))*))\s+\d{1,4}([A-Za-z]*)\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)*)|(([A-Za-zÄÖÜäöüß]{2,}-?)*))(?![A-Za-z0-9ÄÖÜäöüß-])",
-            r"\b(((([A-ZÄÖÜ][a-zäöüß]+)-?)+\s*(str(\.?)|straße|strasse|weg))|((([A-ZÄÖÜ][a-zäöüß]+)-?)+)|((\b([A-ZÄÖÜ][a-zäöüß]+)\s*)+))\s+\d{1,4}[A-Za-z]*\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)+)|((([A-ZÄÖÜ][a-zäöüß]+)-?)+))(?![A-Za-z0-9ÄÖÜäöüß-])",
+            # r"\b(((([A-ZÄÖÜ][a-zäöüß]+)-?)+\s*(str(\.?)|straße|strasse|weg))|((([A-ZÄÖÜ][a-zäöüß]+)-?)+)|((\b([A-ZÄÖÜ][a-zäöüß]+)\s*)+))\s+\d{1,4}[A-Za-z]*\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)+)|((([A-ZÄÖÜ][a-zäöüß]+)-?)+))(?![A-Za-z0-9ÄÖÜäöüß-])",
+            # r"\b(((([A-ZÄÖÜ][a-zäöüß]+)(-([A-ZÄÖÜa-zäöüß]{2,}))?-?)+\s*((((Str(.?))|Straße|Strasse|Weg)*)))|(([A-ZÄÖÜ][a-zäöüß]+)+-?(str\.)?\s*)+)\s+\d{1,4}[A-Za-z]*\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)+)|((([A-ZÄÖÜ][a-zäöüß]+)-?)+))(?![A-Za-z0-9ÄÖÜäöüß-])",
+            r"\b(((([A-ZÄÖÜ][a-zäöüß]+)(-([A-ZÄÖÜa-zäöüß]{2,}))*)+\s*((((Str\.?)|Straße|Strasse|Weg)*)))|(([A-ZÄÖÜ][a-zäöüß]+)+-?(str\.)?\s*(Str\.)?)+)\s+\d{1,4}[A-Za-z]*\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)+)|((([A-ZÄÖÜ][a-zäöüß]+)-?)+))(?![A-Za-z0-9ÄÖÜäöüß-])",
             message_processed
         )
         # regex_match = re.search(
@@ -136,10 +138,16 @@ def detect_address_in_message(detected_address_temp, message_raw):
     if (not strasse and not hausnr):
         # Mit RegEx Straße-Hausnummer-Syntax erkennen (Musterstr. 55)
         regex_match = re.search(
-            r"\b((([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|([a-zäöüß]{2,}(-?))*)\s+\d{1,4}([a-z]*)\b",
+            # r"\b((([A-ZÄÖÜa-zäöüß]{2,}-?)+(\s+)?(((S|s)((tr(\.?))|traße|trasse))|((W|w)eg))+)|(([A-ZÄÖÜ][a-zäöüß]+)+-?)+)\s+\d{1,4}([a-z]*)\b",
+            # r"\b(((([A-ZÄÖÜ][a-zäöüß]+)(-([A-ZÄÖÜa-zäöüß]{2,}))*)+\s*((((Str(.?))|Straße|Strasse|Weg)*)))|(([A-ZÄÖÜ][a-zäöüß]+)+-?(str\.)?\s*)+)\s+\d{1,4}([A-Za-z]*)\b",
+            r"\b(((([A-ZÄÖÜ][a-zäöüß]+)(-([A-ZÄÖÜa-zäöüß]{2,}))*)+((\s*)|(-))((((Str(.?))|Straße|Strasse|Weg)*)))|(([A-ZÄÖÜ][a-zäöüß]+)+-?(str\.)?\s*)+)\s+\d{1,4}([A-Za-z]*)\b",
             message_processed,
-            re.IGNORECASE
         )
+        # regex_match = re.search(
+        #     r"\b((([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|([a-zäöüß]{2,}(-?))*)\s+\d{1,4}([a-z]*)\b",
+        #     message_processed,
+        #     re.IGNORECASE
+        # )
         if (regex_match):
             regex_match_string = regex_match.group()
             # "Ein-Beispiel Weg 55" an der ersten Ziffer in zwei Substrings aufteilen, damit Leerzeichen im Straßennamen nicht als Trenner dient
@@ -159,15 +167,25 @@ def detect_address_in_message(detected_address_temp, message_raw):
 
     # Falls Straße noch fehlt, versuche diese gezielt auszulesen
     if (not strasse):
-        # Mit RegEx Straßen-Syntax erkennen (Musterstr. 55)
-        regex_match = re.search(
-            r"\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg)(?![a-z0-9äöüß-])",
-            message_processed,
-            re.IGNORECASE
-        )
-        if (regex_match):
-            regex_match_string = regex_match.group()
-            strasse = regex_match_string.strip()
+        # Bei längerer Nachricht nach RegEx Straßen-Syntax suchen (Musterstr. 55)
+        if (len(message_processed.split()) > 3):
+            regex_match = re.search(
+                # r"\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg)(?![a-z0-9äöüß-])",
+                r"\b(((([A-ZÄÖÜ][a-zäöüß]+)(-([A-ZÄÖÜa-zäöüß]{2,}))*)+((\s*)|(-))((((Str(\.?))|Straße|Strasse|Weg)))))(?![A-Za-z0-9AÖÜäöüß-])",
+                message_processed,
+                re.IGNORECASE
+            )
+            if (regex_match):
+                regex_match_string = regex_match.group()
+                strasse = regex_match_string.strip()
+
+        # Bei kürzerer Nachricht alle Treffer nehmen
+        else:
+            # regex_match = re.search(
+            #     r"\b(((([A-ZÄÖÜ][a-zäöüß]+)(-([A-ZÄÖÜa-zäöüß]{2,}))*)+((\s*)|(-))((((Str(.?))|Straße|Strasse|Weg))))|(([A-ZÄÖÜ][a-zäöüß]+)+-?(str\.)?\s*)+)(?![A-Za-z0-9AÖÜäöüß-])",
+            #     message_processed
+            # )
+            strasse = message_processed.strip()
 
     # Falls Hausnummer noch fehlt, versuche diese gezielt auszulesen
     if (not hausnr):
@@ -340,7 +358,7 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
                     r"[^A-Za-zÄÖÜäöüß\s-]", "", potential_surname
                 ).strip()
 
-    # Falls kein Nachname gefunden wurde, prüfe, ob die Nachricht eine Namensanhabe in RegEx-Syntax enthält (erkennt nur Namen ohne Leerzeichen)
+    # Falls kein Nachname gefunden wurde, prüfe, ob die Nachricht eine Namensangabe in RegEx-Syntax enthält (erkennt nur Namen ohne Leerzeichen)
     if (not potential_surname):
         regex_match = re.search(
             r"\b((ist|lautet|heißt|heisst|heisse|heiße|in|zu))\s+([A-ZÄÖÜ][a-zäöüß]+(-?))+",
