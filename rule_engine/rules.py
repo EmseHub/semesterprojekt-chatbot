@@ -191,7 +191,7 @@ def pruefung_anmelden(state_running_task, message_processed, intent_tag):
 
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
     if (intent_tag != "zustimmung"):
-        query = f'Okay {student['vorname'].split()[0]}, möchtest Du die Prüfung im Fach "{
+        query = f'Okay {student["vorname"].split()[0]}, möchtest Du die Prüfung im Fach "{
             course["name"]}" bei {course["lehrperson"]} verbindlich anmelden?'
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
@@ -201,7 +201,7 @@ def pruefung_anmelden(state_running_task, message_processed, intent_tag):
     )
     if (exam):
         next(
-            pruefung for pruefung in student['pruefungen'] if pruefung["kursID"] == course["id"]
+            pruefung for pruefung in student["pruefungen"] if pruefung["kursID"] == course["id"]
         )["isAngemeldet"] = True
     else:
         exam = {"kursID": course["id"], "isAngemeldet": True, "note": None}
@@ -257,7 +257,7 @@ def pruefung_abmelden(state_running_task, message_processed, intent_tag):
         (s for s in students if (s["matnr"] == student["matnr"])), student
     )
     next(
-        pruefung for pruefung in student['pruefungen'] if pruefung["kursID"] == course["id"]
+        pruefung for pruefung in student["pruefungen"] if pruefung["kursID"] == course["id"]
     )["isAngemeldet"] = False
 
     student["letztesUpdate"] = datetime.now().isoformat()
@@ -296,7 +296,7 @@ def pruefung_status(state_running_task, message_processed, intent_tag):
 
     # Prüfen, ob der Kurs (mit einer Note) bestanden ist
     elif (not (exam["note"] is None)):
-        response = f'Glückwunsch {student["vorname"].split(' ')[0]}, Du hast die Prüfung im Fach "{
+        response = f'Glückwunsch {student["vorname"].split()[0]}, Du hast die Prüfung im Fach "{
             course["name"]}" mit der Note {"{:.1f}".format(exam["note"])} bestanden!'
 
     return {"state_running_task": None, "response": response, "is_data_changed": False}
