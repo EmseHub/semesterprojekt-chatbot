@@ -391,7 +391,7 @@ function processTaskPruefungAbmelden(objTaskState, strMessageRaw, strIntentTag) 
     objStudentLive.pruefungen.find(p => p.kursID === objCourse.id).isAngemeldet = false;
     objStudentLive.letztesUpdate = new Date();
     isDataChanged = true;
-    return [null, 'Die Prüfung wurde erfolgreich angemeldet.', isDataChanged];
+    return [null, 'Die Prüfung wurde erfolgreich abgemeldet.', isDataChanged];
 }
 
 function processTaskPruefungStatus(objTaskState, strMessageRaw, strIntentTag) {

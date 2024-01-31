@@ -23,10 +23,10 @@ def get_intent(tagged_tokens):
         for pattern in intent['patterns']:
             # Prüfen, ob Pattern des Intents zu Lemma oder Original-Wort des Textes passt
             for tagged_token in tagged_tokens:
-                # Lemma und Original-Word extrahieren und zum Abgleich ins Format der Patterns umwandeln: Umlaute ersetzen und Lower Case
-                lemma = replace_diacritics(tagged_token["lemma"].lower())
+                # Original-Wort und Lemma extrahieren und zum Abgleich ins Format der Patterns umwandeln: Umlaute ersetzen und Lower Case
                 original = replace_diacritics(tagged_token["original"].lower())
-                if (pattern == lemma or pattern == original):
+                lemma = replace_diacritics(tagged_token["lemma"].lower())
+                if (pattern == original or pattern == lemma):
                     # Pattern getroffen
                     hit_count += 1
                     # Nur ein Treffer je Token möglich
