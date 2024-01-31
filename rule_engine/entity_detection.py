@@ -397,7 +397,7 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
         result["surname"] = potential_surname
     else:
         result["query"] = get_random_item_in_list([
-            "Wie genau lautet Dein neuer Nachname?",
+            "Wie genau lautet Dein neuer Nachname bitte?",
             "Könntest Du nur Deinen Nachnamen bitte erneut angeben?",
             'Gib Deinen neuen Nachnamen gerne in folgender Form an: "Mein neuer Nachname lautet: Beispielname"'
         ])

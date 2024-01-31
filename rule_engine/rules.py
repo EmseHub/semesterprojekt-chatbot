@@ -2,14 +2,9 @@ from operator import itemgetter
 from datetime import datetime
 import re
 
-
 from rule_engine.data_service import students, courses
 from rule_engine.helpers import get_random_item_in_list, replace_diacritics
-
-from rule_engine.entity_detection import detect_student_in_message, detect_course_in_message, detect_address_in_message
-
-
-# region     --------------------------- Daten ermitteln ---------------------------
+from rule_engine.entity_detection import detect_student_in_message, detect_course_in_message, detect_address_in_message, detect_new_surname_in_message
 
 
 def get_missing_student_information(current_task: str, message: str):
@@ -17,40 +12,11 @@ def get_missing_student_information(current_task: str, message: str):
     : Erfragt fehlende Informationen vom Studenten und gibt diese als Dictionary zurück.
     : 
     '''
-    result = {}
-
-    # ermitteln, welche Informationen fehlen/abgefragt werden sollen
-    match current_task:
-        case "adresse_aendern":
-            # todo
-            result = {}
-        case "nachname_aendern":
-            # todo
-            result = {}
-        case "pruefung_status":
-            # todo
-            result = {}
-        case "pruefung_anmelden":
-            # todo
-            result = {}
-        case "pruefung_abmelden":
-            # todo
-            result = {}
-
-    return result
-
-
-def get_missing_student_or_address_from_message():
-    '''Fehlende Informationen (Matrikelnummer oder Adresse) vom Studenten abfragen. 
-    '''
-    return None
-
-# endregion  --------------------------- Daten ermitteln ---------------------------
-
+    return
 
 # region --------------------------- Task-Funtkionen ---------------------------
 
-# TASK WÄHLEN
+
 def process_task(state_running_task, tagged_tokens, message_raw, intent):
     '''Ermittlung des auszuführenden Tasks & Initiierung der Funktion'''
 
@@ -87,8 +53,10 @@ def process_task(state_running_task, tagged_tokens, message_raw, intent):
             # )
 
         elif (running_task_name == "nachname_aendern"):
-            state_running_task, response, is_data_changed = process_task_nachname_aendern(
-                state_running_task, tagged_tokens,  message_raw_simple, intent_tag
+            state_running_task, response, is_data_changed = itemgetter("state_running_task", "response", "is_data_changed")(
+                process_task_nachname_aendern(
+                    state_running_task, tagged_tokens,  message_raw_simple, message_processed, intent_tag
+                )
             )
         elif (running_task_name == "pruefung_anmelden"):
             state_running_task, response, is_data_changed = process_task_pruefung_anmelden(
@@ -133,10 +101,9 @@ def process_task(state_running_task, tagged_tokens, message_raw, intent):
     return {"state_running_task": state_running_task, "response": response, "is_data_changed": is_data_changed}
 
 
-# ADRESSE ÄNDERN
 def process_task_adresse_aendern(state_running_task, message_raw, message_processed, intent_tag):
     if (not state_running_task or not message_raw or not message_processed or not intent_tag):
-        return {"state_running_task": None, "response": None, "is_data_changed": False}
+        return {"state_running_task": state_running_task, "response": None, "is_data_changed": False}
 
     if intent_tag == "ablehnung":
         return {"state_running_task": None, "response": "Ich breche die Adressänderung ab.", "is_data_changed": False}
@@ -191,46 +158,49 @@ def process_task_adresse_aendern(state_running_task, message_raw, message_proces
     return {"state_running_task": None, "response": "Vielen Dank, die Adresse wurde geändert.", "is_data_changed": True}
 
 
-# NACHNAME ÄNDERN
-def process_task_nachname_aendern(state_running_task, tagged_tokens, message, intent_tag):
-    is_data_changed = False
+def process_task_nachname_aendern(state_running_task, tagged_tokens, message_raw, message_processed, intent_tag):
+    if (not state_running_task or not tagged_tokens or not message_raw or not message_processed or not intent_tag):
+        return {"state_running_task": state_running_task, "response": None, "is_data_changed": False}
 
-    if intent_tag == 'ablehnung':
-        return [None, 'Ich breche die Nachnamensänderung ab.', is_data_changed]
+    if intent_tag == "ablehnung":
+        return {"state_running_task": None, "response": "Ich breche die Namensänderung ab.", "is_data_changed": False}
 
-    if not state_running_task or not tagged_tokens or not tagged_tokens.strip():
-        return [state_running_task, None, is_data_changed]
+    # Falls dem Task noch kein Student zugeordnet wurde, versuche diesen anhand einer Matrikelnummer im Text zu ermitteln
+    student = state_running_task["params"].get("student")
+    if (not student):
+        student, query_student = itemgetter("student", "query")(
+            detect_student_in_message(message_processed)
+        )
+        if (not student):
+            return {"state_running_task": state_running_task, "response": query_student, "is_data_changed": False}
+        state_running_task["params"]["student"] = student
 
-    # Daten in Nachricht erkennen
-    obj_detected_data, str_query = get_missing_student_or_address_from_message(
-        {**state_running_task.params}, tagged_tokens
-    )
-    state_running_task.params = obj_detected_data
-
-    # Prüfen, ob alle Daten vorliegen
-    address_keys = ['vorname', 'nachname']
-    if not (
-        obj_detected_data.objStudent
-    ):
-        return [state_running_task, str_query, is_data_changed]
+    # Falls dem Task noch kein neuer Nachname zugeordnet wurde, versuche diese dem Text zu entnehmen
+    surname = state_running_task["params"].get("surname")
+    if (not surname):
+        surname, query_surname = itemgetter("surname", "query")(
+            detect_new_surname_in_message(student, tagged_tokens, message_raw)
+        )
+        if (not surname):
+            return {"state_running_task": state_running_task, "response": query_surname, "is_data_changed": False}
+        state_running_task["params"]["surname"] = surname
 
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
-    if intent_tag != 'zustimmung':
-        str_response = (
-            f'Nun denn, {obj_detected_data.objStudent.vorname.split(" ")[0]}, ich ändere Deinen Nachnamen zu "{
-                obj_detected_data.objStudent.nachname}", okay?'
+    if (intent_tag != "zustimmung"):
+        query = (
+            f'Alles klar, {student["vorname"].split()[0]}, ich ändere Deinen Nachnamen dann um in "{
+                surname}". Ist das so korrekt?'
         )
-        return [state_running_task, str_response, is_data_changed]
+        return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
-    # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
-    obj_student_live = next(
-        (s for s in students if s.matnr == obj_detected_data.objStudent.matnr), None)
-    if obj_student_live:
-        obj_student_live.nachname = {**obj_detected_data.objStudent}
-        obj_student_live.letztesUpdate = datetime.now().isoformat()
-        is_data_changed = True
+    # Da, alle Daten vorhanden und Vorgang bestätigt, kann Datensatz nun in DB aktualisert und Running Task zurückgesetzt werden
+    student = next(
+        (s for s in students if (s["matnr"] == student["matnr"])), student
+    )
+    student["nachname"] = surname
+    student["letztesUpdate"] = datetime.now().isoformat()
 
-    return [None, 'Vielen Dank, dein Nachname wurde geändert.', is_data_changed]
+    return {"state_running_task": None, "response": "Vielen Dank, Dein Nachname wurde aktualisiert.", "is_data_changed": True}
 
 
 # PRÜFUNG ANMELDEN
@@ -391,6 +361,4 @@ def process_task_pruefung_status(state_running_task, tagged_tokens, message, int
         )
 
     return [None, str_response, is_data_changed]
-
-
 # endregion --------------------------- Task-Funtkionen ---------------------------
