@@ -7,15 +7,15 @@ from rule_engine.helpers import get_random_item_in_list, replace_diacritics
 from rule_engine.entity_detection import detect_student_in_message, detect_course_in_message, detect_address_in_message, detect_new_surname_in_message
 
 
-def get_missing_student_information(current_task: str, message: str):
-    '''[Prototyp Alternative] Zusammengeführte Funktion zum Abfragen aller fehlenden Informationen
-    : Erfragt fehlende Informationen vom Studenten und gibt diese als Dictionary zurück.
-    : 
-    '''
-    return
+# def get_missing_student_information(current_task: str, message: str):
+#     '''[Prototyp Alternative] Zusammengeführte Funktion zum Abfragen aller fehlenden Informationen
+#     : Erfragt fehlende Informationen vom Studenten und gibt diese als Dictionary zurück.
+#     :
+#     '''
+#     return
+
 
 # region --------------------------- Task-Funtkionen ---------------------------
-
 
 def supply_pruefung_data(state_running_task, message_processed):
     if (not state_running_task or not message_processed):
@@ -169,13 +169,13 @@ def pruefung_anmelden(state_running_task, message_processed, intent_tag):
         supply_pruefung_data(state_running_task, message_processed)
     )
 
-    # Was bisher an Werten für die Zuordnung einer Prüfung ermittelt wurde
-    student = state_running_task["params"].get("student")
-    course = state_running_task["params"].get("course")
-
     # Prüfen, ob noch Rückfragen vorliegen, oder alle relevanten Daten vorhanden sind
     if (query):
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
+
+    # Was bisher an Werten für die Zuordnung einer Prüfung ermittelt wurde
+    student = state_running_task["params"].get("student")
+    course = state_running_task["params"].get("course")
 
     # Falls bei Student bereits eine Prüfung vorhanden ist, sicherstellen, dass diese noch nicht bestanden und nocht nicht angemeldet ist
     if (exam):
@@ -224,13 +224,13 @@ def pruefung_abmelden(state_running_task, message_processed, intent_tag):
         supply_pruefung_data(state_running_task, message_processed)
     )
 
-    # Was bisher an Werten für die Zuordnung einer Prüfung ermittelt wurde
-    student = state_running_task["params"].get("student")
-    course = state_running_task["params"].get("course")
-
     # Prüfen, ob noch Rückfragen vorliegen, oder alle relevanten Daten vorhanden sind
     if (query):
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
+
+    # Was bisher an Werten für die Zuordnung einer Prüfung ermittelt wurde
+    student = state_running_task["params"].get("student")
+    course = state_running_task["params"].get("course")
 
     # Prüfen, ob dem Studenten eine Prüfung in diesem Kurs zugeordnet ist und ob diese angemeldet ist
     if (not exam or not exam["isAngemeldet"]):
@@ -265,112 +265,46 @@ def pruefung_abmelden(state_running_task, message_processed, intent_tag):
     return {"state_running_task": None, "response": "Die Prüfung wurde erfolgreich abgemeldet.", "is_data_changed": True}
 
 
-def pruefung_abmelden_OLD(state_running_task, tagged_tokens, message, intent_tag):
-    is_data_changed = False
+def pruefung_status(state_running_task, message_processed, intent_tag):
+    if (not state_running_task or not message_processed or not intent_tag):
+        return {"state_running_task": state_running_task, "response": None, "is_data_changed": False}
 
-    if intent_tag == 'ablehnung':
-        return [None, 'Ich stoppe die Abmeldung der Prüfung.', is_data_changed]
+    if intent_tag == "ablehnung":
+        return {"state_running_task": None, "response": "Ich breche die Abmeldung der Prüfung ab.", "is_data_changed": False}
 
-    if not state_running_task or not tagged_tokens or not tagged_tokens.strip():
-        return [state_running_task, None, is_data_changed]
-
-    # Prüfen, ob Anhand der Nachricht und ggf. bisheriger Angaben die referenzierte Prüfung ermittelt werden kann
-    obj_existing_pruefung, obj_task_state_params, str_query = get_referenced_pruefung_from_message(
-        {**state_running_task.params}, tagged_tokens
-    )
-    state_running_task.params = obj_task_state_params
-    obj_student, obj_course = obj_task_state_params['objStudent'], obj_task_state_params['objCourse']
-
-    # Prüfen, ob die notwendigen Daten zu User und Kurs vorliegen
-    if not obj_student or not obj_course:
-        return [state_running_task, str_query, is_data_changed]
-
-    # Prüfen, ob der Kurs dem User zugeordnet und die Prüfung angemeldet ist
-    if not obj_existing_pruefung or not obj_existing_pruefung['isAngemeldet']:
-        str_response = (
-            f"{obj_student['vorname'].split(' ')[0]}, Du kannst die Prüfung im Fach \"{
-                obj_course["name"]}\" nicht abmelden, "
-            "da Du gar nicht angemeldet bist."
-        )
-        return [None, str_response, is_data_changed]
-
-    # Prüfen, ob der Kurs noch nicht bestanden ist
-    if obj_existing_pruefung['note'] is not None:
-        str_response = (
-            f"{obj_student['vorname'].split(' ')[0]}, Du kannst die Prüfung im Fach \"{
-                obj_course["name"]}\" nicht abmelden, "
-            f"da Du sie bereits mit der Note {
-                obj_existing_pruefung['note']:.1f} bestanden hast."
-        )
-        return [None, str_response, is_data_changed]
-
-    # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
-    if intent_tag != 'zustimmung':
-        str_response = (
-            f"Okay {obj_student['vorname'].split(' ')[0]}, möchtest Du die Prüfung im Fach \"{
-                obj_course['name']}\" "
-            f"bei {obj_course['lehrperson']} wirklich abmelden?"
-        )
-        return [state_running_task, str_response, is_data_changed]
-
-    # Vorgang bestätigt --> Daten ändern und Running Task zurücksetzen
-    obj_student_live = next(
-        (s for s in students if s['matnr'] == obj_student['matnr']), None)
-    next(p for p in obj_student_live['pruefungen'] if p['kursID'] == obj_course['id'])[
-        'isAngemeldet'] = False
-    obj_student_live['letztesUpdate'] = datetime.now().isoformat()
-    is_data_changed = True
-
-    return [None, 'Die Prüfung wurde erfolgreich abgemeldet.', is_data_changed]
-
-
-def pruefung_status(state_running_task, tagged_tokens, message, intent_tag):
-    is_data_changed = False
-
-    if intent_tag == 'ablehnung':
-        return [None, 'Ich stoppe die Statusabfrage der Prüfung.', is_data_changed]
-
-    if not state_running_task or not tagged_tokens or not tagged_tokens.strip():
-        return [state_running_task, None, is_data_changed]
-
-    # Prüfen, ob Anhand der Nachricht und ggf. bisheriger Angaben die referenzierte Prüfung ermittelt werden kann
-    obj_existing_pruefung, obj_task_state_params, str_query = get_referenced_pruefung_from_message(
-        {**state_running_task.params}, tagged_tokens
-    )
-    state_running_task.params = obj_task_state_params
-    obj_student, obj_course = obj_task_state_params['objStudent'], obj_task_state_params['objCourse']
-
-    # Prüfen, ob die notwendigen Daten zu User und Kurs vorliegen
-    if not obj_student or not obj_course:
-        return [state_running_task, str_query, is_data_changed]
-
-    # Annahme, dass der Kurs angemeldet ist
-    str_response = (
-        f"{obj_student['vorname'].split(' ')[0]}, die Prüfung im Fach \"{
-            obj_course['name']}\" ist angemeldet und noch nicht bestanden."
+    # Angaben zu Student und Kurs ermitteln und zugehörige Prüfung aus DB auslesen
+    state_running_task, exam, query, = itemgetter("state_running_task", "exam", "query")(
+        supply_pruefung_data(state_running_task, message_processed)
     )
 
-    # Prüfen, ob der Kurs wirklich dem User zugeordnet und die Prüfung angemeldet ist
-    if not obj_existing_pruefung or not obj_existing_pruefung['isAngemeldet']:
-        str_response = (
-            f"{obj_student['vorname'].split(' ')[0]}, die Prüfung im Fach \"{
-                obj_course['name']}\" ist weder angemeldet noch bestanden."
-        )
-    # Prüfen, ob der Kurs bestanden ist
-    elif obj_existing_pruefung['note'] is not None:
-        str_response = (
-            f"Glückwunsch {obj_student['vorname'].split(' ')[0]}, Du hast die Prüfung im Fach \"{
-                obj_course['name']}\" "
-            f"mit der Note {obj_existing_pruefung['note']:.1f} bestanden."
-        )
+    # Prüfen, ob noch Rückfragen vorliegen, oder alle relevanten Daten vorhanden sind
+    if (query):
+        return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
-    return [None, str_response, is_data_changed]
+    # Was bisher an Werten für die Zuordnung einer Prüfung ermittelt wurde
+    student = state_running_task["params"].get("student")
+    course = state_running_task["params"].get("course")
+
+    # Response initialisieren mit der Annahme, dass der Kurs angemeldet ist
+    response = f'{student["vorname"].split()[0]}, die Prüfung im Fach "{
+        course["name"]}" ist angemeldet und noch nicht bestanden.'
+
+    # Prüfen, ob dem Studenten eine Prüfung in diesem Kurs zugeordnet ist und ob diese angemeldet ist
+    if (not exam or not exam["isAngemeldet"]):
+        response = f'{student["vorname"].split()[0]}, die Prüfung im Fach "{
+            course["name"]}" ist weder angemeldet noch bestanden.'
+
+    # Prüfen, ob der Kurs (mit einer Note) bestanden ist
+    elif (not (exam["note"] is None)):
+        response = f'Glückwunsch {student["vorname"].split(' ')[0]}, Du hast die Prüfung im Fach "{
+            course["name"]}" mit der Note {"{:.1f}".format(exam["note"])} bestanden!'
+
+    return {"state_running_task": None, "response": response, "is_data_changed": False}
 
 # endregion --------------------------- Task-Funtkionen ---------------------------
 
 
 # region --------------------------- Task-Steuerung ---------------------------
-
 
 def process_task(state_running_task, tagged_tokens, message_raw, intent):
     '''Ermittlung des auszuführenden Tasks & Initiierung der Funktion'''
