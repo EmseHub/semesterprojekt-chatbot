@@ -124,7 +124,8 @@ def detect_address_in_message(detected_address_temp, message_raw):
         detected_address_new["staat"] = "Deutschland"
         # Mit RegEx Adressen-Syntax erkennen (Musterstr. 55 12345 Musterstadt)
         regex_match = re.search(
-            r"\b((([A-Za-zÄÖÜäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|(([A-ZÄÖÜa-zäöüß]{2,}-?)*)|((\b[A-ZÄÖÜ][a-zäöüß]+(\s*))*))\s+\d{1,4}([A-Za-z]*)\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)*)|(([A-Za-zÄÖÜäöüß]{2,}-?)*))(?![A-Za-z0-9ÄÖÜäöüß-])",
+            # r"\b((([A-Za-zÄÖÜäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg))|(([A-ZÄÖÜa-zäöüß]{2,}-?)*)|((\b[A-ZÄÖÜ][a-zäöüß]+(\s*))*))\s+\d{1,4}([A-Za-z]*)\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)*)|(([A-Za-zÄÖÜäöüß]{2,}-?)*))(?![A-Za-z0-9ÄÖÜäöüß-])",
+            r"\b(((([A-ZÄÖÜ][a-zäöüß]+)-?)+\s*(str(\.?)|straße|strasse|weg))|((([A-ZÄÖÜ][a-zäöüß]+)-?)+)|((\b([A-ZÄÖÜ][a-zäöüß]+)\s*)+))\s+\d{1,4}[A-Za-z]*\s+\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)+)|((([A-ZÄÖÜ][a-zäöüß]+)-?)+))(?![A-Za-z0-9ÄÖÜäöüß-])",
             message_processed
         )
         # regex_match = re.search(
@@ -148,14 +149,16 @@ def detect_address_in_message(detected_address_temp, message_raw):
             if (len(regex_match_string_from_1st_digit_splitted) > 2):
                 # Erkannte Adress-Angaben zuweisen
                 strasse = regex_match_string_before_1st_digit.strip()
-                hausnr = regex_match_string_from_1st_digit_splitted[0]
-                plz = regex_match_string_from_1st_digit_splitted[1]
-                stadt = regex_match_string_from_1st_digit_splitted[2]
+                hausnr = regex_match_string_from_1st_digit_splitted.pop(0)
+                plz = regex_match_string_from_1st_digit_splitted.pop(0)
+                stadt = " ".join(
+                    regex_match_string_from_1st_digit_splitted
+                ).strip()
                 # Falls erkannter Wert für Stadt ein Substring des DB-Wertes ist, DB-Wert übernehmen
                 stadt_in_data = next(
                     (postal_code for postal_code in parsed_postal_codes if (
                         postal_code["zipcode"] == plz
-                        and replace_diacritics(stadt.lower()) in replace_diacritics(postal_code["city"].lower())
+                        and (replace_diacritics(stadt.lower()) in replace_diacritics(postal_code["city"].lower()))
                     )), None
                 )
                 if (stadt_in_data):
@@ -229,10 +232,14 @@ def detect_address_in_message(detected_address_temp, message_raw):
     if (not plz and not stadt):
         # Mit RegEx PLZ-Stadt-Syntax erkennen (12345 Musterstadt)
         regex_match = re.search(
-            r"\b\d{5}(\,?)\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])",
-            message_processed,
-            re.IGNORECASE
+            r"\b\d{5}\s+(((([A-ZÄÖÜ][a-zäöüß]+)\s*)+)|((([A-ZÄÖÜ][a-zäöüß]+)-?)+)){1,}(?![A-Za-z0-9ÄÖÜäöüß-])",
+            message_processed
         )
+        # regex_match = re.search(
+        #     r"\b\d{5}(\,?)\s+([a-zäöüß]{2,}(-)?)*[a-zäöüß]{2,}(?![a-z0-9äöüß-])",
+        #     message_processed,
+        #     re.IGNORECASE
+        # )
         if (regex_match):
             regex_match_string = regex_match.group()
             # "12345 Musterstadt"
@@ -374,10 +381,6 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
         )
         if (regex_match):
             regex_match_string = regex_match.group()
-
-            print("----regex_match_string----")
-            print(regex_match_string)
-
             regex_match_splitted = regex_match_string.strip().split()
             if len(regex_match_splitted) > 1:
                 potential_surname = regex_match_splitted[-1]
@@ -428,7 +431,7 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
 
 print("---address_test_result---")
 address_test_result = detect_address_in_message(
-    None, "Meine neue Adresse ist Am Hang 5 in 31812 Bad Pyrmont, kannst du das übernehmen?")
+    None, "Meine neue Adresse ist Am-Hang 5 in 31812 Fra Kpyrmont, kannst du das übernehmen?")
 print(address_test_result)
 
 
