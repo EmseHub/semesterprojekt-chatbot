@@ -21,23 +21,29 @@
 
 
 
+    
 
 
     {
         "tag": "adresse_aendern",
         "min_hits": 2,
         "patterns": [
-            "adresse",
-            "anschrift",
-            "wohnort",
-            "aendern",
-            "aenderung",
+            "Adresse",
+            "Anschrift",
+            "Wohnort",
+            "Änderung",
+            "ändern",
+            "geändert",
+            "verändern",
+            "verändert",
             "aktualisieren",
             "anpassen",
             "aktuell",
             "neu",
             "vornehmen",
             "umziehen",
+            "umzog",
+            "umgezogen",
             "umzug"
         ],
         "responses": [
@@ -49,17 +55,22 @@
         "tag": "nachname_aendern",
         "min_hits": 2,
         "patterns": [
-            "nachname",
-            "familien",
-            "name",
-            "heirat",
+            "Nachname",
+            "Name",
+            "Familienname",
+            "Ehe",
+            "Heirat",
+            "Hochzeit",
             "heiraten",
-            "hochzeit",
-            "ehe",
+            "geheiratet",
             "neu",
             "anpassen",
-            "aendern",
-            "veraendern",
+            "ändern",
+            "änderte",
+            "geändert",
+            "verändern",
+            "veränderte",
+            "verändert",
             "aktualisieren"
         ],
         "responses": [
@@ -71,19 +82,19 @@
         "tag": "pruefung_anmelden",
         "min_hits": 2,
         "patterns": [
-            "pruefung",
-            "pruefungsleistung",
-            "pruefungsanmeldung",
-            "klausur",
-            "anmeldung",
+            "Prüfung",
+            "Prüfungsleistung",
+            "Prüfungsanmeldung",
+            "Klausur",
+            "Anmeldung",
             "anmelden",
             "melden",
             "an",
             "teilnehmen",
-            "teilnahme",
-            "moegen",
-            "moechten",
-            "aendern"
+            "Teilnahme",
+            "mögen",
+            "möchten",
+            "ändern"
         ],
         "responses": [
             "Ich schaue ins System...",
@@ -95,18 +106,18 @@
         "tag": "pruefung_abmelden",
         "min_hits": 2,
         "patterns": [
-            "pruefung",
-            "pruefungsleistung",
-            "pruefungsabmeldung",
-            "klausur",
-            "abmeldung",
+            "Prüfung",
+            "Prüfungsleistung",
+            "Prüfungsabmeldung",
+            "Klausur",
+            "Abmeldung",
+            "Rücktritt",
             "abmelden",
             "melden",
             "ab",
-            "moegen",
-            "moechten",
-            "zuruecktreten",
-            "ruecktritt"
+            "mögen",
+            "möchten",
+            "zurücktreten"
         ],
         "responses": [
             ""
@@ -115,24 +126,30 @@
     },
     {
         "tag": "pruefung_status",
-        "min_hits": 1,
+        "min_hits": 2,
         "patterns": [
-            "pruefung",
-            "pruefungsleistung",
-            "pruefungsstatus",
-            "klausur",
-            "status",
-            "note",
-            "bestehen",
+            "Prüfung",
+            "Prüfungsleistung",
+            "Prüfungsstatus",
+            "Klausur",
+            "Status",
+            "Note",
+            "Auskunft",
+            "wissen",
+            "bestanden",
+            "angemeldet",
+            "abgemeldet",
             "einsehen",
-            "auskunft",
-            "abfragen"
+            "abfragen",
+            "vorgenommen"
         ],
         "responses": [
             ""
         ],
         "task": "pruefung_status"
     },
+
+
 
 
 
@@ -145,7 +162,7 @@
             "jawohl",
             "jo",
             "korrekt",
-            "bestaetigen",
+            "bestätigen",
             "yes",
             "ok",
             "okay",
@@ -176,11 +193,11 @@
             "abbruch",
             "abbrechen",
             "beenden",
-            "zurueck",
+            "zurück",
             "widersprechen",
             "falsch",
             "niemals",
-            "aufhoeren",
+            "aufhören",
             "exit"
         ],
         "responses": [
@@ -189,6 +206,8 @@
         ],
         "task": ""
     },
+
+
 
 
 
@@ -202,10 +221,10 @@
             "hey",
             "moin",
             "na",
-            "gruss",
-            "gruessen",
+            "gruß",
+            "grüßen",
             "gut",
-            "tag"
+            "Tag"
         ],
         "responses": [
             "Hallo, wie kann ich helfen?",
@@ -224,13 +243,13 @@
         "tag": "abschiedsgruss",
         "min_hits": 1,
         "patterns": [
-            "tschuess",
-            "tschues",
+            "Abschied",
+            "tschüß",
+            "tschüs",
             "ciao",
-            "wiedersehen",
+            "Wiedersehen",
             "bye",
             "verabschieden",
-            "abschied",
             "hauen",
             "rein"
         ],
@@ -263,7 +282,7 @@
         "patterns": [
             "wie",
             "gehen",
-            "fuehlen",
+            "fühlen",
             "laufen"
         ],
         "responses": [
@@ -291,6 +310,12 @@
         ],
         "task": ""
     },
+
+
+
+
+
+
     {
         "tag": "hilfe",
         "min_hits": 3,
@@ -299,7 +324,7 @@
             "chatbot",
             "funktionen",
             "anbieten",
-            "koennen",
+            "können",
             "welche",
             "sich",
             "helfen",
@@ -315,12 +340,16 @@
     },
 
 
+
+
+
+
     {
         "tag": "bullshit1",
         "min_hits": 1,
         "patterns": [
             "verarschen",
-            "wollen"
+            "willst"
         ],
         "responses": [
             "Oh ja.",

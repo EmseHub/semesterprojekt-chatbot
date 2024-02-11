@@ -7,17 +7,10 @@ from rule_engine.helpers import get_random_item_in_list, replace_diacritics
 from rule_engine.entity_detection import detect_student_in_message, detect_course_in_message, detect_address_in_message, detect_new_surname_in_message
 
 
-# def get_missing_student_information(current_task: str, message: str):
-#     '''[Prototyp Alternative] Zusammengeführte Funktion zum Abfragen aller fehlenden Informationen
-#     : Erfragt fehlende Informationen vom Studenten und gibt diese als Dictionary zurück.
-#     :
-#     '''
-#     return
-
-
 # region --------------------------- Task-Funtkionen ---------------------------
-
 def supply_pruefung_data(state_running_task, message_processed):
+    """Generische Hilfsfunktion zur Ermittlung der Informationen einer Prüfung (Kurs und Student) und dem Prüfungsobjekt selbst."""
+
     if (not state_running_task or not message_processed):
         return {"state_running_task": state_running_task, "response": None, "is_data_changed": False}
 
@@ -28,14 +21,14 @@ def supply_pruefung_data(state_running_task, message_processed):
     # String mit Rückfragen bei unvollständigen Angaben
     query = ""
 
-    # Falls dem Task noch kein Student zugeordnet wurde, versuche diesen anhand einer Matrikelnummer im Text zu ermitteln
+    # Falls dem Task noch kein Student zugeordnet wurde, versuche, diesen anhand einer Matrikelnummer im Text zu ermitteln
     if (not student):
         student, query_student = itemgetter("student", "query")(
             detect_student_in_message(message_processed)
         )
         query = query_student
 
-    # Falls dem Task noch kein Kurs zugeordnet wurde, versuche diesen dem Text zu entnehmen
+    # Falls dem Task noch kein Kurs zugeordnet wurde, versuche, diesen dem Text zu entnehmen
     if (not course):
         course, query_course = itemgetter("course", "query")(
             detect_course_in_message(message_processed)
@@ -69,7 +62,7 @@ def adresse_aendern(state_running_task, message_raw, message_processed, intent_t
     # String mit Rückfragen bei unvollständigen Angaben
     query = ""
 
-    # Falls dem Task noch kein Student zugeordnet wurde, versuche diesen anhand einer Matrikelnummer im Text zu ermitteln
+    # Falls dem Task noch kein Student zugeordnet wurde, versuche, diesen anhand einer Matrikelnummer im Text zu ermitteln
     if (not student):
         student, query_student = itemgetter("student", "query")(
             detect_student_in_message(message_processed)
@@ -79,7 +72,7 @@ def adresse_aendern(state_running_task, message_raw, message_processed, intent_t
     # Angaben, die eine Adresse aufweisen muss
     address_keys = ["strasse", "hausnr", "stadt", "plz"]
 
-    # Falls dem Task noch keine vollständige neue Adresse zugeordnet wurde, versuche diese dem Text zu entnehmen
+    # Falls dem Task noch keine vollständige neue Adresse zugeordnet wurde, versuche, diese dem Text zu entnehmen
     if (not address or any(not address.get(key) for key in address_keys)):
         address, query_address = itemgetter("address", "query")(
             detect_address_in_message(address, message_raw)
@@ -119,7 +112,7 @@ def nachname_aendern(state_running_task, tagged_tokens, message_raw, message_pro
     if intent_tag == "ablehnung":
         return {"state_running_task": None, "response": "Ich breche die Namensänderung ab.", "is_data_changed": False}
 
-    # Falls dem Task noch kein Student zugeordnet wurde, versuche diesen anhand einer Matrikelnummer im Text zu ermitteln
+    # Falls dem Task noch kein Student zugeordnet wurde, versuche, diesen anhand einer Matrikelnummer im Text zu ermitteln
     student = state_running_task["params"].get("student")
     if (not student):
         student, query_student = itemgetter("student", "query")(
@@ -129,7 +122,7 @@ def nachname_aendern(state_running_task, tagged_tokens, message_raw, message_pro
             return {"state_running_task": state_running_task, "response": query_student, "is_data_changed": False}
         state_running_task["params"]["student"] = student
 
-    # Falls dem Task noch kein neuer Nachname zugeordnet wurde, versuche diese dem Text zu entnehmen
+    # Falls dem Task noch kein neuer Nachname zugeordnet wurde, versuche, diese dem Text zu entnehmen
     surname = state_running_task["params"].get("surname")
     if (not surname):
         surname, query_surname = itemgetter("surname", "query")(
@@ -173,7 +166,7 @@ def pruefung_anmelden(state_running_task, message_processed, intent_tag):
     if (query):
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
-    # Was bisher an Werten für die Zuordnung einer Prüfung ermittelt wurde
+    # Ermittelte Angaben in Hilfsvariablen speichern
     student = state_running_task["params"].get("student")
     course = state_running_task["params"].get("course")
 
@@ -228,7 +221,7 @@ def pruefung_abmelden(state_running_task, message_processed, intent_tag):
     if (query):
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
-    # Was bisher an Werten für die Zuordnung einer Prüfung ermittelt wurde
+    # Ermittelte Angaben in Hilfsvariablen speichern
     student = state_running_task["params"].get("student")
     course = state_running_task["params"].get("course")
 
@@ -281,7 +274,7 @@ def pruefung_status(state_running_task, message_processed, intent_tag):
     if (query):
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
-    # Was bisher an Werten für die Zuordnung einer Prüfung ermittelt wurde
+    # Ermittelte Angaben in Hilfsvariablen speichern
     student = state_running_task["params"].get("student")
     course = state_running_task["params"].get("course")
 
@@ -305,9 +298,9 @@ def pruefung_status(state_running_task, message_processed, intent_tag):
 
 
 # region --------------------------- Task-Steuerung ---------------------------
-
 def process_task(state_running_task, tagged_tokens, message_raw, intent):
-    '''Ermittlung des auszuführenden Tasks & Initiierung der Funktion'''
+    '''Funktion, die die Fortsetzung eines bestehenden oder Eröffnung eines neu erkannten Tasks steuert. 
+    Falls keine Ausgabe ausgeführt werden soll, wird ein simpler, im Intent vordefinierter Antwort-String zurückgegeben.'''
 
     response = None
     is_data_changed = False
@@ -363,7 +356,8 @@ def process_task(state_running_task, tagged_tokens, message_raw, intent):
             )
         else:
             state_running_task, response, is_data_changed = (
-                None, response, is_data_changed)
+                None, response, is_data_changed
+            )
 
         # Funktion/Prozess für den entsprechenden Task auswählen
         # state_running_task, response, is_data_changed = (lambda: (
@@ -384,7 +378,7 @@ def process_task(state_running_task, tagged_tokens, message_raw, intent):
                 "Hast Du weitere Anliegen?"
             ])
 
-    # Es ist kein Task offen und soll auch kein neuer gestartet werden (einfach nur Antwort auf Nachricht)
+    # Es ist kein Task offen und soll auch kein neuer gestartet werden (Rückgabe eines im Intent vordefinierten Response-Strings)
     else:
         response = get_random_item_in_list(intent["responses"])
 

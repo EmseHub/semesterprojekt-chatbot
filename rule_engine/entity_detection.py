@@ -15,7 +15,7 @@ def detect_student_in_message(message_processed):
         return result
     # Prüfen, ob Nachricht Nummern enthält
     min_length_matnr = 6
-    numbers_in_message = re.findall(r'\d+', message_processed)
+    numbers_in_message = re.findall(r"\d+", message_processed)
     if (not numbers_in_message or not any(len(nr) >= min_length_matnr for nr in numbers_in_message)):
         result["query"] = get_random_item_in_list([
             "Ich bräuchte noch Deine Matrikelnummer.",
@@ -86,7 +86,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
     plz = detected_address_new.get("plz")
     stadt = detected_address_new.get("stadt")
 
-    # Falls Adresse noch gar nicht definiert ist (auch nicht unvollständig), versuche alle Attribute auf einmal auszulesen
+    # Falls Adresse noch gar nicht definiert ist (auch nicht unvollständig), versuche, alle Attribute auf einmal auszulesen
     if (not detected_address_new):
         # Staat der neuen Adresse mit "Deutschland" initialisieren, da der Chatbot andere Staaten erstmal nicht berücksichtigt
         detected_address_new["staat"] = "Deutschland"
@@ -107,7 +107,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
             regex_match_string = regex_match.group()
             # "Ein-Beispiel Weg 55 12345 Musterstadt" an der ersten Ziffer in zwei Substrings aufteilen, damit Leerzeichen im Straßennamen nicht als Trenner dient
             regex_match_string_splitted_by_1st_digit = re.split(
-                r'(\d+.*)',
+                r"(\d+.*)",
                 regex_match_string
             )
             # ["Ein-Beispiel Weg ", "55 12345 Musterstadt", ""]
@@ -134,7 +134,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
                 if (stadt_in_data):
                     stadt = stadt_in_data["city"]
 
-    # Falls Straße und Hausnummer fehlen, versuche gezielt beide auf einmal auszulesen
+    # Falls Straße und Hausnummer fehlen, versuche, gezielt beide auf einmal auszulesen
     if (not strasse and not hausnr):
         # Mit RegEx Straße-Hausnummer-Syntax erkennen (Musterstr. 55)
         regex_match = re.search(
@@ -152,7 +152,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
             regex_match_string = regex_match.group()
             # "Ein-Beispiel Weg 55" an der ersten Ziffer in zwei Substrings aufteilen, damit Leerzeichen im Straßennamen nicht als Trenner dient
             regex_match_string_splitted_by_1st_digit = re.split(
-                r'(\d+.*)',
+                r"(\d+.*)",
                 regex_match_string
             )
             # ["Ein-Beispiel Weg ", "55", ""]
@@ -165,7 +165,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
                 strasse = regex_match_string_splitted_by_1st_digit[0].strip()
                 hausnr = regex_match_string_splitted_by_1st_digit[1].strip()
 
-    # Falls Straße noch fehlt, versuche diese gezielt auszulesen
+    # Falls Straße noch fehlt, versuche, diese gezielt auszulesen
     if (not strasse):
         # Bei längerer Nachricht nach RegEx Straßen-Syntax suchen (Musterstr. 55)
         if (len(message_processed.split()) > 3):
@@ -187,7 +187,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
             # )
             strasse = message_processed.strip()
 
-    # Falls Hausnummer noch fehlt, versuche diese gezielt auszulesen
+    # Falls Hausnummer noch fehlt, versuche, diese gezielt auszulesen
     if (not hausnr):
         # Mit RegEx Hausnummer-Syntax erkennen (Meine Hausnummer ist 55)
         regex_match = re.search(
@@ -201,7 +201,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
             if len(regex_match_splitted) > 1:
                 hausnr = regex_match_splitted[-1]
 
-    # Falls Hausnummer immer noch fehlt, aber bereits eine Strasse angegeben wurde, versuche eine passende Ziffern-/Zeichenfolge auszulesen
+    # Falls Hausnummer immer noch fehlt, aber bereits eine Strasse angegeben wurde, versuche, eine passende Ziffern-/Zeichenfolge auszulesen
     if (strasse and not hausnr):
         # Mit RegEx Hausnummer-Syntax erkennen (Bla bla 55a)
         regex_match = re.search(
@@ -214,7 +214,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
             if (regex_match_string):
                 hausnr = regex_match_string.strip()
 
-    # Falls PLZ und Stadt fehlen, versuche gezielt beide auf einmal auszulesen
+    # Falls PLZ und Stadt fehlen, versuche, gezielt beide auf einmal auszulesen
     if (not plz and not stadt):
         # Mit RegEx PLZ-Stadt-Syntax erkennen (12345 Musterstadt)
         regex_match = re.search(
@@ -236,7 +236,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
                 plz = regex_match_string_splitted[0].strip()
                 stadt = regex_match_string_splitted[1].strip()
 
-    # Falls PLZ noch fehlt, versuche diese gezielt auszulesen
+    # Falls PLZ noch fehlt, versuche, diese gezielt auszulesen
     if (not plz):
         # Mit RegEx PLZ-Syntax erkennen (12345)
         regex_match = re.search(
@@ -248,7 +248,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
             regex_match_string = regex_match.group()
             plz = regex_match_string.strip()
 
-    # Falls Stadt noch fehlt, aber eine PLZ vorhanden ist, versuche anhand der DB die Stadt aus der PLZ abzuleiten
+    # Falls Stadt noch fehlt, aber eine PLZ vorhanden ist, versuche, anhand der DB die Stadt aus der PLZ abzuleiten
     if (plz and not stadt):
         # PLZ in DB suchen
         stadt_in_data = next(
@@ -257,7 +257,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
         if (stadt_in_data):
             stadt = stadt_in_data["city"]
 
-    # Falls Stadt und PLZ noch fehlen, versuche einen Stadtnamen aus der DB zu erkennen
+    # Falls Stadt und PLZ noch fehlen, versuche, einen Stadtnamen aus der DB zu erkennen
     if (not plz and not stadt):
         # Roh-Nachricht vergleichbar machen
         message_processed = replace_diacritics(message_raw.lower())
@@ -340,7 +340,7 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
         message_processed_splitted_by_colon = message_processed.split(":")
         message_processed_after_colon = message_processed_splitted_by_colon[-1]
         message_processed_after_colon_splitted_by_punctuationmarks = re.split(
-            r'([^A-Za-zÄÖÜäöüß\s-])+', message_processed_after_colon
+            r"([^A-Za-zÄÖÜäöüß\s-])+", message_processed_after_colon
         )
         potential_surname = message_processed_after_colon_splitted_by_punctuationmarks[0].strip(
         )
@@ -408,42 +408,10 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
     else:
         result["query"] = get_random_item_in_list([
             "Wie genau lautet Dein neuer Nachname bitte?",
-            "Könntest Du nur Deinen Nachnamen bitte erneut angeben?",
+            (f"Okay {student["vorname"].split()[
+             0]}, könntest Du mit in der nächsten Nachricht bitte die exakte Schreibweise Deines neuen Nachnamens angeben?"
+             ),
             'Gib Deinen neuen Nachnamen gerne in folgender Form an: "Mein neuer Nachname lautet: Beispielname"'
         ])
 
     return result
-
-
-# print("---student_test_result---")
-# student_test_result = detect_student_in_message("1234567 1122334")
-# print(student_test_result)
-
-
-# print("---course_test_result---")
-# course_test_result = detect_course_in_message("muggelkunde")
-# print(course_test_result)
-
-
-# print("---address_test_result---")
-# address_test_result = detect_address_in_message(
-#     None, "Meine neue Adresse ist Am Hang 5 in 31812 Bad, kannst du das übernehmen?")
-# print(address_test_result)
-
-
-# print("---new_surname_test_result---")
-# test_tokens = [
-#     {'original': 'Fehlren', 'korrigiert': 'Fehlern', 'lemma': 'Fehler', 'pos': 'NN'},
-#     {'original': 'House', 'korrigiert': 'Hose', 'lemma': 'Hose', 'pos': 'NN'},
-#     {'original': 'Homer', 'korrigiert': 'Homer', 'lemma': 'Homer', 'pos': 'NE'},
-#     {'original': 'Potter', 'korrigiert': 'Potter', 'lemma': 'Potter', 'pos': 'NE'}
-# ]
-# test_tokens = [
-#     {'original': 'Plotter', 'korrigiert': 'Fehlern', 'lemma': 'Fehler', 'pos': 'NN'}
-# ]
-# new_surname_test_result = detect_new_surname_in_message(
-#     students[0],
-#     test_tokens,
-#     "Meine neuer Name lautet: Harry James van der Shit"
-# )
-# print(new_surname_test_result)

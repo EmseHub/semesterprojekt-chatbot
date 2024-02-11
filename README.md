@@ -6,14 +6,8 @@
 
 - Die JS-only Demo im Verzeichnis <i>/demo-js-only</i> kann über lokalen <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> oder <a href="https://emsehub.github.io/semesterprojekt-chatbot/demo-js-only/">hier</a> getestet werden, läuft bis auf Weiteres jedoch nur unter Chrome (<i>import assertions</i> werden aus Sicherheitsgründen nicht von allen Browsern unterstützt, siehe <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility">hier</a>)
 
-### Aufgaben
 
-- Preprocessing vervollständigen (*preprocessing/\**) -> Micha/Leon
-- Passende (performante) Tools für Rechtschreibkorrektur finden (*preprocessing/spelling_correction.py*) -> Thorsten
-- Potenzielle Algorithmen für Intent-Matching finden (*rule_engine/intent_matching*)-> Micha/Leon
-- Doku aufsetzen (*documentation/documentation.md* oder Word-Datei) -> Jana
-
-## Requirements
+## Anforderungen
 
 Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
@@ -30,16 +24,16 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
 ### Environment:
 
-- Identifikation des Studenten per Matrikelnummer bei jeder Anfrage (dient quasi als Passwort/Legitimation)
-- Umgangssprache verstehen (ggf. unklare Anfrage)
-- menschliche, natürlichsprachliche Kommunikation (freundliche, flüssige Sprachweise)
-- Aktionen sollen tatsächliche Änderungen in der Datenbank bewirken
-- Fehlerbehandlung von Falscheingaben & EdgeCases
+- Identifikation des Studenten per Matrikelnummer bei jeder Anfrage
+- menschliche, natürlichsprachliche Kommunikation erzeugen und 
+- Umgangssprache verstehen
+- Aktionen sollen tatsächliche Änderungen in der (simulierten) Datenbank bewirken
+- Fehlerbehandlung von Falscheingaben & Edge Cases
   - falsche Matrikelnummer
-  - unerlaubte Anmeldung (Prüfung bereits bestanden) oder Notenabfrage (Prüfung noch nicht bestanden)
-- bei unklaren Anfragen: im Zweifel Nachfragen des Chatbots (fehlende Informationen erfragen, Verifizierung des Intents)
-  - Achtung: Anfragen zu Prüfungen (An-/Abmeldung etc.) sind recht ähnlich --> Sicherstellen, dass die richtige Aktion durchgeführt wird!
-- Kreativität bei der Lösung, hinreichende Komplexität durch NLP
+  - Anmeldung, wenn Prüfung bereits bestanden
+  - Notenabfrage, wenn Prüfung noch nicht bestanden
+- Chatbot erkennt Absichten (Intents) des Studenten und führt entsprechende Aufgaben aus
+- Chatbot erfragt alle für die Erledigung einer Aufgabe benötigten Informationen
 
 ### Beispieldialoge
 
@@ -59,30 +53,6 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
   - Chatbot: Vielen Dank, Frau Meier. Ich fasse noch einmal zusammen: Sie sind umgezogen und Ihre neue Adresse lautet Hauptstraße 12 in 44143 Dortmund. Ist dies korrekt?
   - Studierender: Ja
   - Chatbot: Vielen Dank, ich habe die Änderung vorgenommen.
-
-## Grober Plan
-
-- Begrüßung des Users
-- Chatbot loop, user input einlesen
-- Input mit NLP zerlegen
-- Satzbestandteile analysieren (NLP Pipeline)
-- Intent des Nutzers ermitteln
-- mögliche Antwort aus vorgefertigten Texten auswählen
-- Aktion durch User bestätigen lassen
-- Aktion durchführen & Infos dazu ausgeben
-- nach weiterem Anliegen fragen (repeat loop)
-- profit
-
-## NLP-Pipeline
-
-1. Tokenization (auf Wortebene)
-2. Interpunktion entfernen
-3. Automatische Rechtschreibkorrektur auf Wortebene
-4. Stop-Words entfernen
-5. Part-of-Speech-Tagging (PoS-Tagging)
-6. Named Entity Recognition (NER)
-7. Lemmatization [oder Stemming]
-8. [Co-reference resolution]
 
 ## Projekt-Setup 
 
@@ -123,13 +93,3 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
    }
    ```
 - Hinweis: NTLK benötigt einige gesonderte Downloads, daher ist vor Verwendung des Chatbots einmalig die Datei *setup.py* auszuführen
-
-## Offene Fragen
-
-- Identitätsabfrage je Anliegen oder je Session/Chataufruf?
-- NLTK oder spaCy?
-- 1 Token == 1 Wort?
-- Rechtschreibprüfung/Autokorrektur vorab? Auf Satz- oder Wortebene?
-- Stop-Words erst vor Lemmatization/Stemming entfernen, oder direkt zu Beginn?
-- Lemmatization UND/ODER Stemming?
-- Co-reference resolution weglassen?

@@ -161,3 +161,7 @@ cython_debug/
 
 # VS Code Workspace Settings
 .vscode/
+
+
+# Tempfiles
+tmp_intents_runtime.json
