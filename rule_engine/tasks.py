@@ -73,7 +73,7 @@ def adresse_aendern(state_running_task, message_raw, message_processed, intent_t
     address_keys = ["strasse", "hausnr", "stadt", "plz"]
 
     # Falls dem Task noch keine vollständige neue Adresse zugeordnet wurde, versuche, diese dem Text zu entnehmen
-    if (not address or any(not address.get(key) for key in address_keys)):
+    if (not address or not all(address.get(key) for key in address_keys)):
         address, query_address = itemgetter("address", "query")(
             detect_address_in_message(address, message_raw)
         )
@@ -94,6 +94,10 @@ def adresse_aendern(state_running_task, message_raw, message_processed, intent_t
                 address["strasse"]} {address["hausnr"]}, {address["plz"]} {address["stadt"]}", okay?'
         )
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
+
+    # Prüfen, ob die neue Adresse der bisherigen entspricht
+    if (all(address.get(key) == student.get("adresse").get(key) for key in address_keys)):
+        return {"state_running_task": None, "response": "Diese Anschrift ist bereits in unserem System hinterlegt, daher beende ich den Vorgang.", "is_data_changed": False}
 
     # Da, alle Daten vorhanden und Vorgang bestätigt, kann Datensatz nun in DB aktualisert und Running Task zurückgesetzt werden
     student = next(
@@ -139,6 +143,10 @@ def nachname_aendern(state_running_task, tagged_tokens, message_raw, message_pro
                 surname}". Ist das so korrekt?'
         )
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
+
+    # Prüfen, ob der neue Nachname dem bisherigen entspricht
+    if (student.get("nachname") == surname):
+        return {"state_running_task": None, "response": "Witzbold! Genau dieser Nachname ist im System hinterlegt, daher breche ich den Vorgang ab.", "is_data_changed": False}
 
     # Da, alle Daten vorhanden und Vorgang bestätigt, kann Datensatz nun in DB aktualisert und Running Task zurückgesetzt werden
     student = next(

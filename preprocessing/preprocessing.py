@@ -11,7 +11,7 @@ from preprocessing.spelling_correction import autocorrect_word
 hanover_tagger = hanta.HanoverTagger("morphmodel_ger.pgz")
 
 # Bekannte Begriffe, die aus Performanzgründen von der Rechtschreibkorrektur ausgenommen werden sollen
-words_not_to_process = ['Muggel']
+words_not_to_process = ["Muggel"]
 for student in students:
     words_not_to_process += student["vorname"].split()
     words_not_to_process += student["nachname"].split()
@@ -30,7 +30,6 @@ def get_tagged_tokens(text_raw):
 
     # Tokenization auf Wort-Ebene
     tokens_original = word_tokenize(clean_text, language)
-    # tokens_sentence = sent_tokenize(clean_text, language)
 
     # Satzzeichen entfernen
     tokens_original = [
@@ -60,7 +59,7 @@ def get_tagged_tokens(text_raw):
     # HanTa-Tags entsprechen dem Stuttgart-Tübingen-Tagset (STTS)
     # https://www.ims.uni-stuttgart.de/forschung/ressourcen/lexika/germantagsets/#id-cfcbf0a7-0
     # https://homepage.ruhr-uni-bochum.de/stephen.berman/Korpuslinguistik/Tagsets-STTS.html
-    # https://www.ims.uni-stuttgart.de/documents/ressourcen/korpora/tiger-corpus/annotation/tiger_scheme-morph.pdf (pp 26/27)
+    # https://www.ims.uni-stuttgart.de/documents/ressourcen/korpora/tiger-corpus/annotation/tiger_scheme-morph.pdf (S. 26/27)
 
     taglevel = 1  # Default ist 1
     casesensitive = True  # Default ist True

@@ -86,8 +86,17 @@ def detect_address_in_message(detected_address_temp, message_raw):
     plz = detected_address_new.get("plz")
     stadt = detected_address_new.get("stadt")
 
-    # Falls Adresse noch gar nicht definiert ist (auch nicht unvollständig), versuche, alle Attribute auf einmal auszulesen
-    if (not detected_address_new):
+    print("strasse")
+    print(strasse)
+    print("hausnr")
+    print(hausnr)
+    print("plz")
+    print(plz)
+    print("stadt")
+    print(stadt)
+
+    # Falls Adresse noch gar nicht definiert ist (auch nicht unvollständig [außer Staat]), versuche, alle Attribute auf einmal auszulesen
+    if (not detected_address_new or not all(detected_address_new.get(key) for key in ["strasse", "hausnr", "stadt", "plz"])):
         # Staat der neuen Adresse mit "Deutschland" initialisieren, da der Chatbot andere Staaten erstmal nicht berücksichtigt
         detected_address_new["staat"] = "Deutschland"
         # Mit RegEx Adressen-Syntax erkennen (Musterstr. 55 12345 Musterstadt)
@@ -168,7 +177,7 @@ def detect_address_in_message(detected_address_temp, message_raw):
     # Falls Straße noch fehlt, versuche, diese gezielt auszulesen
     if (not strasse):
         # Bei längerer Nachricht nach RegEx Straßen-Syntax suchen (Musterstr. 55)
-        if (len(message_processed.split()) > 3):
+        if (len(message_processed.split()) > 2):
             regex_match = re.search(
                 # r"\b([a-zäöüß]{2,}(-?))+(\s+)?(str(\.?)|straße|strasse|weg)(?![a-z0-9äöüß-])",
                 r"\b(((([A-ZÄÖÜ][a-zäöüß]+)(-([A-ZÄÖÜa-zäöüß]{2,}))*)+((\s*)|(-))((((Str(\.?))|Straße|Strasse|Weg)))))(?![A-Za-z0-9AÖÜäöüß-])",
@@ -179,8 +188,8 @@ def detect_address_in_message(detected_address_temp, message_raw):
                 regex_match_string = regex_match.group()
                 strasse = regex_match_string.strip()
 
-        # Bei kürzerer Nachricht alle Treffer nehmen
-        else:
+        # Bei kürzerer Nachricht alle Treffer nehmen, sofern keine Zahlen enthalten sind
+        elif (not any(char.isdigit() for char in message_processed)):
             # regex_match = re.search(
             #     r"\b(((([A-ZÄÖÜ][a-zäöüß]+)(-([A-ZÄÖÜa-zäöüß]{2,}))*)+((\s*)|(-))((((Str(.?))|Straße|Strasse|Weg))))|(([A-ZÄÖÜ][a-zäöüß]+)+-?(str\.)?\s*)+)(?![A-Za-z0-9AÖÜäöüß-])",
             #     message_processed
@@ -233,8 +242,8 @@ def detect_address_in_message(detected_address_temp, message_raw):
             # ["12345", "Musterstadt"]
             if (len(regex_match_string_splitted) > 1):
                 # Erkannte Adress-Angaben zuweisen
-                plz = regex_match_string_splitted[0].strip()
-                stadt = regex_match_string_splitted[1].strip()
+                plz = regex_match_string_splitted.pop(0)
+                stadt = " ".join(regex_match_string_splitted).strip()
 
     # Falls PLZ noch fehlt, versuche, diese gezielt auszulesen
     if (not plz):
@@ -257,11 +266,11 @@ def detect_address_in_message(detected_address_temp, message_raw):
         if (stadt_in_data):
             stadt = stadt_in_data["city"]
 
-    # Falls Stadt und PLZ noch fehlen, versuche, einen Stadtnamen aus der DB zu erkennen
-    if (not plz and not stadt):
+    # Falls Stadt noch fehlt, versuche, einen Stadtnamen aus der DB zu erkennen
+    if (not stadt):
         # Roh-Nachricht vergleichbar machen
         message_processed = replace_diacritics(message_raw.lower())
-        # "Meine" ist eine Stadt, die hier außen vor gelassen wird und nur mit PLZ gefunden werden kann
+        # "Meine" ist ein Stadtname, die hier außen vor gelassen wird und nur mit PLZ-Angabe gefunden werden kann
         message_processed = re.sub(r"\bmeine", "", message_processed)
         message_processed = re.sub(r"\s+", " ", message_processed).strip()
         # Überschneidungen mit Stadtnamen aus DB finden
@@ -273,7 +282,6 @@ def detect_address_in_message(detected_address_temp, message_raw):
             best_match = max(
                 matches_in_data, key=lambda match: len(match["city"])
             )
-            plz = best_match["zipcode"].strip()
             stadt = best_match["city"].strip()
 
     # Prüfen, welche Adress-Angaben fehlen, und entsprechende Rückfrage (query) ausgeben
@@ -387,7 +395,7 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
             (tagged_token for tagged_token in tagged_tokens if (
                 tagged_token["pos"] == "NE"
                 and replace_diacritics(tagged_token["original"].lower()) != replace_diacritics(student["vorname"].lower().split()[0])
-                and replace_diacritics(tagged_token["original"].lower()) != replace_diacritics(student["nachname"].lower())
+                # and tagged_token["original"] != student["nachname"]
             )),
             None
         )
@@ -399,7 +407,10 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
         potential_surname = tagged_tokens[0]["original"]
 
     # Prüfen, ob der gefundene Nachname gültig und auch wirklich neu ist
-    if (potential_surname and len(potential_surname) > 1 and replace_diacritics(potential_surname.lower()) != replace_diacritics(student["nachname"].lower())):
+    if (
+        potential_surname and len(potential_surname) > 1
+        # and potential_surname != student["nachname"]
+    ):
         # Satzzeichen entfernen
         potential_surname = re.sub(
             r"[^A-Za-zÄÖÜäöüß\s-]", "", potential_surname

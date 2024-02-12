@@ -17,6 +17,6 @@ def set_courses(courses):
     pass
 
 
-# Zu Testzwecken zur Laufzeit gespeichert
+# Zu Testzwecken nur zur Laufzeit gespeichert
 students = get_students()
 courses = get_courses()
