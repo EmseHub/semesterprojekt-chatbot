@@ -86,15 +86,6 @@ def detect_address_in_message(detected_address_temp, message_raw):
     plz = detected_address_new.get("plz")
     stadt = detected_address_new.get("stadt")
 
-    print("strasse")
-    print(strasse)
-    print("hausnr")
-    print(hausnr)
-    print("plz")
-    print(plz)
-    print("stadt")
-    print(stadt)
-
     # Falls Adresse noch gar nicht definiert ist (auch nicht unvollständig [außer Staat]), versuche, alle Attribute auf einmal auszulesen
     if (not detected_address_new or not all(detected_address_new.get(key) for key in ["strasse", "hausnr", "stadt", "plz"])):
         # Staat der neuen Adresse mit "Deutschland" initialisieren, da der Chatbot andere Staaten erstmal nicht berücksichtigt
