@@ -4,12 +4,12 @@
 
 ### Hinweis
 
-- Die JS-only Demo im Verzeichnis <i>/demo-js-only</i> kann über lokalen <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> oder <a href="https://emsehub.github.io/semesterprojekt-chatbot/demo-js-only/">hier</a> getestet werden, läuft bis auf Weiteres jedoch nur unter Chrome (<i>import assertions</i> werden aus Sicherheitsgründen nicht von allen Browsern unterstützt, siehe <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility">hier</a>)
+- Eine rudimentäre JS-only Demo im Verzeichnis <i>demo-js-only</i> kann über lokalen <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> oder <a href="https://emsehub.github.io/semesterprojekt-chatbot/demo-js-only/">hier</a> getestet werden, läuft bis auf Weiteres jedoch nur unter Chrome (<i>import assertions</i> werden aus Sicherheitsgründen nicht von allen Browsern unterstützt, siehe <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility">hier</a>)
 
 
 ## Anforderungen
 
-Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
+Das Projekt umfasst einen Chatbot zur automatisierten Verarbeitung von Anfragen von Studierenden an das Prüfungsamt oder Studienbüro einer Hochschule.
 
 ### Aufgaben des Chatbots
 
@@ -24,15 +24,15 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
 ### Rahmenbedingungen
 
-- Identifikation des Studenten ist bei jeder Anfrage erforderlich und anhand der Matrikelnummer realisierbar
+- Identifikation der Studierenden ist bei jeder Anfrage erforderlich und anhand der Matrikelnummer realisierbar
 - menschliche, natürlichsprachliche Kommunikation erzeugen 
 - Umgangssprache verstehen
 - Aktionen sollen tatsächliche Änderungen in der (simulierten) Datenbank bewirken
-- Fehlerbehandlung von Falscheingaben & Edge Cases
+- Fehlerbehandlung von Falscheingaben und Edge Cases
   - falsche Matrikelnummer
   - Anmeldung, wenn Prüfung bereits bestanden
   - Notenabfrage, wenn Prüfung noch nicht bestanden
-- Chatbot erkennt Absichten (Intents) des Studenten und führt entsprechende Aufgaben aus
+- Chatbot erkennt Absichten (Intents) der Studierenden und führt entsprechende Aufgaben aus
 - Chatbot erfragt alle für die Erledigung einer Aufgabe benötigten Informationen
 
 ### Beispieldialoge
@@ -104,3 +104,23 @@ Zusammenfassung der Aufgabenstellung zum Semesterprojekt 'Chatbot'
 
 ### 3. Eingabe über Web-Frontend oder Terminal starten
 - Je nach Präferenz *run_in_webfrontend.py* oder *run_in_terminal.py* ausführen, um die Interaktion zu starten
+
+
+
+## Known Issues
+
+### Nachnamen ändern
+- Wenn Studierende ihren neuen Nachnamen bereits genannt haben und sich erst in einer späteren Nachricht mit ihrer Matrikelnummer identifizieren, wird der Nachname erneut erfragt. Dieses Problem tritt nicht auf, wenn der neue Nachname und die Matrikelnummer in derselben Nachricht gesendet werden.
+
+  Grund: Das Student-Objekt ist für die Ermittlung des Nachnamens im Text erforderlich. Es könnte sein, dass Studierende ihren vollen Namen angeben. Dem Erkennungsalgorithmus muss bekannt sein, wie der Vorname lautet, damit er gezielt danach suchen kann, ob es im Text einen anderen als den bestehenden Nachnamen hinter dem Vornamen gibt. Zudem muss der Algorithmus den Vornamen vom neuen Nachnamen abtrennen können.
+
+
+- Nachnamen, die ein oder mehrere Wörter enthalten, die mit einem Kleinbuchstaben beginnen, werden nur dann korrekt erkannt, wenn sie hinter einem Doppelpunkt angegeben werden ("Mein Nachname hat sich geändert in: Freiherr von Mustersee"). 
+
+### Angaben korrigieren 
+- Wenn Studierende die finale Rückfrage vor dem Abschließen der Aufgabe nicht bestätigen (oder die Bearbeitung schon vorher unterbrechen), gehen alle der Aufgabe zugeordneten Informationen verloren. Dies gilt auch dann, wenn z. B. bei der Angabe des Straßennamens ein kleiner Tippfehler unterlaufen ist und lediglich diese Information korrigiert werden soll. Für jede Korrektur muss der Task neu begonnen werden.
+
+### Anliegen mitteilen
+- Es können nicht mehrere Anliegen bzw. Tasks gleichzeitig erkannt und bearbeitet werden. Solange ein Task offen ist, beziehen sich alle Nachrichten ausschließlich auf ihn.
+
+

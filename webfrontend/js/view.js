@@ -5,26 +5,17 @@ var stateIsSpeechMode = false;
 
 //#region --------------------------- Start ---------------------------
 $(document).ready(function () {
-
-    fetch("/start", {
-        method: "POST",
-        body: JSON.stringify({
-            message: "",
-        }),
-        headers: { "Content-type": "application/json; charset=UTF-8" },
-    })
+    fetch("/data")
         .then((response) => response.json())
         .then((json) => {
             arrStudents = json.data_students;
             arrStudents = arrStudents.map(objStudent => ({ ...objStudent, letztesUpdate: new Date(objStudent.letztesUpdate) }));
             arrCourses = json.data_courses;
-
             init_page();
-
         });
 });
 
-function init_page(params) {
+function init_page() {
     updateStudentCards(arrStudents, arrCourses);
     document.getElementById('container-spinner').style.display = 'none';
     document.getElementById('container-main').style.display = 'block';
@@ -57,27 +48,31 @@ function getResponse(strMessage, callback) {
     })
         .then((response) => response.json())
         .then((json) => {
-            // console.log(json);
 
-            // reply = {
-            //     "request": "Start",
-            //     "response": "",
-            //     "diagnostic": {},
-            //     "is_data_changed": True,
+            // Struktur der HTTP-Response:
+            // json = {
+            //     "request": "Nachricht",
+            //     "response": "Antwort",
+            //     "diagnostic": {
+            //         "tagged_tokens": [...],
+            //         "intent": {...},
+            //         "state_running_task": {...},
+            //         "is_data_changed": false
+            //     },
             //     "data_students": students,
             //     "data_courses": courses
             // }
+
             const strResponse = json.response;
             const objDiagnostic = json.diagnostic;
-            const isDataChanged = json.is_data_changed;
 
-            if (isDataChanged) {
+            if (objDiagnostic.is_data_changed) {
                 arrStudents = json.data_students;
                 arrStudents = arrStudents.map(objStudent => ({ ...objStudent, letztesUpdate: new Date(objStudent.letztesUpdate) }));
                 arrCourses = json.data_courses;
             }
 
-            callback([strResponse, objDiagnostic, isDataChanged]);
+            callback([strResponse, objDiagnostic]);
         });
 }
 
@@ -96,13 +91,13 @@ export function handleSendMessage() {
     }, 0);
 
     setTimeout(() => {
-        getResponse(strMessage, (callbackValue) => {
-            const [strResponse, objDiagnostic, isDataChanged] = callbackValue;
+        getResponse(strMessage, (cbArrResponse) => {
+            const [strResponse, objDiagnostic] = cbArrResponse;
 
             appendMessageSystem(strResponse);
             updateDiagnostic(objDiagnostic);
 
-            if (isDataChanged) { updateStudentCards(arrStudents, arrCourses); }
+            if (objDiagnostic.is_data_changed) { updateStudentCards(arrStudents, arrCourses); }
         });
     }, getRandomInt(1000, 2000));
 }
@@ -129,7 +124,7 @@ export function toggleSpeechMode() {
             if (cbStrMessage.trim() === '') {
                 countNoInputResult++;
                 if (!stateIsSpeechMode) { return; }
-                if (!objDiagnostic || !objDiagnostic.runningTask || countNoInputResult > 3) {
+                if (!objDiagnostic || !objDiagnostic.state_running_task || countNoInputResult > 3) {
                     toggleSpeechMode();
                     return;
                 }
@@ -155,19 +150,21 @@ export function toggleSpeechMode() {
             }
 
             appendMessageUser(cbStrMessage);
-            const [strResponse, objDiagnosticNew, isDataChanged] = getResponse(cbStrMessage);
 
-            setTimeout(() => {
-                appendMessageSystem(strResponse);
-                updateDiagnostic(objDiagnosticNew);
-                if (isDataChanged) { updateStudentCards(arrStudents, arrCourses); }
-                if (stateIsSpeechMode) {
-                    elemImgMic.src = 'webfrontend/img/audio_play.png';
-                    speakUtteranceFromText(strResponse, (cbEndedSuccessfully) => {
-                        (cbEndedSuccessfully) ? loopAudioConversation(objDiagnosticNew, 0) : toggleSpeechMode();
-                    });
-                }
-            }, getRandomInt(1000, 2000));
+            getResponse(cbStrMessage, (cbArrResponse) => {
+                const [strResponse, objDiagnosticNew] = cbArrResponse;
+                setTimeout(() => {
+                    appendMessageSystem(strResponse);
+                    updateDiagnostic(objDiagnosticNew);
+                    if (objDiagnosticNew.is_data_changed) { updateStudentCards(arrStudents, arrCourses); }
+                    if (stateIsSpeechMode) {
+                        elemImgMic.src = 'webfrontend/img/audio_play.png';
+                        speakUtteranceFromText(strResponse, (cbEndedSuccessfully) => {
+                            (cbEndedSuccessfully) ? loopAudioConversation(objDiagnosticNew, 0) : toggleSpeechMode();
+                        });
+                    }
+                }, getRandomInt(1000, 2000));
+            });
         })
     }
 }

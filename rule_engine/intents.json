@@ -45,7 +45,8 @@
             "umziehen",
             "umzog",
             "umgezogen",
-            "umzug"
+            "wohnen",
+            "wohne"
         ],
         "responses": [
             ""
@@ -94,10 +95,7 @@
             "melden",
             "an",
             "teilnehmen",
-            "Teilnahme",
-            "mögen",
-            "möchten",
-            "ändern"
+            "Teilnahme"
         ],
         "responses": [
             "Ich schaue ins System...",
@@ -118,8 +116,6 @@
             "abmelden",
             "melden",
             "ab",
-            "mögen",
-            "möchten",
             "zurücktreten"
         ],
         "responses": [
@@ -166,6 +162,7 @@
             "jo",
             "korrekt",
             "bestätigen",
+            "bestätige",
             "yes",
             "ok",
             "okay",
@@ -198,6 +195,7 @@
             "beenden",
             "zurück",
             "widersprechen",
+            "widerspreche",
             "falsch",
             "niemals",
             "aufhören",
@@ -225,7 +223,7 @@
             "moin",
             "na",
             "gruß",
-            "grüßen",
+            "grüße",
             "gut",
             "Tag"
         ],
@@ -253,7 +251,9 @@
             "Wiedersehen",
             "bye",
             "verabschieden",
+            "verabschiede",
             "hauen",
+            "hau",
             "rein"
         ],
         "responses": [
@@ -284,9 +284,9 @@
         "min_hits": 2,
         "patterns": [
             "wie",
-            "gehen",
-            "fühlen",
-            "laufen"
+            "geht",
+            "fühlst",
+            "läuft"
         ],
         "responses": [
             "Sehr gut! Bei Dir alles gut?",
@@ -300,9 +300,10 @@
         "tag": "dank",
         "min_hits": 1,
         "patterns": [
-            "danke",
             "danken",
+            "danke",
             "bedanken",
+            "bedanke",
             "hilfreich"
         ],
         "responses": [
@@ -317,42 +318,14 @@
 
 
 
-
-
     {
-        "tag": "hilfe",
-        "min_hits": 3,
-        "patterns": [
-            "hilfe",
-            "chatbot",
-            "funktionen",
-            "anbieten",
-            "können",
-            "welche",
-            "sich",
-            "helfen",
-            "was",
-            "alles",
-            "brauchen"
-        ],
-        "responses": [
-            "Bei mir bist Du genau richtig! Ich bin ein (C)hatbot der besonderen Art und helfe Dir bei Deinem Studentenleben in Hogwarts. Wenn Du willst, kann ich zum Beispiel Prüfungen für Dich an- und abmelden, Dir Infos zu Deinen Prüfungen geben und Deine hinterlegten Daten wie Name und Adresse anpassen.\n\nWenn Du mehr über mich und meine Entwicklung erfahren möchtest, schau mal unter https://github.com/EmseHub/semesterprojekt-chatbot.",
-            "Hilfe, Hilfe... jetzt mal ganz ruhig. Sag einmal sauber \"wingardium leviosa\", setz mich nochmal auf und Frage dann ganz höflich \"Oh mächtiger sprechender Hut, kannst Du mir bitte helfen?\". So wird ein Hut draus!"
-        ],
-        "task": ""
-    },
-
-
-
-
-
-
-    {
-        "tag": "bullshit1",
+        "tag": "bullshit",
         "min_hits": 1,
         "patterns": [
             "verarschen",
-            "willst"
+            "willst",
+            "dumm",
+            "blöd"
         ],
         "responses": [
             "Oh ja.",

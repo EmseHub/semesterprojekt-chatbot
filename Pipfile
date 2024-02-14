@@ -6,10 +6,9 @@ name = "pypi"
 [packages]
 nltk = "*"
 hanta = "*"
-numpy = "*"
-pyspellchecker = "*"
-phunspell = "*"
 flask = "*"
+numpy = "*"
+spylls = "*"
 
 [dev-packages]
 

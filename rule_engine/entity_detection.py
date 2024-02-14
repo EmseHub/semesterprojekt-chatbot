@@ -1,7 +1,7 @@
 import re
 
-from rule_engine.data_service import students, courses
-from rule_engine.helpers import parse_json_file, get_random_item_in_list, replace_diacritics
+from data.data_service import students, courses
+from helpers.helpers import parse_json_file, get_random_item_in_list, replace_diacritics
 
 parsed_postal_codes = parse_json_file("rule_engine/postal-codes.json")
 
@@ -341,14 +341,13 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
         message_processed_after_colon_splitted_by_punctuationmarks = re.split(
             r"([^A-Za-zÄÖÜäöüß\s-])+", message_processed_after_colon
         )
-        potential_surname = message_processed_after_colon_splitted_by_punctuationmarks[0].strip(
-        )
-        # Falls ein Name gefunden wurde, prüfen, ob der Vorname enthalten und Nachname wirklich neu ist
+        potential_surname = message_processed_after_colon_splitted_by_punctuationmarks[0]
+        # Falls ein Name gefunden wurde, prüfen, ob der Vorname enthalten ist
         if (potential_surname):
             # Ggf. Vornamen entfernen
             potential_surname = potential_surname.replace(
                 student["vorname"], ""
-            ).strip()
+            ).strip("- ")
 
     # Falls kein Nachname gefunden wurde, prüfe, ob die Nachricht den Vornamen mit einem anderen Nachnamen als dem bisherigen enthält
     if (not potential_surname and student["vorname"] in message_processed):
@@ -359,59 +358,83 @@ def detect_new_surname_in_message(student, tagged_tokens, message_raw):
             # Text, der direkt auf den Vornamen folgt, extrahieren
             message_after_vorname = message_processed_splitted_at_vorname[-1].strip(
             )
+
             # Prüfen, ob der Text mit einem Großbuchstaben anfängt und ggf. das erste Wort als Nachnamen übernehmen
             if (message_after_vorname and message_after_vorname[0].isupper()):
-                potential_surname = message_after_vorname.split()[0]
-                # Satzzeichen entfernen
+
+                message_after_vorname_splitted = message_after_vorname.split()
+                potential_surname = message_after_vorname_splitted.pop(0)
+
+                # Prüfen, ob weitere Wörter in Frage kommen und ob aktueller potential_surname bereits ein Satzzeichen enthält
+                while (message_after_vorname_splitted and (re.search(r"[^A-Za-zÄÖÜäöüß\s-]", potential_surname) == None)):
+
+                    tmp_addition = message_after_vorname_splitted.pop(0)
+                    # Prüfen, ob nächstes Wort mit einem Großbuchstaben (und keinem Satzzeichen) beginnt
+                    if (tmp_addition and re.search(r"^[A-ZÄÖÜ]", tmp_addition)):
+                        potential_surname += (" " + tmp_addition)
+                    else:
+                        break
+
+                # Satzzeichen entfernen ("Mein neuer Nachname ist Vorname Nachname.")
                 potential_surname = re.sub(
                     r"[^A-Za-zÄÖÜäöüß\s-]", "", potential_surname
-                ).strip()
+                ).strip("- ")
 
     # Falls kein Nachname gefunden wurde, prüfe, ob die Nachricht eine Namensangabe in RegEx-Syntax enthält (erkennt nur Namen ohne Leerzeichen)
     if (not potential_surname):
         regex_match = re.search(
-            r"\b((ist|lautet|heißt|heisst|heisse|heiße|in|zu))\s+([A-ZÄÖÜ][a-zäöüß]+(-?))+",
-            message_processed,
-            re.IGNORECASE
+            r"\b(ist|lautet|heißt|heisst|heisse|heiße|in|zu|nach)(\s+([A-ZÄÖÜ][a-zäöüß]+(-?))+)+\b",
+            message_processed
         )
         if (regex_match):
             regex_match_string = regex_match.group()
-            regex_match_splitted = regex_match_string.strip().split()
-            if len(regex_match_splitted) > 1:
-                potential_surname = regex_match_splitted[-1]
+            regex_match_splitted = regex_match_string.strip("- ").split()
+            potential_surname = (" ").join(regex_match_splitted[1:])
 
-    # Falls kein Nachname gefunden wurde, prüfe, ob es ein Token mit dem POS-Tag "NE" gibt, der nicht den bisherigen Namen entspricht
+    # Falls kein Nachname gefunden wurde, prüfe, ob es ein Token mit dem POS-Tag "NE" gibt
     if (not potential_surname):
         surname_from_token = next(
             (tagged_token for tagged_token in tagged_tokens if (
                 tagged_token["pos"] == "NE"
                 and replace_diacritics(tagged_token["original"].lower()) != replace_diacritics(student["vorname"].lower().split()[0])
-                # and tagged_token["original"] != student["nachname"]
             )),
             None
         )
         if (surname_from_token and surname_from_token["original"][0].isupper()):
+
             potential_surname = surname_from_token["original"]
+
+            # Prüfen, ob unmittelbar auf den Namen weitere Nomen ("NE" oder "NN") folgen
+            index_next_word = tagged_tokens.index(surname_from_token) + 1
+            while (index_next_word < len(tagged_tokens)
+                   and (tagged_tokens[index_next_word]["pos"] == "NE" or tagged_tokens[index_next_word]["pos"] == "NN"
+                        and tagged_tokens[index_next_word]["original"][0].isupper())
+                   ):
+                potential_surname += (
+                    " " + tagged_tokens[index_next_word]["original"]
+                )
+                index_next_word += 1
+
+            # An dieser Stelle wurde bereits ausgeschlossen, dass der Vorname im String enthalten ist
 
     # Falls kein Nachname gefunden wurde, prüfe, ob es nur einen Token gibt, der angegeben wurde
     if (not potential_surname and len(tagged_tokens) == 1 and tagged_tokens[0]["original"][0].isupper()):
         potential_surname = tagged_tokens[0]["original"]
 
-    # Prüfen, ob der gefundene Nachname gültig und auch wirklich neu ist
+    # Prüfen, ob der gefundene Nachname gültig ist
     if (
-        potential_surname and len(potential_surname) > 1
-        # and potential_surname != student["nachname"]
+        potential_surname and len(potential_surname.strip("- ")) > 1
     ):
         # Satzzeichen entfernen
         potential_surname = re.sub(
             r"[^A-Za-zÄÖÜäöüß\s-]", "", potential_surname
-        ).strip()
+        ).strip("- ")
         result["surname"] = potential_surname
     else:
         result["query"] = get_random_item_in_list([
             "Wie genau lautet Dein neuer Nachname bitte?",
             (f"Okay {student["vorname"].split()[
-             0]}, könntest Du mit in der nächsten Nachricht bitte die exakte Schreibweise Deines neuen Nachnamens angeben?"
+             0]}, könntest Du mir in der nächsten Nachricht bitte die exakte Schreibweise Deines neuen Nachnamens angeben?"
              ),
             'Gib Deinen neuen Nachnamen gerne in folgender Form an: "Mein neuer Nachname lautet: Beispielname"'
         ])

@@ -1,11 +1,12 @@
 import json
+
+from data.data_service import students
 from chatbot import get_response
 
 
 def run_chatbot_in_terminal():
 
     tagged_tokens = intent = state_running_task = {}
-    is_data_changed = False
 
     opening_messsage = 'Okay, lass uns per Terminal chatten!\n' + \
         '[Eingabe "task": Stand des aktuell bearbeiteten Tasks ausgeben]\n' + \
@@ -35,20 +36,17 @@ def run_chatbot_in_terminal():
             print('> Danke! Bis bald!')
             break
 
-        # response, state_running_task, tagged_tokens = get_response(message)
-        response, diagnostic, is_data_changed, students, courses = get_response(
-            message)
+        response, diagnostic = get_response(message)
 
         tagged_tokens = diagnostic.get("tagged_tokens")
         intent = diagnostic.get("intent")
         state_running_task = diagnostic.get("state_running_task")
 
         print("---Gefundener Intent---\n", intent.get("tag"))
-        # print("---Daten verändert---\n", is_data_changed)
-
+        if (diagnostic["is_data_changed"]):
+            print("---Daten verändert---\n", diagnostic["is_data_changed"])
         print("> " + response)
 
 
-# COMMAND PROMPT EXEC
-if __name__ == "__main__":
+if (__name__) == "__main__":
     run_chatbot_in_terminal()

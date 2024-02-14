@@ -1,7 +1,7 @@
 import json
 
 from HanTa import HanoverTagger as hanta
-from rule_engine.helpers import parse_json_file, replace_diacritics
+from helpers.helpers import parse_json_file, replace_diacritics
 
 # auch "intent recognition"
 # https://botfriends.de/en/blog/botwiki/intents/
@@ -45,6 +45,7 @@ def generate_intents_runtime(intents_with_diacritics):
     return intents_runtime
 
 
+# Aufbereitete Intents generieren und im Arbeitsspeicher halten
 intents_runtime = generate_intents_runtime(
     parse_json_file("rule_engine/intents.json")
 )

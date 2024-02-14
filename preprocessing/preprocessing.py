@@ -4,21 +4,24 @@ import string
 from nltk.tokenize import word_tokenize
 from HanTa import HanoverTagger as hanta
 
-from rule_engine.data_service import students, courses
+from data.data_service import students, courses
 from preprocessing.spelling_correction import autocorrect_word
 
 # HanoverTagger mit Modell initialisieren
 hanover_tagger = hanta.HanoverTagger("morphmodel_ger.pgz")
 
 # Bekannte Begriffe, die aus Performanzgründen von der Rechtschreibkorrektur ausgenommen werden sollen
-words_not_to_process = ["Muggel"]
+words_not_to_correct = ["Muggel"]
 for student in students:
-    words_not_to_process += student["vorname"].split()
-    words_not_to_process += student["nachname"].split()
-    words_not_to_process += student["adresse"]["strasse"].split()
-    words_not_to_process += student["adresse"]["stadt"].split()
+    words_not_to_correct += student["vorname"].split()
+    words_not_to_correct += student["nachname"].split()
+    words_not_to_correct += student["adresse"]["strasse"].split()
+    words_not_to_correct += student["adresse"]["stadt"].split()
 for course in courses:
-    words_not_to_process += course["name"].split()
+    words_not_to_correct += course["name"].split()
+
+# Maximal zulässige Wortlänge, ab deren Überschreitung Begriffe aus Performanzgründen von der Rechtschreibkorrektur ausgenommen werden
+max_wordlength_to_correct = 15
 
 
 def get_tagged_tokens(text_raw):
@@ -43,7 +46,11 @@ def get_tagged_tokens(text_raw):
 
     # Rechtschreibkorrektur
     tokens_corrected = [
-        token if (("." in token) or (token in words_not_to_process)) else autocorrect_word(token) for token in tokens_original
+        token if (
+            (re.search(r"[^A-ZÄÖÜa-zäöüß]", token))
+            or (token in words_not_to_correct)
+            or (len(token) > max_wordlength_to_correct)
+        ) else autocorrect_word(token) for token in tokens_original
     ]
 
     # Part-of-Speech-Tagging und Lemmatisierung

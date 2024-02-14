@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, jsonify, json
+
+from data.data_service import students, courses
 from chatbot import get_response
 
 
@@ -11,20 +13,12 @@ app = Flask(
 
 @app.get("/")
 def index():
-    # Aufruf der Startseite/Chatbot
     return render_template("index.html")
 
 
-@app.post("/start")
-def start():
-    response, diagnostic, is_data_changed, students, courses = get_response(
-        "Start"
-    )
+@app.get("/data")
+def data():
     reply = {
-        "request": "Start",
-        "response": "",
-        "diagnostic": {},
-        "is_data_changed": True,
         "data_students": students,
         "data_courses": courses
     }
@@ -39,22 +33,19 @@ def response():
     if (not message.strip()):
         return None
 
-    response, diagnostic, is_data_changed, students, courses = get_response(
-        message
-    )
+    response, diagnostic = get_response(message)
 
     reply = {
         "request": message,
         "response": response,
         "diagnostic": diagnostic,
-        "is_data_changed": is_data_changed,
         "data_students": students,
         "data_courses": courses
     }
 
-    # JS-Objekt mit der fertigen Antwort zurück ans Frontend geben
-    # return render_template("index.html", reply=jsonify(reply))
     return jsonify(reply)
+    # Website und Objekt zurückgeben:
+    # return render_template("index.html", reply=jsonify(reply))
 
 
 if (__name__) == "__main__":

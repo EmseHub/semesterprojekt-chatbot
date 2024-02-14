@@ -1,9 +1,9 @@
+import re
 from operator import itemgetter
 from datetime import datetime
-import re
 
-from rule_engine.data_service import students, courses
-from rule_engine.helpers import get_random_item_in_list, replace_diacritics
+from data.data_service import students
+from helpers.helpers import get_random_item_in_list, replace_diacritics
 from rule_engine.entity_detection import detect_student_in_message, detect_course_in_message, detect_address_in_message, detect_new_surname_in_message
 
 
@@ -21,12 +21,16 @@ def supply_pruefung_data(state_running_task, message_processed):
     # String mit Rückfragen bei unvollständigen Angaben
     query = ""
 
+    # Nachverfolgen, ob schon vor dieser Nachricht alle Daten vorlagen und es sich um eine Besätigung handeln kann
+    is_confirmation_possible = True
+
     # Falls dem Task noch kein Student zugeordnet wurde, versuche, diesen anhand einer Matrikelnummer im Text zu ermitteln
     if (not student):
         student, query_student = itemgetter("student", "query")(
             detect_student_in_message(message_processed)
         )
         query = query_student
+        is_confirmation_possible = False
 
     # Falls dem Task noch kein Kurs zugeordnet wurde, versuche, diesen dem Text zu entnehmen
     if (not course):
@@ -34,6 +38,7 @@ def supply_pruefung_data(state_running_task, message_processed):
             detect_course_in_message(message_processed)
         )
         query += (" " + query_course)
+        is_confirmation_possible = False
 
     state_running_task["params"]["student"] = student
     state_running_task["params"]["course"] = course
@@ -45,7 +50,12 @@ def supply_pruefung_data(state_running_task, message_processed):
             pruefung["kursID"] == course["id"]
         )), None
     )
-    return {"state_running_task": state_running_task, "exam": exam, "query": query}
+    return {
+        "state_running_task": state_running_task,
+        "exam": exam,
+        "query": query,
+        "is_confirmation_possible": is_confirmation_possible
+    }
 
 
 def adresse_aendern(state_running_task, message_raw, message_processed, intent_tag):
@@ -62,12 +72,16 @@ def adresse_aendern(state_running_task, message_raw, message_processed, intent_t
     # String mit Rückfragen bei unvollständigen Angaben
     query = ""
 
+    # Nachverfolgen, ob schon vor dieser Nachricht alle Daten vorlagen und es sich um eine Besätigung handeln kann
+    is_confirmation_possible = True
+
     # Falls dem Task noch kein Student zugeordnet wurde, versuche, diesen anhand einer Matrikelnummer im Text zu ermitteln
     if (not student):
         student, query_student = itemgetter("student", "query")(
             detect_student_in_message(message_processed)
         )
         query = query_student
+        is_confirmation_possible = False
 
     # Angaben, die eine Adresse aufweisen muss
     address_keys = ["strasse", "hausnr", "stadt", "plz"]
@@ -78,6 +92,7 @@ def adresse_aendern(state_running_task, message_raw, message_processed, intent_t
             detect_address_in_message(address, message_raw)
         )
         query += (" " + query_address)
+        is_confirmation_possible = False
 
     state_running_task["params"]["student"] = student
     state_running_task["params"]["address"] = address
@@ -87,8 +102,8 @@ def adresse_aendern(state_running_task, message_raw, message_processed, intent_t
     if (query):
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
 
-    # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
-    if (intent_tag != "zustimmung"):
+    # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird (sofern diese zuvor erfragt wurde)
+    if ((not is_confirmation_possible) or (intent_tag != "zustimmung")):
         query = (
             f'Nun denn, {student["vorname"].split()[0]}, ich ändere Deine Adresse zu "{
                 address["strasse"]} {address["hausnr"]}, {address["plz"]} {address["stadt"]}", okay?'
@@ -116,6 +131,9 @@ def nachname_aendern(state_running_task, tagged_tokens, message_raw, message_pro
     if intent_tag == "ablehnung":
         return {"state_running_task": None, "response": "Ich breche die Namensänderung ab.", "is_data_changed": False}
 
+    # Nachverfolgen, ob schon vor dieser Nachricht alle Daten vorlagen und es sich um eine Besätigung handeln kann
+    is_confirmation_possible = True
+
     # Falls dem Task noch kein Student zugeordnet wurde, versuche, diesen anhand einer Matrikelnummer im Text zu ermitteln
     student = state_running_task["params"].get("student")
     if (not student):
@@ -125,6 +143,7 @@ def nachname_aendern(state_running_task, tagged_tokens, message_raw, message_pro
         if (not student):
             return {"state_running_task": state_running_task, "response": query_student, "is_data_changed": False}
         state_running_task["params"]["student"] = student
+        is_confirmation_possible = False
 
     # Falls dem Task noch kein neuer Nachname zugeordnet wurde, versuche, diese dem Text zu entnehmen
     surname = state_running_task["params"].get("surname")
@@ -135,9 +154,10 @@ def nachname_aendern(state_running_task, tagged_tokens, message_raw, message_pro
         if (not surname):
             return {"state_running_task": state_running_task, "response": query_surname, "is_data_changed": False}
         state_running_task["params"]["surname"] = surname
+        is_confirmation_possible = False
 
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
-    if (intent_tag != "zustimmung"):
+    if ((not is_confirmation_possible) or (intent_tag != "zustimmung")):
         query = (
             f'Alles klar, {student["vorname"].split()[0]}, ich ändere Deinen Nachnamen dann um in "{
                 surname}". Ist das so korrekt?'
@@ -166,7 +186,7 @@ def pruefung_anmelden(state_running_task, message_processed, intent_tag):
         return {"state_running_task": None, "response": "Ich breche die Prüfungsanmeldung ab.", "is_data_changed": False}
 
     # Angaben zu Student und Kurs ermitteln und zugehörige Prüfung aus DB auslesen
-    state_running_task, exam, query, = itemgetter("state_running_task", "exam", "query")(
+    state_running_task, exam, query, is_confirmation_possible = itemgetter("state_running_task", "exam", "query", "is_confirmation_possible")(
         supply_pruefung_data(state_running_task, message_processed)
     )
 
@@ -191,7 +211,7 @@ def pruefung_anmelden(state_running_task, message_processed, intent_tag):
             return {"state_running_task": None, "response": response, "is_data_changed": False}
 
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
-    if (intent_tag != "zustimmung"):
+    if ((not is_confirmation_possible) or (intent_tag != "zustimmung")):
         query = f'Okay {student["vorname"].split()[0]}, möchtest Du die Prüfung im Fach "{
             course["name"]}" bei {course["lehrperson"]} verbindlich anmelden?'
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
@@ -221,7 +241,7 @@ def pruefung_abmelden(state_running_task, message_processed, intent_tag):
         return {"state_running_task": None, "response": "Ich breche die Abmeldung der Prüfung ab.", "is_data_changed": False}
 
     # Angaben zu Student und Kurs ermitteln und zugehörige Prüfung aus DB auslesen
-    state_running_task, exam, query, = itemgetter("state_running_task", "exam", "query")(
+    state_running_task, exam, query, is_confirmation_possible = itemgetter("state_running_task", "exam", "query", "is_confirmation_possible")(
         supply_pruefung_data(state_running_task, message_processed)
     )
 
@@ -248,7 +268,7 @@ def pruefung_abmelden(state_running_task, message_processed, intent_tag):
         return {"state_running_task": None, "response": response, "is_data_changed": False}
 
     # Prüfen, ob mit der aktuellen Nachricht die Bestätigung erteilt wird
-    if (intent_tag != "zustimmung"):
+    if ((not is_confirmation_possible) or (intent_tag != "zustimmung")):
         query = f'Okay {student["vorname"].split()[0]}, möchtest Du die Prüfung im Fach "{
             course["name"]}" bei {course["lehrperson"]} wirklich abmelden?'
         return {"state_running_task": state_running_task, "response": query, "is_data_changed": False}
@@ -274,7 +294,7 @@ def pruefung_status(state_running_task, message_processed, intent_tag):
         return {"state_running_task": None, "response": "Ich breche die Abmeldung der Prüfung ab.", "is_data_changed": False}
 
     # Angaben zu Student und Kurs ermitteln und zugehörige Prüfung aus DB auslesen
-    state_running_task, exam, query, = itemgetter("state_running_task", "exam", "query")(
+    state_running_task, exam, query = itemgetter("state_running_task", "exam", "query")(
         supply_pruefung_data(state_running_task, message_processed)
     )
 
@@ -305,7 +325,7 @@ def pruefung_status(state_running_task, message_processed, intent_tag):
 # endregion --------------------------- Task-Funtkionen ---------------------------
 
 
-# region --------------------------- Task-Steuerung ---------------------------
+# region --------------------------- Steuerung der Task-Funktionen ---------------------------
 def process_task(state_running_task, tagged_tokens, message_raw, intent):
     '''Funktion, die die Fortsetzung eines bestehenden oder Eröffnung eines neu erkannten Tasks steuert. 
     Falls keine Ausgabe ausgeführt werden soll, wird ein simpler, im Intent vordefinierter Antwort-String zurückgegeben.'''
@@ -390,7 +410,6 @@ def process_task(state_running_task, tagged_tokens, message_raw, intent):
     else:
         response = get_random_item_in_list(intent["responses"])
 
-    # return (state_running_task, response, is_data_changed)
     return {"state_running_task": state_running_task, "response": response, "is_data_changed": is_data_changed}
 
-# endregion --------------------------- Task-Steuerung ---------------------------
+# endregion --------------------------- Steuerung der Task-Funktionen ---------------------------
